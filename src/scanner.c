@@ -55,9 +55,9 @@ int isWhitespace(char c)
 	return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
 }
 
-int isBracket(char c)
+int isTerminalChar(char c)
 {
-	return (c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}');
+	return (c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}' || c == ';');
 }
 
 int isOperator(char c)
@@ -82,7 +82,7 @@ int characterClass(char c)
 int peek(char current, char next)
 {
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
-	if(isBracket(next)) return 1; // Brackets always terminate (as they are single char tokens)
+	if(isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
 	if(!isOperator(current) && !isOperator(next)) return 0; // Letter/digit followed by letter/digit
 															// Examples:
@@ -91,7 +91,7 @@ int peek(char current, char next)
 															// Digit letter: 1001b
 															// Digit digit: 42
 	if(isOperator(current) && !isOperator(next)) return 1;
-
+    if (isOperator(current) && isOperator(next)) return 0;
 	return 1;
 }
 // ----------------------------------------------------------------------------
@@ -101,7 +101,7 @@ int readNextCharacter(){
     static FILE *fp = 0;
     
     if(fp == 0){
-        fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt","r");
+        fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c","r");
     }
     
     if(fp == NULL){
@@ -126,33 +126,47 @@ void getNextToken(){
     
     while(currentChar != EOF){
         
+
         if(isWhitespace(currentChar)){
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
             }
         }
+
+        
+        if(currentChar == '/' && nextChar == '/'){
+            while ((char) currentChar != '\n' && currentChar != EOF){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
+        }
+        else
+        {
         
 
-        int checkPeek = peek((char) currentChar, (char) nextChar);
+            int checkPeek;
+            
+            do{
+                checkPeek = peek((char) currentChar, (char) nextChar);
+                len = len +1;
+                status[len - 1] = currentChar;
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+                
+                
+            }while (checkPeek == 0);
+            
+            status[len] = '\0';
+            len = 0;
+            
+            
+
+            
+            printf("'%s'\n",status);
         
-        do{
-            len = len +1;
-            status[len - 1] = currentChar;
-            currentChar = nextChar;
-            nextChar = readNextCharacter();
-            checkPeek = peek((char) currentChar, (char) nextChar);
-        }while (checkPeek == 0);
-        
-        status[len] = currentChar;
-        status[len+1] = '\0';
-        
-        printf("'%s'\n",status);
-        
-    
-        currentChar = nextChar;
-        nextChar = readNextCharacter();
-        len = 0;
+        }
+
         
     }
             
@@ -177,14 +191,6 @@ void findToken(char status[1024], len){
 
 void main()
 {
-    /*
-    struct token {
-        int tokenType;
-        char charValue;
-        int intValue;
-        char charValueArray[1024];
-    };
-    */
     
     getNextToken();
     

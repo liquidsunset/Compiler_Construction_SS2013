@@ -1,5 +1,9 @@
 #include <stdio.h> // used for tests
 
+
+int tokenValue;
+char stringValue[1024];
+
 // ---------------------------- Tools -----------------------------------------
 
 // Compares two character arrays.
@@ -50,13 +54,53 @@ int isWhitespace(char c)
 {
 	return (c == ' ' || c == 10 || c == 13 || c == '\t');
 }
+
 // ----------------------------------------------------------------------------
+
+//Returns the next Character from the file
+int readNextCharacter(){
+    static FILE *fp = 0;
+    
+    if(fp == 0){
+        fp = fopen("scanner.c","r");
+    }
+    
+    if(fp == NULL){
+        return 0;
+    }
+    else{
+        int temp = fgetc(fp);
+        if(temp == EOF){
+            fclose(fp);
+        }
+        return temp;
+    }
+}
+
+void getNextToken(){
+
+}
+
+int peek(char status[], int len, char nextChar){
+    
+    
+}
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
 
 void main()
 {
+    /*
+    struct token {
+        int tokenType;
+        char charValue;
+        int intValue;
+        char charValueArray[1024];
+    };
+    */
+    
+    
 	// --- Happy case:
 	char letter = 'a', digit='1', whitespace=' ';
 

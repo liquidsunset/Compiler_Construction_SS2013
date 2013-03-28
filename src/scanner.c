@@ -52,7 +52,7 @@ int isDigit(char c)
 // Returns true if the character is whitespace.
 int isWhitespace(char c)
 {
-	return (c == ' ' || c == 10 || c == 13 || c == '\t');
+	return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
 }
 
 int isOperator(char c)

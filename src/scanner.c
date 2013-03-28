@@ -55,6 +55,39 @@ int isWhitespace(char c)
 	return (c == ' ' || c == 10 || c == 13 || c == '\t');
 }
 
+int isOperator(char c)
+{
+	return (!isWhitespace(c) && !isLetter(c) && !isDigit(c));
+}
+
+int characterClass(char c)
+{
+	if(isDigit(c)) return 1;
+	if(isLetter(c)) return 2;
+
+	return 3; // Terminal character
+}
+// ----------------------------------------------------------------------------
+
+// ------------------------ Lexical analysis ----------------------------------
+
+// Returns:
+// 	0 if current token continues
+// 	1 if it is terminated
+int peek(char current, char next)
+{
+	if(isWhitespace(next)) return 1; // Whitespace always terminates.
+
+	if(!isOperator(current) && !isOperator(next)) return 0; // Letter/digit followed by letter/digit
+															// Examples:
+															// Letter letter: avg
+															// Letter digit: List1
+															// Digit letter: 1001b
+															// Digit digit: 42
+	if(isOperator(current) && !isOperator(next)) return 1;
+
+	return 1;
+}
 // ----------------------------------------------------------------------------
 
 //Returns the next Character from the file
@@ -81,10 +114,7 @@ void getNextToken(){
 
 }
 
-int peek(char status[], int len, char nextChar){
-    
-    
-}
+
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
@@ -137,5 +167,4 @@ void main()
 		printf("'%c' is not a whitespace.\n", letter);
 
 }
-
 // ----------------------------------------------------------------------------

@@ -194,14 +194,85 @@ void getNextToken(){
             
 }
 
-
-void findToken(char status[1024], len){
+void findToken(char status[1024],int len){
     if(len == 1){
         char tokenChar = status[0];
         if(tokenChar == '+'){
-            
+            tokenType = 400;
+        }else if (tokenChar == '-'){
+            tokenType = 401;
+        }else if (tokenChar == '*'){
+            tokenType = 402;
+        }else if (tokenChar == '/'){
+            tokenType = 403;
+        }else if (tokenChar == '%'){
+            tokenType = 404;
+        }else if (tokenChar == '='){
+            tokenType = 405;
+        }else if (tokenChar == '<'){
+            tokenType = 409;
+        }else if (tokenChar == '>'){
+            tokenType = 410;
+        }else if (tokenChar == '&'){
+            tokenType = 413;
+        }else if (tokenChar == '|'){
+            tokenType = 415;
+        }else if (tokenChar == '^'){
+            tokenType = 417;
+        }else if (tokenChar == '~'){
+            tokenType = 418;
+        }else if (tokenChar == '!'){
+            tokenType = 422;
+        }else if (tokenChar == '['){
+            tokenType = 500;
+        }else if (tokenChar == ']'){
+            tokenType = 501;
+        }else if (tokenChar == '('){
+            tokenType = 502;
+        }else if (tokenChar == ')'){
+            tokenType = 503;
+        }else if (tokenChar == '{'){
+            tokenType = 504;
+        }else if (tokenChar == '}'){
+            tokenType = 505;
+        }else if (tokenChar == ';'){
+            tokenType = 506;
+        }else if (tokenChar == ','){
+            tokenType = 507;
+        }else if (tokenChar == ':'){
+            tokenType = 508;
+        }else if (tokenChar == '#'){
+            tokenType = 510;
+        }else if (isLetter(tokenChar)){
+            tokenType = 100;
+            stringValue[0] = tokenChar;
+            stringValue[1] = '\0';
         }
-            
+    }else if (len == 2){
+        if(strcmp(status, "==")){
+            tokenType = 406;
+        }else if (strcmp(status, "<=")){
+            tokenType = 407;
+        }else if (strcmp(status, ">=")){
+            tokenType = 408;
+        }else if (strcmp(status, "<<")){
+            tokenType = 411;
+        }else if (strcmp(status, ">>")){
+            tokenType = 412;
+        }else if (strcmp(status, "&&")){
+            tokenType = 414;
+        }else if (strcmp(status, "||")){
+            tokenType = 416;
+        }else if (strcmp(status, "!=")){
+            tokenType = 419;
+        }else if (strcmp(status, "++")){
+            tokenType = 420;
+        }else if (strcmp(status, "--")){
+            tokenType = 421;
+        }else if (strcmp(status, "if")){
+            tokenType = 6;
+        }
+    }else{
         
     }
     

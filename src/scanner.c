@@ -1,6 +1,6 @@
 #include <stdio.h> // used for tests
 
-
+int tokenType;
 int tokenValue;
 char stringValue[1024];
 
@@ -112,6 +112,30 @@ int readNextCharacter(){
 
 void getNextToken(){
 
+    int currentChar = readNextCharacter;
+    int nextChar = readNextCharacter();
+
+    
+    while(nextChar != EOF && currentChar!= EOF){
+        while(isWhitespace(currentChar)){
+            currentChar = nextChar;
+            nextChar = readNextCharacter();
+        }
+
+        char status[1024];
+        int len = 0;
+        int checkPeek = peek((char) currentChar, (char) nextChar);
+
+        while(checkPeek == 0){
+            len = len + 1;
+            status[len - 1] = currentChar;
+            currentChar = nextChar;
+            nextChar = readNextCharacter();
+            checkPeek = peek((char) currentChar, (char) nextChar)
+        }
+        
+    }
+            
 }
 
 

@@ -95,7 +95,7 @@ int readNextCharacter(){
     static FILE *fp = 0;
     
     if(fp == 0){
-        fp = fopen("scanner.c","r");
+        fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt","r");
     }
     
     if(fp == NULL){
@@ -112,27 +112,41 @@ int readNextCharacter(){
 
 void getNextToken(){
 
-    int currentChar = readNextCharacter;
+    int currentChar = readNextCharacter();
     int nextChar = readNextCharacter();
-
+    char status[1024];
+    int len = 0;
     
-    while(nextChar != EOF && currentChar!= EOF){
-        while(isWhitespace(currentChar)){
-            currentChar = nextChar;
-            nextChar = readNextCharacter();
+    
+    while(currentChar != EOF){
+        
+        if(isWhitespace(currentChar)){
+            while(isWhitespace(currentChar)){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
         }
+        
 
-        char status[1024];
-        int len = 0;
         int checkPeek = peek((char) currentChar, (char) nextChar);
-
-        while(checkPeek == 0){
-            len = len + 1;
+        
+        do{
+            len = len +1;
             status[len - 1] = currentChar;
             currentChar = nextChar;
             nextChar = readNextCharacter();
-            checkPeek = peek((char) currentChar, (char) nextChar)
-        }
+            checkPeek = peek((char) currentChar, (char) nextChar);
+        }while (checkPeek == 0);
+        
+        status[len] = currentChar;
+        status[len+1] = '\0';
+        
+        printf("'%s'\n",status);
+        
+    
+        currentChar = nextChar;
+        nextChar = readNextCharacter();
+        len = 0;
         
     }
             
@@ -154,6 +168,7 @@ void main()
     };
     */
     
+    getNextToken();
     
 	// --- Happy case:
 	char letter = 'a', digit='1', whitespace=' ';

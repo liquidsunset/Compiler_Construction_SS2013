@@ -37,6 +37,20 @@ int strlen(char a[])
 	return i;
 }
 
+// String copy
+//
+// Copies the first char array into the second
+void strcp(char from[], char to[])
+{
+	int i = 0;
+	while(from[i] != 0 && i < 1023)
+	{
+		to[i]=from[i];
+		i = i+1;
+	}
+	to[i]='\0';
+}
+
 // Checks if the character c is a letter.
 // Umlauts are not supported, our input encoding is ASCII.
 //

@@ -153,6 +153,18 @@ void getNextToken(){
 }
 
 
+void findToken(char status[1024], len){
+    if(len == 1){
+        char tokenChar = status[0];
+        if(tokenChar == '+'){
+            
+        }
+            
+        
+    }
+    
+}
+
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.

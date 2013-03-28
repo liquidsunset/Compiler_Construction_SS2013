@@ -55,6 +55,11 @@ int isWhitespace(char c)
 	return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
 }
 
+int isBracket(char c)
+{
+	return (c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}');
+}
+
 int isOperator(char c)
 {
 	return (!isWhitespace(c) && !isLetter(c) && !isDigit(c));
@@ -77,6 +82,7 @@ int characterClass(char c)
 int peek(char current, char next)
 {
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
+	if(isBracket(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
 	if(!isOperator(current) && !isOperator(next)) return 0; // Letter/digit followed by letter/digit
 															// Examples:

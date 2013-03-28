@@ -15,18 +15,26 @@ int strcmp(char a[], char b[]) // TODO: Support call by reference
 	char ca = a[i];
 	char cb = b[i];
 
-	while( (i < 1024) && (ca != 0 || cb != 0) ) {
+	while( (i < 1024) && (a[i] != 0 || b[i] != 0) ) {
 		if( ca != cb )
 		{
 			return 0;
 		}
 
 		i = i + 1;
-		ca = a[i];
-		cb = b[i];
 	}
 
 	return 1;
+}
+
+// Length of string
+//
+// Returns the length of the string or 1024 if the string is unterminated
+int strlen(char a[])
+{
+	int i=0;
+	while(a[i]!='\0'&&i<1024) i++;
+	return i;
 }
 
 // Checks if the character c is a letter.

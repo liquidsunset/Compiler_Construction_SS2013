@@ -1,5 +1,4 @@
 #include <stdio.h> // used for tests
-
 #include "scanner.h"
 
 // ---------------------------- Tools -----------------------------------------
@@ -99,8 +98,9 @@ int characterClass(char c)
 // Returns:
 // 	0 if current token continues
 // 	1 if it is terminated
-int peek(char current, char next)
+int peek(int current, int next)
 {
+    if(current < 0 || next < 0) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
 	if(isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
@@ -119,17 +119,22 @@ int peek(char current, char next)
 //Returns the next Character from the file
 int readNextCharacter(){
     static FILE *fp = 0;
-    
-    if(fp == 0){
-        fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c","r");
+
+    if(fp == 0)
+    {
+        fp = fopen("../test/easy.c","r");
     }
-    
-    if(fp == NULL){
+    int pos = ftell(fp);
+
+    if(fp == NULL || pos < 0)
+    {
         return EOF;
     }
-    else{
+    else
+    {
         int temp = fgetc(fp);
-        if(temp == EOF){
+        if(temp == EOF)
+        {
             fclose(fp);
         }
         return temp;
@@ -224,60 +229,64 @@ void findToken(char status[1024],int len){
 
 // --------------------------- Interface to scanner ---------------------------
 
-void getNextToken(){
-
-    int currentChar = readNextCharacter();
-    int nextChar = readNextCharacter();
+void getNextToken()
+{
+    static int currentChar = -1;
+    static int nextChar = -1;
     char status[1024];
     int len = 0;
     
-    
-    while(currentChar != EOF){
-        
-
-        if(isWhitespace(currentChar)){
-            while(isWhitespace(currentChar)){
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-            }
-        }
-
-        
-        if(currentChar == '/' && nextChar == '/'){
-            while ((char) currentChar != '\n' && currentChar != EOF){
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-            }
-        }
-        else
-        {
-        
-
-            int checkPeek;
-            
-            do{
-                checkPeek = peek((char) currentChar, (char) nextChar);
-                len = len +1;
-                status[len - 1] = currentChar;
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-                
-                
-            }while (checkPeek == 0);
-            
-            status[len] = '\0';
-            len = 0;
-            
-            
-
-            
-            printf("'%s'\n",status);
-        
-        }
-
-        
+    if(currentChar < 0) 
+    {
+        currentChar = readNextCharacter();
     }
-            
+    
+    if(nextChar < 0) 
+    {
+        nextChar = readNextCharacter();
+    }
+
+    if(currentChar == EOF)
+    {
+        // set token type to EOF
+        return;
+    }
+
+    // Trim whitespace
+    if(isWhitespace(currentChar)){
+        while(isWhitespace(currentChar)){
+            currentChar = nextChar;
+            nextChar = readNextCharacter();
+        }
+    }
+
+    // Support for line comments
+    if(currentChar == '/' && nextChar == '/'){
+        while ((char) currentChar != '\n' && currentChar != EOF){
+            currentChar = nextChar;
+            nextChar = readNextCharacter();
+        }
+    }
+    else
+    {
+        int checkPeek;
+        
+        do
+        {
+            checkPeek = peek(currentChar, nextChar);
+            len = len +1;
+            status[len - 1] = currentChar;
+            currentChar = nextChar;
+            nextChar = readNextCharacter();                
+        } while (checkPeek == 0);
+        
+        status[len] = '\0';
+        len = 0;
+
+        // TODO: analyse token
+
+        printf("'%s'\n",status);
+    }        
 }
 // ----------------------------------------------------------------------------
 
@@ -286,43 +295,12 @@ void getNextToken(){
 
 void main()
 {
-    
-    getNextToken();
-    
-	// --- Happy case:
-	char letter = 'a', digit='1', whitespace=' ';
-
-	if(isLetter(letter))
-		printf("'%c' is a letter\n", letter);
-	else
-		printf("ERROR: '%c' should be a letter.\n", digit);
-
-	if(isDigit(digit))
-		printf("'%c' is a digit\n", digit);
-	else
-		printf("ERROR: '%c' should be a digit.\n", digit);
-
-	if(isWhitespace(whitespace))
-		printf("'%c' is a whitespace\n", whitespace);
-	else
-		printf("ERROR: '%c' should be a whitespace.\n", whitespace);
-
-	// --- Sad cases:
-
-	if(isLetter(digit))
-		printf("ERROR: '%c' should not be a letter\n", digit);
-	else
-		printf("'%c' is not a letter.\n", digit);
-
-	if(isDigit(whitespace))
-		printf("ERROR: '%c' should not be a digit\n", whitespace);
-	else
-		printf("'%c' is not a digit.\n", whitespace);
-
-	if(isWhitespace(letter))
-		printf("ERROR: '%c' should not be a whitespace\n", letter);
-	else
-		printf("'%c' is not a whitespace.\n", letter);
-
+    char c= 'a';
+    do
+    {
+        getNextToken();
+        c = getchar();
+    }
+    while(c != 'x');
 }
 // ----------------------------------------------------------------------------

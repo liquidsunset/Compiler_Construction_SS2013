@@ -1,8 +1,6 @@
 #include <stdio.h> // used for tests
 
-int tokenType;
-int tokenValue;
-char stringValue[1024];
+#include "scanner.h"
 
 // ---------------------------- Tools -----------------------------------------
 
@@ -127,7 +125,7 @@ int readNextCharacter(){
     }
     
     if(fp == NULL){
-        return 0;
+        return EOF;
     }
     else{
         int temp = fgetc(fp);
@@ -138,61 +136,7 @@ int readNextCharacter(){
     }
 }
 
-void getNextToken(){
 
-    int currentChar = readNextCharacter();
-    int nextChar = readNextCharacter();
-    char status[1024];
-    int len = 0;
-    
-    
-    while(currentChar != EOF){
-        
-
-        if(isWhitespace(currentChar)){
-            while(isWhitespace(currentChar)){
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-            }
-        }
-
-        
-        if(currentChar == '/' && nextChar == '/'){
-            while ((char) currentChar != '\n' && currentChar != EOF){
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-            }
-        }
-        else
-        {
-        
-
-            int checkPeek;
-            
-            do{
-                checkPeek = peek((char) currentChar, (char) nextChar);
-                len = len +1;
-                status[len - 1] = currentChar;
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-                
-                
-            }while (checkPeek == 0);
-            
-            status[len] = '\0';
-            len = 0;
-            
-            
-
-            
-            printf("'%s'\n",status);
-        
-        }
-
-        
-    }
-            
-}
 
 void findToken(char status[1024],int len){
     if(len == 1){
@@ -278,6 +222,64 @@ void findToken(char status[1024],int len){
     
 }
 
+// --------------------------- Interface to scanner ---------------------------
+
+void getNextToken(){
+
+    int currentChar = readNextCharacter();
+    int nextChar = readNextCharacter();
+    char status[1024];
+    int len = 0;
+    
+    
+    while(currentChar != EOF){
+        
+
+        if(isWhitespace(currentChar)){
+            while(isWhitespace(currentChar)){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
+        }
+
+        
+        if(currentChar == '/' && nextChar == '/'){
+            while ((char) currentChar != '\n' && currentChar != EOF){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
+        }
+        else
+        {
+        
+
+            int checkPeek;
+            
+            do{
+                checkPeek = peek((char) currentChar, (char) nextChar);
+                len = len +1;
+                status[len - 1] = currentChar;
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+                
+                
+            }while (checkPeek == 0);
+            
+            status[len] = '\0';
+            len = 0;
+            
+            
+
+            
+            printf("'%s'\n",status);
+        
+        }
+
+        
+    }
+            
+}
+// ----------------------------------------------------------------------------
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.

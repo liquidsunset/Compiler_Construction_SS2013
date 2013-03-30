@@ -114,6 +114,43 @@ int peek(int current, int next)
     if (isOperator(current) && isOperator(next)) return 0;
 	return 1;
 }
+
+int pow(int base, int exp)
+{
+    int i = 0;
+    int res = 1;
+    while(i < exp)
+    {
+        res = res * base;
+        i = i + 1;
+    }
+    return res;
+}
+
+int strToInt(char str[])
+{
+    int i = 0;
+    int len = strlen(str);
+    int res = 0;
+
+    if(str[0] == '-')
+    {
+        i = i + 1;
+    }
+
+    while(str[i] != 0 && i < 1024)
+    {
+        res = res + (str[i]-48) * pow(10, len-i-1);
+        i = i + 1;
+    }
+
+    if(str[0] == '-')
+    {
+        res = -res;
+    }
+
+    return res;
+}
 // ----------------------------------------------------------------------------
 
 //Returns the next Character from the file

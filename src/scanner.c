@@ -395,6 +395,7 @@ void getNextToken()
     if(currentChar == EOF)
     {
         // set token type to EOF
+        tokenType = 509;
         return;
     }
 

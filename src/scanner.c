@@ -235,7 +235,7 @@ void findToken(char status[1024],int len){
             stringValue[0] = tokenChar;
             stringValue[1] = '\0';
         }else if (isDigit(tokenChar)){
-            tokenType = 100;
+            tokenType = 200;
             tokenValue = strToInt(status);
         }
     }else if (len == 2){
@@ -265,7 +265,7 @@ void findToken(char status[1024],int len){
             tokenType = 100;
             strcp(status, stringValue);
         }else if (isDigit(status[0])){
-            tokenType = 100;
+            tokenType = 200;
             tokenValue = strToInt(status);
         }
     }else{
@@ -291,7 +291,7 @@ void findToken(char status[1024],int len){
             tokenType = 100;
             strcp(status, stringValue);
         }else if(isDigit(status[0])){
-            tokenType = 100;
+            tokenType = 200;
             tokenValue = strToInt(status);
         }
       

@@ -301,7 +301,8 @@ void findToken(char status[1024],int len){
             tokenType = 200;
             tokenValue = strToInt(status);
         }
-    }else if (len == 2){
+    }
+    else if (len == 2){
         if(strcmp(status, "==")){
             tokenType = 406;
         }else if (strcmp(status, "<=")){
@@ -331,7 +332,8 @@ void findToken(char status[1024],int len){
             tokenType = 200;
             tokenValue = strToInt(status);
         }
-    }else{
+    }
+    else{
         if(strcmp(status, "NULL")){
             tokenType = 0;
         }else if (strcmp(status, "void")){
@@ -356,7 +358,16 @@ void findToken(char status[1024],int len){
         }else if(isDigit(status[0])){
             tokenType = 200;
             tokenValue = strToInt(status);
-        }
+        }else if(status[0] == '\'') // Char literal
+            {
+                tokenType = 202;
+                strTrimQuotes(status, stringValue);
+            }
+        else if(status[0] == '\"') // String literal
+            {
+                tokenType = 300;
+                strTrimQuotes(status, stringValue);
+            }
       
     }
     

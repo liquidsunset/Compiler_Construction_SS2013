@@ -76,7 +76,17 @@ int isWhitespace(char c)
 
 int isTerminalChar(char c)
 {
-	return (c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}' || c == ';');
+	return (
+        c == '(' ||
+        c == ')' ||
+        c == '[' ||
+        c == ']' ||
+        c == '{' ||
+        c == '}' ||
+        c == ';' ||
+        c == '\'' ||
+        c == '\"'
+        );
 }
 
 int isOperator(char c)
@@ -100,18 +110,55 @@ int characterClass(char c)
 // 	1 if it is terminated
 int peek(int current, int next)
 {
+    // String literals:
+    static int isInString = 0;
+
+    if(current == '\"' && !isInString) // add the starting "
+    {
+        isInString = 1;
+        return 0;
+    }
+    if(next == '\"' && isInString) return 0; // add the ending "
+    if(current == '\"' && isInString) // terminate after the ending "
+    {
+        isInString = 0;
+        return 1;
+    }
+
+    // Char literals (duplicated to support something like "'a'"):
+    static int isInChar = 0;
+
+    if(current == '\'' && !isInChar) // add the starting "
+    {
+        isInChar = 1;
+        return 0;
+    }
+    if(next == '\'' && isInChar) return 0; // add the ending "
+    if(current == '\'' && isInChar) // terminate after the ending "
+    {
+        isInChar = 0;
+        return 1;
+    }
+
     if(current < 0 || next < 0) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
 	if(isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
-	if(!isOperator(current) && !isOperator(next)) return 0; // Letter/digit followed by letter/digit
-															// Examples:
-															// Letter letter: avg
-															// Letter digit: List1
-															// Digit letter: 1001b
-															// Digit digit: 42
-	if(isOperator(current) && !isOperator(next)) return 1;
-    if (isOperator(current) && isOperator(next)) return 0;
+    //if(current == '\'' || next == '\'') return 0; // char literals
+
+    //if(current == '\"' && isInString)
+    //{
+    //    isInString = 1;
+    //    return 0;
+    //}
+    
+
+    if(isLetter(current) && isLetter(next)) return 0; //Letter letter: avg
+    if(isDigit(current) && isDigit(next)) return 0; // Digit digit: 42
+    if(isLetter(current) && isDigit(next)) return 0; // Letter digit: List1
+
+    if (isOperator(current) && isOperator(next)) {return 0;}
+
 	return 1;
 }
 
@@ -140,7 +187,10 @@ int strToInt(char str[])
 
     while(str[i] != 0 && i < 1024)
     {
-        res = res + (str[i]-48) * pow(10, len-i-1);
+        if(str[i] >= '0' && str[i] <= '9')
+        {
+            res = res + (str[i]-'0') * pow(10, len-i-1);
+        }
         i = i + 1;
     }
 

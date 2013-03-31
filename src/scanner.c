@@ -210,6 +210,7 @@ int readNextCharacter(){
     if(fp == 0)
     {
         fp = fopen("../test/easy.c","r");
+        //fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
     }
     int pos = ftell(fp);
 
@@ -283,6 +284,9 @@ void findToken(char status[1024],int len){
             tokenType = 100;
             stringValue[0] = tokenChar;
             stringValue[1] = '\0';
+        }else if (isDigit(tokenChar)){
+            tokenType = 200;
+            tokenValue = strToInt(status);
         }
     }else if (len == 2){
         if(strcmp(status, "==")){
@@ -307,9 +311,40 @@ void findToken(char status[1024],int len){
             tokenType = 421;
         }else if (strcmp(status, "if")){
             tokenType = 6;
+        }else if (isLetter(status[0])){
+            tokenType = 100;
+            strcp(status, stringValue);
+        }else if (isDigit(status[0])){
+            tokenType = 200;
+            tokenValue = strToInt(status);
         }
     }else{
-        
+        if(strcmp(status, "NULL")){
+            tokenType = 0;
+        }else if (strcmp(status, "void")){
+            tokenType = 1;
+        }else if (strcmp(status, "int")){
+            tokenType = 2;
+        }else if (strcmp(status, "char")){
+            tokenType = 3;
+        }else if (strcmp(status, "double")){
+            tokenType = 4;
+        }else if (strcmp(status, "while")){
+            tokenType = 5;
+        }else if (strcmp(status, "else")){
+            tokenType = 7;
+        }else if (strcmp(status, "return")){
+            tokenType = 8;
+        }else if (strcmp(status, "struct")){
+            tokenType = 9;
+        }else if(isLetter(status[0])){
+            tokenType = 100;
+            strcp(status, stringValue);
+        }else if(isDigit(status[0])){
+            tokenType = 200;
+            tokenValue = strToInt(status);
+        }
+      
     }
     
 }

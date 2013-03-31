@@ -299,7 +299,7 @@ void findToken(char status[1024],int len){
             stringValue[1] = '\0';
         }else if (isDigit(tokenChar)){
             tokenType = 200;
-            tokenValue = strToInt(status);
+            intValue = strToInt(status);
         }
     }
     else if (len == 2){
@@ -330,7 +330,7 @@ void findToken(char status[1024],int len){
             strcp(status, stringValue);
         }else if (isDigit(status[0])){
             tokenType = 200;
-            tokenValue = strToInt(status);
+            intValue = strToInt(status);
         }
     }
     else{
@@ -357,7 +357,7 @@ void findToken(char status[1024],int len){
             strcp(status, stringValue);
         }else if(isDigit(status[0])){
             tokenType = 200;
-            tokenValue = strToInt(status);
+            intValue = strToInt(status);
         }else if(status[0] == '\'') // Char literal
             {
                 tokenType = 202;

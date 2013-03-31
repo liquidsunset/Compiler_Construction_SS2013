@@ -1,5 +1,5 @@
 int tokenType;
-int tokenValue;
+int intValue;
 char stringValue[1024];
 
 void getNextToken();

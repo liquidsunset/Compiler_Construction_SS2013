@@ -3,3 +3,5 @@ scanner: scanner.o
 
 scanner.o: scanner.c
 	gcc -c scanner.c
+
+	./scanner

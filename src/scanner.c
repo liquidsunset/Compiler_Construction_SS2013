@@ -224,11 +224,15 @@ int readNextCharacter(){
     {
         fp = fopen("../test/easy.c","r");
         //fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
+        if(fp == NULL)
+        {
+            return EOF;
+        }
     }
-    int pos = ftell(fp);
 
-    if(fp == NULL || pos < 0)
+    if(ftell(fp) < 0)
     {
+
         return EOF;
     }
     else

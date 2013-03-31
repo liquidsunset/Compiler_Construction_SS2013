@@ -48,6 +48,19 @@ void strcp(char from[], char to[])
 	to[i]='\0';
 }
 
+void strTrimQuotes(char a[], char b[])
+{
+    int i = 0;
+
+    do
+    {
+        b[i] = a[i+1];
+        i = i +1;
+    } while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024);
+
+    b[i-1] = 0;
+}
+
 // Checks if the character c is a letter.
 // Umlauts are not supported, our input encoding is ASCII.
 //

@@ -6,7 +6,7 @@
 // Compares two character arrays.
 // 
 // Returns true if both arrays hold the same characters.
-int strcmp(char a[], char b[]) // TODO: Support call by reference
+int strCompare(char a[], char b[]) // TODO: Support call by reference
 {
 	int i = 0;
 	char ca = a[i];
@@ -27,7 +27,7 @@ int strcmp(char a[], char b[]) // TODO: Support call by reference
 // Length of string
 //
 // Returns the length of the string or 1024 if the string is unterminated
-int strlen(char a[])
+int strLength(char a[])
 {
 	int i=0;
 	while(a[i]!='\0'&&i<1024) i++;
@@ -37,7 +37,7 @@ int strlen(char a[])
 // String copy
 //
 // Copies the first char array into the second
-void strcp(char from[], char to[])
+void strCopy(char from[], char to[])
 {
 	int i = 0;
 	while(from[i] != 0 && i < 1023)
@@ -175,7 +175,7 @@ int peek(int current, int next)
 	return 1;
 }
 
-int pow(int base, int exp)
+int power(int base, int exp)
 {
     int i = 0;
     int res = 1;
@@ -190,7 +190,7 @@ int pow(int base, int exp)
 int strToInt(char str[])
 {
     int i = 0;
-    int len = strlen(str);
+    int len = strLength(str);
     int res = 0;
 
     if(str[0] == '-')
@@ -202,7 +202,7 @@ int strToInt(char str[])
     {
         if(str[i] >= '0' && str[i] <= '9')
         {
-            res = res + (str[i]-'0') * pow(10, len-i-1);
+            res = res + (str[i]-'0') * power(10, len-i-1);
         }
         i = i + 1;
     }
@@ -291,21 +291,21 @@ void findToken(char status[1024],int len){
     } // if(len == 1)
     else if(len == 2)
     {
-        if(strcmp(status, "==")){tokenType = 406; return;}
-        if(strcmp(status, "<=")){tokenType = 407; return;}
-        if(strcmp(status, ">=")){tokenType = 408; return;}
-        if(strcmp(status, "<<")){tokenType = 411; return;}
-        if(strcmp(status, ">>")){tokenType = 412; return;}
-        if(strcmp(status, "&&")){tokenType = 414; return;}
-        if(strcmp(status, "||")){tokenType = 416; return;}
-        if(strcmp(status, "!=")){tokenType = 419; return;}
-        if(strcmp(status, "++")){tokenType = 420; return;}
-        if(strcmp(status, "--")){tokenType = 421; return;}
-        if(strcmp(status, "if")){tokenType = 6; return;}
+        if(strCompare(status, "==")){tokenType = 406; return;}
+        if(strCompare(status, "<=")){tokenType = 407; return;}
+        if(strCompare(status, ">=")){tokenType = 408; return;}
+        if(strCompare(status, "<<")){tokenType = 411; return;}
+        if(strCompare(status, ">>")){tokenType = 412; return;}
+        if(strCompare(status, "&&")){tokenType = 414; return;}
+        if(strCompare(status, "||")){tokenType = 416; return;}
+        if(strCompare(status, "!=")){tokenType = 419; return;}
+        if(strCompare(status, "++")){tokenType = 420; return;}
+        if(strCompare(status, "--")){tokenType = 421; return;}
+        if(strCompare(status, "if")){tokenType = 6; return;}
         if(isLetter(status[0]))
         {
             tokenType = 100;
-            strcp(status, stringValue);
+            strCopy(status, stringValue);
             return;
         }
         if(isDigit(status[0]))
@@ -316,19 +316,19 @@ void findToken(char status[1024],int len){
         }
     } // if(len == 2)
     else{
-        if(strcmp(status, "NULL")){tokenType = 0; return;}
-        if(strcmp(status, "void")){tokenType = 1; return;}
-        if(strcmp(status, "int")){tokenType = 2; return;}
-        if(strcmp(status, "char")){tokenType = 3; return;}
-        if(strcmp(status, "double")){tokenType = 4; return;}
-        if(strcmp(status, "while")){tokenType = 5; return;}
-        if(strcmp(status, "else")){tokenType = 7; return;}
-        if(strcmp(status, "return")){tokenType = 8; return;}
-        if(strcmp(status, "struct")){tokenType = 9; return;}
+        if(strCompare(status, "NULL")){tokenType = 0; return;}
+        if(strCompare(status, "void")){tokenType = 1; return;}
+        if(strCompare(status, "int")){tokenType = 2; return;}
+        if(strCompare(status, "char")){tokenType = 3; return;}
+        if(strCompare(status, "double")){tokenType = 4; return;}
+        if(strCompare(status, "while")){tokenType = 5; return;}
+        if(strCompare(status, "else")){tokenType = 7; return;}
+        if(strCompare(status, "return")){tokenType = 8; return;}
+        if(strCompare(status, "struct")){tokenType = 9; return;}
         if(isLetter(status[0]))
         {
             tokenType = 100;
-            strcp(status, stringValue);
+            strCopy(status, stringValue);
             return;
         }
         if(isDigit(status[0])){

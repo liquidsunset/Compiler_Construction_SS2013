@@ -245,131 +245,107 @@ int readNextCharacter(){
 
 
 void findToken(char status[1024],int len){
-    if(len == 1){
+    if(len == 1)
+    {
         char tokenChar = status[0];
-        if(tokenChar == '+'){
-            tokenType = 400;
-        }else if (tokenChar == '-'){
-            tokenType = 401;
-        }else if (tokenChar == '*'){
-            tokenType = 402;
-        }else if (tokenChar == '/'){
-            tokenType = 403;
-        }else if (tokenChar == '%'){
-            tokenType = 404;
-        }else if (tokenChar == '='){
-            tokenType = 405;
-        }else if (tokenChar == '<'){
-            tokenType = 409;
-        }else if (tokenChar == '>'){
-            tokenType = 410;
-        }else if (tokenChar == '&'){
-            tokenType = 413;
-        }else if (tokenChar == '|'){
-            tokenType = 415;
-        }else if (tokenChar == '^'){
-            tokenType = 417;
-        }else if (tokenChar == '~'){
-            tokenType = 418;
-        }else if (tokenChar == '!'){
-            tokenType = 422;
-        }else if (tokenChar == '['){
-            tokenType = 500;
-        }else if (tokenChar == ']'){
-            tokenType = 501;
-        }else if (tokenChar == '('){
-            tokenType = 502;
-        }else if (tokenChar == ')'){
-            tokenType = 503;
-        }else if (tokenChar == '{'){
-            tokenType = 504;
-        }else if (tokenChar == '}'){
-            tokenType = 505;
-        }else if (tokenChar == ';'){
-            tokenType = 506;
-        }else if (tokenChar == ','){
-            tokenType = 507;
-        }else if (tokenChar == ':'){
-            tokenType = 508;
-        }else if (tokenChar == '#'){
-            tokenType = 510;
-        }else if (isLetter(tokenChar)){
+        if(tokenChar == '+'){tokenType = 400; return;}
+        if(tokenChar == '-'){tokenType = 401; return;}
+        if(tokenChar == '*'){tokenType = 402; return;}
+        if(tokenChar == '/'){tokenType = 403; return;}
+        if(tokenChar == '%'){tokenType = 404; return;}
+        if(tokenChar == '='){tokenType = 405; return;}
+        if(tokenChar == '<'){tokenType = 409; return;}
+        if(tokenChar == '>'){tokenType = 410; return;}
+        if(tokenChar == '&'){tokenType = 413; return;}
+        if(tokenChar == '|'){tokenType = 415; return;}
+        if(tokenChar == '^'){tokenType = 417; return;}
+        if(tokenChar == '~'){tokenType = 418; return;}
+        if(tokenChar == '!'){tokenType = 422; return;}
+        if(tokenChar == '['){tokenType = 500; return;}
+        if(tokenChar == ']'){tokenType = 501; return;}
+        if(tokenChar == '('){tokenType = 502; return;}
+        if(tokenChar == ')'){tokenType = 503; return;}
+        if(tokenChar == '{'){tokenType = 504; return;}
+        if(tokenChar == '}'){tokenType = 505; return;}
+        if(tokenChar == ';'){tokenType = 506; return;}
+        if(tokenChar == ','){tokenType = 507; return;}
+        if(tokenChar == ':'){tokenType = 508; return;}
+        if(tokenChar == '#'){tokenType = 510; return;}
+        if(isLetter(tokenChar))
+        {
             tokenType = 100;
             stringValue[0] = tokenChar;
             stringValue[1] = '\0';
-        }else if (isDigit(tokenChar)){
+            return;
+        }
+        if(isDigit(tokenChar))
+        {
             tokenType = 200;
             intValue = strToInt(status);
+            return;
         }
-    }
-    else if (len == 2){
-        if(strcmp(status, "==")){
-            tokenType = 406;
-        }else if (strcmp(status, "<=")){
-            tokenType = 407;
-        }else if (strcmp(status, ">=")){
-            tokenType = 408;
-        }else if (strcmp(status, "<<")){
-            tokenType = 411;
-        }else if (strcmp(status, ">>")){
-            tokenType = 412;
-        }else if (strcmp(status, "&&")){
-            tokenType = 414;
-        }else if (strcmp(status, "||")){
-            tokenType = 416;
-        }else if (strcmp(status, "!=")){
-            tokenType = 419;
-        }else if (strcmp(status, "++")){
-            tokenType = 420;
-        }else if (strcmp(status, "--")){
-            tokenType = 421;
-        }else if (strcmp(status, "if")){
-            tokenType = 6;
-        }else if (isLetter(status[0])){
+    } // if(len == 1)
+    else if(len == 2)
+    {
+        if(strcmp(status, "==")){tokenType = 406; return;}
+        if(strcmp(status, "<=")){tokenType = 407; return;}
+        if(strcmp(status, ">=")){tokenType = 408; return;}
+        if(strcmp(status, "<<")){tokenType = 411; return;}
+        if(strcmp(status, ">>")){tokenType = 412; return;}
+        if(strcmp(status, "&&")){tokenType = 414; return;}
+        if(strcmp(status, "||")){tokenType = 416; return;}
+        if(strcmp(status, "!=")){tokenType = 419; return;}
+        if(strcmp(status, "++")){tokenType = 420; return;}
+        if(strcmp(status, "--")){tokenType = 421; return;}
+        if(strcmp(status, "if")){tokenType = 6; return;}
+        if(isLetter(status[0]))
+        {
             tokenType = 100;
             strcp(status, stringValue);
-        }else if (isDigit(status[0])){
+            return;
+        }
+        if(isDigit(status[0]))
+        {
             tokenType = 200;
             intValue = strToInt(status);
+            return;
         }
-    }
+    } // if(len == 2)
     else{
-        if(strcmp(status, "NULL")){
-            tokenType = 0;
-        }else if (strcmp(status, "void")){
-            tokenType = 1;
-        }else if (strcmp(status, "int")){
-            tokenType = 2;
-        }else if (strcmp(status, "char")){
-            tokenType = 3;
-        }else if (strcmp(status, "double")){
-            tokenType = 4;
-        }else if (strcmp(status, "while")){
-            tokenType = 5;
-        }else if (strcmp(status, "else")){
-            tokenType = 7;
-        }else if (strcmp(status, "return")){
-            tokenType = 8;
-        }else if (strcmp(status, "struct")){
-            tokenType = 9;
-        }else if(isLetter(status[0])){
+        if(strcmp(status, "NULL")){tokenType = 0; return;}
+        if(strcmp(status, "void")){tokenType = 1; return;}
+        if(strcmp(status, "int")){tokenType = 2; return;}
+        if(strcmp(status, "char")){tokenType = 3; return;}
+        if(strcmp(status, "double")){tokenType = 4; return;}
+        if(strcmp(status, "while")){tokenType = 5; return;}
+        if(strcmp(status, "else")){tokenType = 7; return;}
+        if(strcmp(status, "return")){tokenType = 8; return;}
+        if(strcmp(status, "struct")){tokenType = 9; return;}
+        if(isLetter(status[0]))
+        {
             tokenType = 100;
             strcp(status, stringValue);
-        }else if(isDigit(status[0])){
+            return;
+        }
+        if(isDigit(status[0])){
             tokenType = 200;
             intValue = strToInt(status);
-        }else if(status[0] == '\'') // Char literal
-            {
-                tokenType = 202;
-                strTrimQuotes(status, stringValue);
-            }
-        else if(status[0] == '\"') // String literal
-            {
-                tokenType = 300;
-                strTrimQuotes(status, stringValue);
-            }
+            return;
+        }
+        if(status[0] == '\'') // Char literal
+        {
+            tokenType = 202;
+            strTrimQuotes(status, stringValue);
+            return;
+        }
+        if(status[0] == '\"') // String literal
+        {
+            tokenType = 300;
+            strTrimQuotes(status, stringValue);
+            return;
+        }
       
-    }
+    } // if(len >= 3)
     
 }
 

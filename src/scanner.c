@@ -442,12 +442,11 @@ void getNextToken()
 
 void main()
 {
-    char c= 'a';
+
     do
     {
         getNextToken();
-        c = getchar();
     }
-    while(c != 'x');
+    while(tokenType!= 509);
 }
 // ----------------------------------------------------------------------------

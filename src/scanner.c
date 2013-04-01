@@ -424,7 +424,6 @@ void main()
     do
     {
         getNextToken();
-        if(tokenType )
         printf("%d\n", tokenType);
         
     }

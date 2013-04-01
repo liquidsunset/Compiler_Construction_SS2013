@@ -1,7 +1,5 @@
 scanner: scanner.o
-	gcc -o scanner scanner.o
+	mkdir -p bin/; gcc -o bin/scanner bin/scanner.o;cd bin/;./scanner
 
-scanner.o: scanner.c
-	gcc -c scanner.c
-
-	./scanner
+%.o: src/%.c
+	gcc -c $< -o bin/$@

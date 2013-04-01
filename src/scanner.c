@@ -222,8 +222,8 @@ int readNextCharacter(){
 
     if(fp == 0)
     {
-        fp = fopen("../test/easy.c","r");
-        //fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
+        //fp = fopen("../test/easy.c","r");
+        fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
         if(fp == NULL)
         {
             return EOF;
@@ -425,7 +425,10 @@ void main()
     {
         getNextToken();
         printf("%d\n", tokenType);
-        
+        if(tokenType == 100){printf("%s\n", stringValue);}
+        if(tokenType == 300){printf("%s\n", stringValue);}
+        if(tokenType == 200){printf("%d\n", intValue);}
+        if(tokenType == 202){printf("%s\n", stringValue);}
     }
     while(tokenType!= 509);
 }

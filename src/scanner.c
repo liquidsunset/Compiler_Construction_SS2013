@@ -222,8 +222,8 @@ int readNextCharacter(){
 
     if(fp == 0)
     {
-        //fp = fopen("../test/easy.c","r");
-        fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
+        fp = fopen("../test/easy.c","r");
+        //fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
         if(fp == NULL)
         {
             return EOF;

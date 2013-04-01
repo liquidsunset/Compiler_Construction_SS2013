@@ -139,6 +139,7 @@ int peek(int current, int next)
         isInString = 0;
         return 1;
     }
+    if(isInString) return 0;
 
     // Char literals (duplicated to support something like "'a'"):
     static int isInChar = 0;
@@ -154,6 +155,7 @@ int peek(int current, int next)
         isInChar = 0;
         return 1;
     }
+    if(isInChar) return 0;
 
     if(current < 0 || next < 0) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.

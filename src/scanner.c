@@ -408,11 +408,9 @@ void getNextToken()
         } while (checkPeek == 0);
         
         status[len] = '\0';
+        findToken(status, len);
         len = 0;
 
-        // TODO: analyse token
-
-        printf("'%s'\n",status);
     }        
 }
 // ----------------------------------------------------------------------------
@@ -426,6 +424,9 @@ void main()
     do
     {
         getNextToken();
+        if(tokenType )
+        printf("%d\n", tokenType);
+        
     }
     while(tokenType!= 509);
 }

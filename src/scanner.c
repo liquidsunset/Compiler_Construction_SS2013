@@ -1,7 +1,7 @@
 #include <stdio.h> // used for tests
 #include "scanner.h"
 
-FILE *fp = 0;
+FILE *fp;
 
 // ---------------------------- Tools -----------------------------------------
 
@@ -224,17 +224,8 @@ void openFile(char path[]){
     fp = fopen(path,"r");
     if(fp == NULL)
     {
-<<<<<<< HEAD
-        fp = fopen("../test/easy.c","r");
-        //fp = fopen("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c","r");
-        if(fp == NULL)
-        {
-            return EOF;
-        }
-=======
         tokenType = 509;
         fclose(fp);
->>>>>>> TestFiles, fixed underscore in operator
     }
     
 }

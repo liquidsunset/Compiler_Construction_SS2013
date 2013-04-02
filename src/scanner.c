@@ -427,49 +427,44 @@ void getNextToken()
 
 int main()
 {
-    /*
-    printf("\n\nNext Testfile- easy.c\n\n");
-    
-    openFile("../test/easy.c");
-    if(tokenType != 509){
-        do
-        {
-            getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= 509);
-    }
-    
-    
-    printf("\n\nNext Testfile - brackets.c\n\n");
-    
-    openFile("../test/brackets.c");
-    if(tokenType != 509){
-        do
-        {
-            getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= 509);
-    }
-    */
+//    
+//    printf("\n\nNext Testfile- easy.c\n\n");
+//    
+//    openFile("../test/easy.c");
+//    if(tokenType != 509){
+//        do
+//        {
+//            getNextToken();
+//            printf("%d\n", tokenType);
+//            if(tokenType == 100){printf("%s\n", stringValue);}
+//            if(tokenType == 300){printf("%s\n", stringValue);}
+//            if(tokenType == 200){printf("%d\n", intValue);}
+//            if(tokenType == 202){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= 509);
+//    }
+//    
+//    
+//    printf("\n\nNext Testfile - brackets.c\n\n");
+//    
+//    openFile("../test/brackets.c");
+//    if(tokenType != 509){
+//        do
+//        {
+//            getNextToken();
+//            printf("%d\n", tokenType);
+//            if(tokenType == 100){printf("%s\n", stringValue);}
+//            if(tokenType == 300){printf("%s\n", stringValue);}
+//            if(tokenType == 200){printf("%d\n", intValue);}
+//            if(tokenType == 202){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= 509);
+//    }
+//    
     printf("\n\nNext Testfile - operator.c\n\n");
-    
 
     openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c");
     //openFile("../test/operator.c");
-
-
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/operator.c");
-    openFile("../test/operator.c");
     if(tokenType != 509){
 
         do
@@ -483,30 +478,29 @@ int main()
         }
         while(tokenType!= 509);
 
-/*
-=======
-    }
-    
-    tokenType = -1;
 
-    
-    printf("\n\nNext Testfile - comments.c\n\n");
-    
-    openFile("../test/comments.c");
-    if(tokenType != 509){
-        do
-        {
-            getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= 509);
     }
-    
-    return 0;
-    
+//    
+//    tokenType = -1;
+//
+//    
+//    printf("\n\nNext Testfile - comments.c\n\n");
+//    
+//    openFile("../test/comments.c");
+//    if(tokenType != 509){
+//        do
+//        {
+//            getNextToken();
+//            printf("%d\n", tokenType);
+//            if(tokenType == 100){printf("%s\n", stringValue);}
+//            if(tokenType == 300){printf("%s\n", stringValue);}
+//            if(tokenType == 200){printf("%d\n", intValue);}
+//            if(tokenType == 202){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= 509);
+//    }
+//    
+//    return 0;
+
 }
 // ----------------------------------------------------------------------------

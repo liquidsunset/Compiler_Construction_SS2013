@@ -470,7 +470,7 @@ int main()
     
     openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c");
     //openFile("../test/operator.c");
-    if(tokenType != 509){
+
         do
         {
             getNextToken();
@@ -481,7 +481,6 @@ int main()
             if(tokenType == 202){printf("%s\n", stringValue);}
         }
         while(tokenType!= 509);
-    }
     /*
     
     printf("\n\nNext Testfile - comments.c\n\n");

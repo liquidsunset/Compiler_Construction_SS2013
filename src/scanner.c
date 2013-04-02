@@ -158,7 +158,7 @@ int peek(int current, int next)
 
     if(current < 0 || next < 0) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
-	if(isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
+	if(isTerminalChar(current) || isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
     //if(current == '\'' || next == '\'') return 0; // char literals
 

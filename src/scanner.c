@@ -11,11 +11,9 @@ FILE *fp;
 int strCompare(char a[], char b[]) // TODO: Support call by reference
 {
 	int i = 0;
-	char ca = a[i];
-	char cb = b[i];
 
 	while( (i < 1024) && (a[i] != 0 || b[i] != 0) ) {
-		if( ca != cb )
+		if( a[i] != b[i] )
 		{
 			return 0;
 		}

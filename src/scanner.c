@@ -356,6 +356,8 @@ void findToken(char status[1024],int len){
       
     } // if(len >= 3)
     
+    tokenType = -1;
+    
 }
 
 // --------------------------- Interface to scanner ---------------------------
@@ -465,6 +467,7 @@ int main()
     
     printf("\n\nNext Testfile - operator.c\n\n");
     
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/operator.c");
     openFile("../test/operator.c");
     if(tokenType != 509){
         do

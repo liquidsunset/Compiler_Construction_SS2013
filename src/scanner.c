@@ -97,6 +97,7 @@ int isTerminalChar(char c)
         c == '{' ||
         c == '}' ||
         c == ';' ||
+        c == ',' ||
         c == '\'' ||
         c == '\"'
         );

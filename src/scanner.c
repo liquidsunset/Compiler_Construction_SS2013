@@ -126,12 +126,8 @@ int peek(int current, int next)
 {
     // String literals:
     static int isInString = 0;
-    static int isInChar = 0;
 
-    if(isInString) return 0;
-    if(isInChar) return 0;
-
-    if(current == '\"' && !isInString) // add the starting "
+    if(current == '\"' && !isInChar && !isInString) // add the starting "
     {
         isInString = 1;
         return 0;
@@ -142,10 +138,11 @@ int peek(int current, int next)
         isInString = 0;
         return 1;
     }
-    
+    if(isInString) return 0;
 
     // Char literals (duplicated to support something like "'a'"):
-    
+    static int isInChar = 0;
+
     if(current == '\'' && !isInChar) // add the starting "
     {
         isInChar = 1;
@@ -157,7 +154,7 @@ int peek(int current, int next)
         isInChar = 0;
         return 1;
     }
-    
+    if(isInChar) return 0;
 
     if(current < 0 || next < 0) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
@@ -228,6 +225,7 @@ void openFile(char path[]){
     fp = fopen(path,"r");
     if(fp == NULL)
     {
+        tokenType = 509;
         fclose(fp);
     }
     
@@ -281,7 +279,6 @@ void findToken(char status[1024],int len){
         if(tokenChar == ','){tokenType = 507; return;}
         if(tokenChar == ':'){tokenType = 508; return;}
         if(tokenChar == '#'){tokenType = 510; return;}
-        if(tokenChar == '.'){tokenType = 511; return;}
         if(isLetter(tokenChar))
         {
             tokenType = 100;
@@ -370,62 +367,58 @@ void getNextToken()
     static int nextChar = -1;
     char status[1024];
     int len = 0;
-    tokenType = -1;
     
-    while(tokenType == -1){
-        
-        if(currentChar < 0) 
-        {
-            currentChar = readNextCharacter();
-        }
-        
-        if(nextChar < 0) 
-        {
+    if(currentChar < 0) 
+    {
+        currentChar = readNextCharacter();
+    }
+    
+    if(nextChar < 0) 
+    {
+        nextChar = readNextCharacter();
+    }
+
+    if(currentChar == EOF)
+    {
+        // set token type to EOF
+        tokenType = 509;
+        return;
+    }
+
+    // Trim whitespace
+    if(isWhitespace(currentChar)){
+        while(isWhitespace(currentChar)){
+            currentChar = nextChar;
             nextChar = readNextCharacter();
         }
+    }
 
-        if(currentChar == EOF)
-        {
-            // set token type to EOF
-            tokenType = 509;
-            return;
-        }
-
-        // Trim whitespace
-        if(isWhitespace(currentChar)){
-            while(isWhitespace(currentChar)){
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-            }
-        }
-
-        // Support for line comments
-        if(currentChar == '/' && nextChar == '/'){
-            while ((char) currentChar != '\n' && currentChar != EOF){
-                currentChar = nextChar;
-                nextChar = readNextCharacter();
-            }
-        }
-        else
-        {
-            int checkPeek;
-            
-            do
-            {
-                checkPeek = peek(currentChar, nextChar);
-                len = len +1;
-                status[len - 1] = currentChar;
-                currentChar = nextChar;
-                nextChar = readNextCharacter();                
-            } while (checkPeek == 0);
-            
-            status[len] = '\0';
-            //Analize the token
-            findToken(status, len);
-            len = 0;
-
+    // Support for line comments
+    if(currentChar == '/' && nextChar == '/'){
+        while ((char) currentChar != '\n' && currentChar != EOF){
+            currentChar = nextChar;
+            nextChar = readNextCharacter();
         }
     }
+    else
+    {
+        int checkPeek;
+        
+        do
+        {
+            checkPeek = peek(currentChar, nextChar);
+            len = len +1;
+            status[len - 1] = currentChar;
+            currentChar = nextChar;
+            nextChar = readNextCharacter();                
+        } while (checkPeek == 0);
+        
+        status[len] = '\0';
+        //Analize the token
+        findToken(status, len);
+        len = 0;
+
+    }        
 }
 // ----------------------------------------------------------------------------
 
@@ -434,7 +427,7 @@ void getNextToken()
 
 int main()
 {
-    /*
+    
     printf("\n\nNext Testfile- easy.c\n\n");
     
     openFile("../test/easy.c");
@@ -451,6 +444,7 @@ int main()
         while(tokenType!= 509);
     }
     
+    tokenType = -1;
     
     printf("\n\nNext Testfile - brackets.c\n\n");
     
@@ -467,12 +461,13 @@ int main()
         }
         while(tokenType!= 509);
     }
-    */
+    
+    tokenType = -1;
     
     printf("\n\nNext Testfile - operator.c\n\n");
     
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c");
-    //openFile("../test/operator.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/operator.c");
+    openFile("../test/operator.c");
     if(tokenType != 509){
         do
         {
@@ -485,7 +480,8 @@ int main()
         }
         while(tokenType!= 509);
     }
-    /*
+    
+    tokenType = -1;
     
     printf("\n\nNext Testfile - comments.c\n\n");
     
@@ -502,7 +498,7 @@ int main()
         }
         while(tokenType!= 509);
     }
-    */
+    
     return 0;
     
 }

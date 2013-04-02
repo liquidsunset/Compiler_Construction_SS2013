@@ -367,58 +367,62 @@ void getNextToken()
     static int nextChar = -1;
     char status[1024];
     int len = 0;
+    tokenType = -1;
     
-    if(currentChar < 0) 
-    {
-        currentChar = readNextCharacter();
-    }
+    while(tokenType == -1){
     
-    if(nextChar < 0) 
-    {
-        nextChar = readNextCharacter();
-    }
-
-    if(currentChar == EOF)
-    {
-        // set token type to EOF
-        tokenType = 509;
-        return;
-    }
-
-    // Trim whitespace
-    if(isWhitespace(currentChar)){
-        while(isWhitespace(currentChar)){
-            currentChar = nextChar;
-            nextChar = readNextCharacter();
-        }
-    }
-
-    // Support for line comments
-    if(currentChar == '/' && nextChar == '/'){
-        while ((char) currentChar != '\n' && currentChar != EOF){
-            currentChar = nextChar;
-            nextChar = readNextCharacter();
-        }
-    }
-    else
-    {
-        int checkPeek;
-        
-        do
+        if(currentChar < 0) 
         {
-            checkPeek = peek(currentChar, nextChar);
-            len = len +1;
-            status[len - 1] = currentChar;
-            currentChar = nextChar;
-            nextChar = readNextCharacter();                
-        } while (checkPeek == 0);
+            currentChar = readNextCharacter();
+        }
         
-        status[len] = '\0';
-        //Analize the token
-        findToken(status, len);
-        len = 0;
+        if(nextChar < 0) 
+        {
+            nextChar = readNextCharacter();
+        }
 
-    }        
+        if(currentChar == EOF)
+        {
+            // set token type to EOF
+            tokenType = 509;
+            return;
+        }
+
+        // Trim whitespace
+        if(isWhitespace(currentChar)){
+            while(isWhitespace(currentChar)){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
+        }
+
+        // Support for line comments
+        if(currentChar == '/' && nextChar == '/'){
+            while ((char) currentChar != '\n' && currentChar != EOF){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
+        }
+        else
+        {
+            int checkPeek;
+            
+            do
+            {
+                checkPeek = peek(currentChar, nextChar);
+                len = len +1;
+                status[len - 1] = currentChar;
+                currentChar = nextChar;
+                nextChar = readNextCharacter();                
+            } while (checkPeek == 0);
+            
+            status[len] = '\0';
+            //Analize the token
+            findToken(status, len);
+            len = 0;
+
+        }
+    }
 }
 // ----------------------------------------------------------------------------
 
@@ -500,7 +504,7 @@ int main()
 //        while(tokenType!= 509);
 //    }
 //    
-//    return 0;
+    return 0;
 
 }
 // ----------------------------------------------------------------------------

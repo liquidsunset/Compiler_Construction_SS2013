@@ -126,6 +126,7 @@ int peek(int current, int next)
 {
     // String literals:
     static int isInString = 0;
+    static int isInChar = 0;
 
     if(current == '\"' && !isInChar && !isInString) // add the starting "
     {
@@ -141,7 +142,6 @@ int peek(int current, int next)
     if(isInString) return 0;
 
     // Char literals (duplicated to support something like "'a'"):
-    static int isInChar = 0;
 
     if(current == '\'' && !isInChar) // add the starting "
     {

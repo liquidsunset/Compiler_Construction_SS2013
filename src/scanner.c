@@ -496,7 +496,25 @@ int main()
         }
         while(tokenType!= 509);
     
+    
+    printf("\n\nNext Testfile - Scanner selfscanc\n\n");
+    
+    openFile("../src/scanner.c");
+    do
+    {
+        getNextToken();
+        printf("%d\n", tokenType);
+        if(tokenType == 100){printf("%s\n", stringValue);}
+        if(tokenType == 300){printf("%s\n", stringValue);}
+        if(tokenType == 200){printf("%d\n", intValue);}
+        if(tokenType == 202){printf("%s\n", stringValue);}
+    }
+    while(tokenType!= 509);
+    
+    
     return 0;
+    
+    
 
 }
 // ----------------------------------------------------------------------------

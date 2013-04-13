@@ -25,11 +25,109 @@ void start() {
 }
 
 void top_declaration() {
-    if(isIn(token, preprocessor)) {
+    if(isIn(token, FIRST_PREPROCESSOR)) {
         preprocessor();
         getNextToken();
+        return;
     }
-    else {}
+    if (isIn(token, FIRST_FUNCTION_DEFINITION)) {
+        function_definition();
+        getNextToken();
+        return;        
+    }
+    if (isIn(token, FIRST_GLOBAL_VARIABLE_DECLARATION)) {
+        global_variable_declaration();
+        getNextToken();
+        return;        
+    }
+
+    //TODO: report error
+}
+
+void preprocessor() {
+    if(token == '#') {
+        getNextToken();
+        if(token == TOKEN_INCLUDE) {
+            getNextToken();
+            if(token == TOKEN_STRING_LITERAL) {
+                getNextToken();
+                // TODO: do something
+            } // token == TOKEN_STRING_LITERAL
+        } // token == TOKEN_INCLUDE
+    } // token == '#'
+}
+
+void function_definition() {
+    if(isIn(token, FIRST_TYPE)) {
+        type();
+        getNextToken();
+        if(token == TOKEN_IDENTIFIER) {
+            identifier();
+            getNextToken();
+            if(token == '(') {
+                getNextToken();
+                while(isIn(token, FIRST_VARIABLE_DECLARATION)) {
+                    variable_declaration();
+                    getNextToken();
+                }
+                if(token == ')') {
+                    getNextToken();
+                    if(token == '{') {
+                        getNextToken();
+                        function_body();
+                        getNextToken();
+                        if(token == '}') {
+                            getNextToken();
+                        } // token == '}'
+                    } // token == '{'
+                } // token == ')'
+            } // token == '('
+        } // token == TOKEN_IDENTIFIER
+    } // isIn(token, FIRST_TYPE)
+}
+
+void global_variable_declaration() {
+    if(token == TOKEN_STATIC) {
+        getNextToken();
+        variable_declaration();
+    }
+}
+
+void variable_declaration() {
+    if(token == TOKEN_STATIC) {
+        getNextToken();
+    }
+    if(isIn(token, FIRST_TYPE)) {
+        getNextToken();
+        if(token = TOKEN_IDENTIFIER) {
+            getNextToken();
+            if(token == TOKEN_EOS) {
+                getNextToken();
+            } // token == TOKEN_EOS
+        } // token = TOKEN_IDENTIFIER
+    } // token, FIRST_TYPE
+}
+
+
+
+void factor() {
+    if(token == TOKEN_IDENTIFIER) {
+
+        return;
+    }
+    if(isIn(token, FIRST_TYPE)) {
+
+        return;
+    }
+    if(token == TOKEN_LPARENS) {
+        getNextToken();
+        expression();
+        if(token == TOKEN_RPARENS) {
+            getNextToken();
+        }
+        return;
+    }
+    
 }
 
 // ----------------------------------------------------------------------------

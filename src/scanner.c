@@ -30,7 +30,7 @@ int strCompare(char a[], char b[]) // TODO: Support call by reference
 int strLength(char a[])
 {
 	int i=0;
-	while(a[i]!='\0'&&i<1024) i++;
+	while(a[i]!='\0'&&i<1024) i=i+1;
 	return i;
 }
 
@@ -303,8 +303,6 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "&&")){tokenType = 414; return;}
         if(strCompare(status, "||")){tokenType = 416; return;}
         if(strCompare(status, "!=")){tokenType = 419; return;}
-        if(strCompare(status, "++")){tokenType = 420; return;}
-        if(strCompare(status, "--")){tokenType = 421; return;}
         if(strCompare(status, "if")){tokenType = 6; return;}
         if(isLetter(status[0]))
         {

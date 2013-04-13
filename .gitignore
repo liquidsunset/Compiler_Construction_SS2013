@@ -3,3 +3,5 @@ bin/scanner
 bin/scanner.o
 src/a.out
 *.o
+
+*.o

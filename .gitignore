@@ -1,3 +1,5 @@
 .DS_Store
+bin/scanner
+bin/scanner.o
 src/a.out
 *.o

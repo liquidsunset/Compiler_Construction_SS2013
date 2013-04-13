@@ -18,6 +18,7 @@ Tokentypes:
   7 else
   8 return
   9 struct
+  10 static
 
 2.) Identifier:
   100 identifier(String-value)

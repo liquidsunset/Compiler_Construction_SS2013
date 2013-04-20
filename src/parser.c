@@ -332,6 +332,20 @@ void term()
     }
 }
 
+void type()
+{
+    if(tokenType == TOKEN_INT)
+    {
+        getNextToken();
+        return;
+    }
+    if(tokenType == TOKEN_CHAR)
+    {
+        getNextToken();
+        return;
+    }
+}
+
 void factor() {
     if(tokenType == TOKEN_IDENTIFIER) {
 

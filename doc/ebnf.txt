@@ -18,8 +18,12 @@ assignment : TOKEN_IDENTIFIER { TOKEN_ASSIGNMENT TOKEN_IDENTIFIER } TOKEN_ASSIGN
 
 expression : simple_expression [(TOKEN_EQUAL | TOKEN_LESSEQUAL | TOKEN_LESS | TOKEN_UNEQUAL | TOKEN_GREATER | TOKEN_GREATEREQUAL | TOKEN_AND | TOKEN_OR) simple_expression]
 
+simple_expression : [TOKEN_MINUS] term {(TOKEN_PLUS | TOKEN_MINUS) term}
+
 term : factor [(TOKEN_MULT | TOKEN_DIVIDE | TOKEN_PERCENT) factor]
 
 factor : TOKEN_IDENTIFIER | TOKEN_CONSTINT | TOKEN_CONSTCHAR | (TOKEN_LRB expression TOKEN_RRB) | procedure_call
 
 procedure_call: TOKEN_IDENTIFIER TOKEN_LRB {expression | (expression TOKEN_COMMA)} TOKEN_RRB
+
+type : TOKEN_INT | TOKEN_CHAR | TOKEN_VOID

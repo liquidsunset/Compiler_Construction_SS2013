@@ -28,11 +28,7 @@ int isIn(int tokenType, int rule){
 
 void factor() {
     if(tokenType == TOKEN_IDENTIFIER) {
-
-        return;
-    }
-    if(isIn(tokenType, FIRST_TYPE)) {
-
+        getNextToken();
         return;
     }
     if(tokenType == TOKEN_LSB) {
@@ -41,6 +37,16 @@ void factor() {
         if(tokenType == TOKEN_RSB) {
             getNextToken();
         }
+        return;
+    }
+    if(tokenType == TOKEN_CONSTINT)
+    {
+        getNextToken();
+        return;
+    }
+    if(tokenType == TOKEN_CONSTCHAR)
+    {
+        getNextToken();
         return;
     }
     

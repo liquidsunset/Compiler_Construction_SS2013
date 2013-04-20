@@ -5,3 +5,5 @@ src/a.out
 *.o
 
 *.o
+
+bin/parser

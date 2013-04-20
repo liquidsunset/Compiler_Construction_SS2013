@@ -3,6 +3,12 @@
 
 FILE *fp;
 
+int positionLine;
+int positionColumn;
+
+int lin = 1;
+int col = 1;
+
 // ---------------------------- Tools -----------------------------------------
 
 // Compares two character arrays.
@@ -67,7 +73,7 @@ void strTrimQuotes(char a[], char b[])
 // Returns true if the character is within the range of [a-zA-Z]
 int isLetter(char c)
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
 }
 
 // Checks if the character c is a digit.
@@ -246,6 +252,13 @@ int readNextCharacter(){
         {
             fclose(fp);
         }
+        col = col + 1;
+        if(temp == '\n')
+        {
+            col = 1;
+            lin = lin + 1;
+        }
+
         return temp;
     }
 }
@@ -278,7 +291,7 @@ void findToken(char status[1024],int len){
         if(tokenChar == ';'){tokenType = 506; return;}
         if(tokenChar == ','){tokenType = 507; return;}
         if(tokenChar == ':'){tokenType = 508; return;}
-        if(tokenChar == '#'){tokenType = 510; return;}
+        //if(tokenChar == '#'){tokenType = 510; return;}
         if(isLetter(tokenChar))
         {
             tokenType = 100;
@@ -327,6 +340,7 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "else")){tokenType = 7; return;}
         if(strCompare(status, "return")){tokenType = 8; return;}
         if(strCompare(status, "struct")){tokenType = 9; return;}
+        if(strCompare(status, "#include")){tokenType = 510; return;}
         if(isLetter(status[0]))
         {
             tokenType = 100;
@@ -404,7 +418,8 @@ void getNextToken()
         else
         {
             int checkPeek;
-            
+            positionColumn = col-2; // as two characters are read already
+            positionLine = lin;
             do
             {
                 checkPeek = peek(currentChar, nextChar);
@@ -422,6 +437,7 @@ void getNextToken()
         }
     }
 }
+
 // ----------------------------------------------------------------------------
 
 // ------------------------ Tests ---------------------------------------------
@@ -437,13 +453,14 @@ int main()
         do
         {
             getNextToken();
-            printf("%d\n", tokenType);
+            printf("Line %d:%d %d\n", positionLine, positionColumn, tokenType);
             if(tokenType == 100){printf("%s\n", stringValue);}
             if(tokenType == 300){printf("%s\n", stringValue);}
             if(tokenType == 200){printf("%d\n", intValue);}
             if(tokenType == 202){printf("%s\n", stringValue);}
         }
         while(tokenType!= 509);
+        getchar();
     }
     
     
@@ -479,7 +496,6 @@ int main()
         }
         while(tokenType!= 509);
 
- 
     printf("\n\nNext Testfile - comments.c\n\n");
     
     openFile("../test/comments.c");

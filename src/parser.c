@@ -178,7 +178,60 @@ void variable_declaration() {
     } // token, FIRST_TYPE
 }
 
+void function_body()
+{
+    if(tokenType == TOKEN_LCB) {
+        getNextToken();
+        while(tokenType != TOKEN_RCB)
+        {
+            function_statement();
+        }
+    } // tokenType == TOKEN_LCB
+}
 
+void function_statement()
+{
+    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+    {
+        variable_declaration();
+    }
+    else if(isIn(tokenType, FIRST_IF_ELSE))
+    {
+        if_else();
+    }
+    else if(isIn(tokenType, FIRST_WHILE))
+    {
+        while_loop();
+    }
+    else if(isIn(tokenType, FIRST_EXPRESSION))
+    {
+        expression();
+    }
+}
+
+void if_else()
+{
+    if(tokenType == TOKEN_IF)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    while(tokenType != TOKEN_RCB)
+                    {
+                        function_body();
+                    }
+                }
+            }
+        }
+    }
+}
 
 void factor() {
     if(tokenType == TOKEN_IDENTIFIER) {

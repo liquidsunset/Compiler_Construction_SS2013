@@ -1,18 +1,17 @@
 #include "scanner.h"
 #include "parser.h"
 
-int FIRST_PREPROCESSOR;
 int FIRST_FUNCTION_DEFINITION;
 int FIRST_GLOBAL_VARIABLE_DECLARATION;
 int FIRST_TYPE;
 int FIRST_VARIABLE_DECLARATION;
+int FIRST_EXPRESSION;
 
 
 // Reports errors of parser
 
 void error(int token)
 {
-
     
 }
 
@@ -74,7 +73,7 @@ void initTokens(){
     TOKEN_INCLUDE = 510;
     TOKEN_POINT = 511;
     
-    FIRST_PREPROCESSOR = 0;
+    FIRST_EXPRESSION = 0;
     FIRST_FUNCTION_DEFINITION = 1;
     FIRST_GLOBAL_VARIABLE_DECLARATION = 2;
     FIRST_TYPE = 3;
@@ -84,7 +83,6 @@ void initTokens(){
 
 int isIn(int tokenType, int rule){
     
-    if(tokenType == 510 && rule == 0){ return 1;} // preprocessor
     if((tokenType == 1 || tokenType == 2 || tokenType == 3) && rule == 1){return 1;} // function_definition
     if(tokenType == 10 && rule == 2){return 1;} //variable_declaration global
 
@@ -195,11 +193,11 @@ void function_statement()
     {
         variable_declaration();
     }
-    else if(isIn(tokenType, FIRST_IF_ELSE))
+    else if(tokenType == TOKEN_IF)
     {
         if_else();
     }
-    else if(isIn(tokenType, FIRST_WHILE))
+    else if(tokenType == TOKEN_WHILE)
     {
         while_loop();
     }

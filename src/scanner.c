@@ -1,9 +1,12 @@
 #include <stdio.h> // used for tests
 #include "scanner.h"
-#include "parser.h"
+#include "globals.c"
 
 FILE *fp;
 
+int tokenType;
+int intValue;
+char stringValue[1024];
 int positionLine;
 int positionColumn;
 

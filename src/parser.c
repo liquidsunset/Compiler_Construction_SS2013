@@ -3,9 +3,16 @@
 
 int FIRST_FUNCTION_DEFINITION;
 int FIRST_GLOBAL_VARIABLE_DECLARATION;
-int FIRST_TYPE;
+static int FIRST_TYPE;
 int FIRST_VARIABLE_DECLARATION;
 int FIRST_EXPRESSION;
+
+
+
+
+
+
+
 
 
 // Reports errors of parser
@@ -93,7 +100,7 @@ int isIn(int tokenType, int rule){
 // -------------------------- EBNF --------------------------------------------
 
 void start() {
-
+    getNextToken();
     while(tokenType == TOKEN_INCLUDE)
     {
         getNextToken();
@@ -361,6 +368,12 @@ void factor() {
         return;
     }
     
+}
+
+int yolo(){
+    initTokens();
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt");
+    start();
 }
 
 // ----------------------------------------------------------------------------

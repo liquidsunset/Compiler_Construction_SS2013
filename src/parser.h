@@ -13,3 +13,4 @@ void simple_expression();
 void term();
 void factor();
 void function_definition();
+void initTokens();

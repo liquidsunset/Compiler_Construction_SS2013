@@ -1,5 +1,6 @@
 #include <stdio.h> // used for tests
 #include "scanner.h"
+#include "parser.h"
 
 FILE *fp;
 
@@ -446,10 +447,12 @@ void getNextToken()
 
 int main()
 {
+    initTokens();
     
     printf("\n\nNext Testfile- easy.c\n\n");
     
-    openFile("../test/easy.c");
+    //openFile("../test/easy.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt");
     if(tokenType != TOKEN_EOF){
         do
         {

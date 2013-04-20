@@ -5,6 +5,9 @@ int lineNumber;
 int column;
 
 void getNextToken();
+void openFile(char path[]);
+
+
 
 
 //tokens:
@@ -72,7 +75,5 @@ static int TOKEN_COLON;
 static int TOKEN_EOF;
 static int TOKEN_INCLUDE;
 static int TOKEN_POINT;
-
-
 
 

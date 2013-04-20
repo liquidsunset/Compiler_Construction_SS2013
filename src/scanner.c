@@ -1,5 +1,5 @@
+
 #include <stdio.h> // used for tests
-#include "scanner.h"
 #include "globals.c"
 
 FILE *fp;
@@ -448,7 +448,7 @@ void getNextToken()
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
 
-int main()
+int yolo()
 {
     initTokens();
     

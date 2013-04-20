@@ -2,6 +2,10 @@
 
 // Reports errors of parser
 
+
+void function_body();
+void expression();
+
 void error(int token)
 {
     
@@ -291,9 +295,9 @@ void start() {
     }
 }
 
-int yolo(){
+int main(){
     initTokens();
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt");
+    openFile("../test/comments.c");
     start();
 }
 

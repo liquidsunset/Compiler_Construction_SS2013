@@ -249,7 +249,7 @@ void function_definition() {
                 getNextToken();
                 while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
                     variable_declaration();
-                    getNextToken();
+                    //getNextToken();
                 }
                 if(tokenType == TOKEN_RRB) {
                     //getNextToken();

@@ -130,7 +130,6 @@ void function_definition() {
         type();
         getNextToken();
         if(tokenType == TOKEN_IDENTIFIER) {
-            identifier();
             getNextToken();
             if(tokenType == '(') {
                 getNextToken();

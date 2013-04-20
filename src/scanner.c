@@ -331,16 +331,17 @@ void findToken(char status[1024],int len){
         }
     } // if(len == 2)
     else{
-        if(strCompare(status, "NULL")){tokenType = 0; return;}
-        if(strCompare(status, "void")){tokenType = 1; return;}
-        if(strCompare(status, "int")){tokenType = 2; return;}
-        if(strCompare(status, "char")){tokenType = 3; return;}
-        if(strCompare(status, "double")){tokenType = 4; return;}
-        if(strCompare(status, "while")){tokenType = 5; return;}
-        if(strCompare(status, "else")){tokenType = 7; return;}
-        if(strCompare(status, "return")){tokenType = 8; return;}
-        if(strCompare(status, "struct")){tokenType = 9; return;}
-        if(strCompare(status, "#include")){tokenType = 510; return;}
+        if(strCompare(status, "NULL")){tokenType = TOKEN_NULL; return;}
+        if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
+        if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
+        if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
+        if(strCompare(status, "double")){tokenType = TOKEN_DOUBLE; return;}
+        if(strCompare(status, "while")){tokenType = TOKEN_WHILE; return;}
+        if(strCompare(status, "else")){tokenType = TOKEN_ELSE; return;}
+        if(strCompare(status, "return")){tokenType = TOKEN_RETURN; return;}
+        if(strCompare(status, "struct")){tokenType = TOKEN_STRUCT; return;}
+        if(strCompare(status, "static")){tokenType = TOKEN_STATIC; return;}
+        if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
         if(isLetter(status[0]))
         {
             tokenType = 100;

@@ -1,4 +1,4 @@
-void main(a){
+void main(int a){
 	//a+b;
 	//int i=0;
 	while(1) {

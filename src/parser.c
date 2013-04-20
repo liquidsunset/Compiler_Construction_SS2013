@@ -95,6 +95,17 @@ int isIn(int tokenType, int rule){
 // -------------------------- EBNF --------------------------------------------
 
 void start() {
+
+    while(tokenType == TOKEN_INCLUDE)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_STRING_LITERAL)
+        {
+            getNextToken();
+            //TODO: handle includes
+        }
+    }
+
     while(tokenType != TOKEN_EOF) {
         top_declaration();
         getNextToken();
@@ -102,11 +113,6 @@ void start() {
 }
 
 void top_declaration() {
-    if(isIn(tokenType, FIRST_PREPROCESSOR)) {
-        preprocessor();
-        getNextToken();
-        return;
-    }
     if (isIn(tokenType, FIRST_FUNCTION_DEFINITION)) {
         function_definition();
         getNextToken();
@@ -119,19 +125,6 @@ void top_declaration() {
     }
 
     //TODO: report error
-}
-
-void preprocessor() {
-    if(tokenType == '#') {
-        getNextToken();
-        if(tokenType == TOKEN_INCLUDE) {
-            getNextToken();
-            if(tokenType == TOKEN_STRING_LITERAL) {
-                getNextToken();
-                // TODO: do something
-            } // token == TOKEN_STRING_LITERAL
-        } // token == TOKEN_INCLUDE
-    } // token == '#'
 }
 
 void function_definition() {

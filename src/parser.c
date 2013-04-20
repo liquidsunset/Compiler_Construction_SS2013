@@ -247,15 +247,15 @@ void function_definition() {
                     getNextToken();
                 }
                 if(tokenType == ')') {
-                    getNextToken();
-                    if(tokenType == '{') {
+                    //getNextToken();
+                    //if(tokenType == '{') {
                         getNextToken();
                         function_body();
                         getNextToken();
                         if(tokenType == '}') {
                             getNextToken();
                         } // token == '}'
-                    } // token == '{'
+                   // } // token == '{'
                 } // token == ')'
             } // token == '('
         } // token == TOKEN_IDENTIFIER

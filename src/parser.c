@@ -296,9 +296,13 @@ void start() {
 }
 
 int main(){
+    printf("Phoenix: Parser\n");
     initTokens();
     openFile("../test/comments.c");
     start();
+    printf("The End\n");
+
+    return 0;
 }
 
 // ----------------------------------------------------------------------------

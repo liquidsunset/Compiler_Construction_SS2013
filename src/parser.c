@@ -223,13 +223,112 @@ void if_else()
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
-                    while(tokenType != TOKEN_RCB)
+                    function_body();
+                    if(tokenType == TOKEN_RCB)
                     {
-                        function_body();
+                        getNextToken();
                     }
+                    //TODO: else branch
                 }
             }
         }
+    }
+}
+
+void while_loop()
+{
+    if(tokenType == TOKEN_WHILE)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            expression();
+            if(tokenType == TOKEN_RRB)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_LCB)
+                {
+                    function_body();
+                    if(tokenType == TOKEN_RCB)
+                    {
+                        getNextToken();
+                    }
+                }
+            }
+        }   
+
+    }
+}
+
+void expression()
+{
+    simple_expression();
+    if(tokenType == TOKEN_EQUAL)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_LESSEQUAL)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_LESS)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_UNEQUAL)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_GREATER)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_GREATEREQUAL)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_AND)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_OR)
+    {
+        getNextToken();
+        simple_expression();
+    }
+}
+
+void simple_expression()
+{
+    if(tokenType == TOKEN_MINUS)
+    {
+        getNextToken();
+        //TODO: handle optional minus
+    }
+
+    term();
+    while(tokenType == TOKEN_PLUS || tokenType == TOKEN_MINUS)
+    {
+        getNextToken();
+        term();
+    }
+}
+
+void term()
+{
+    factor();
+    while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
+    {
+        getNextToken();
+        factor();
     }
 }
 

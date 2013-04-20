@@ -14,9 +14,11 @@ void error(int token)
 
 
 int isIn(int tokenType, int rule){
-    
-    if((tokenType == 1 || tokenType == 2 || tokenType == 3) && rule == 1){return 1;} // function_definition
+    if((tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT
+        || tokenType == TOKEN_CONSTCHAR || tokenType == TOKEN_LRB) && rule == 0){return 1;};
+    if((tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR) && rule == 1){return 1;} // function_definition
     if(tokenType == 10 && rule == 2){return 1;} //variable_declaration global
+    if((tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID) && rule == 3){return 1;};
 
     return 0;
     
@@ -56,6 +58,12 @@ void type()
         getNextToken();
         return;
     }
+    if(tokenType == TOKEN_VOID)
+    {
+        getNextToken();
+        return;
+    }
+    
 }
 
 void term()
@@ -189,9 +197,6 @@ void variable_declaration() {
         getNextToken();
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
-            if(tokenType == TOKEN_EOF) {
-                getNextToken();
-            } // token == TOKEN_EOS
         } // token = TOKEN_IDENTIFIER
     } // token, FIRST_TYPE
 }
@@ -237,22 +242,22 @@ void global_variable_declaration() {
 void function_definition() {
     if(isIn(tokenType, FIRST_TYPE)) {
         type();
-        getNextToken();
+        
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
-            if(tokenType == '(') {
+            if(tokenType == TOKEN_LRB) {
                 getNextToken();
                 while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
                     variable_declaration();
                     getNextToken();
                 }
-                if(tokenType == ')') {
+                if(tokenType == TOKEN_RRB) {
                     //getNextToken();
                     //if(tokenType == '{') {
                         getNextToken();
                         function_body();
                         getNextToken();
-                        if(tokenType == '}') {
+                        if(tokenType == TOKEN_RCB) {
                             getNextToken();
                         } // token == '}'
                    // } // token == '{'
@@ -299,6 +304,7 @@ int main(){
     printf("Phoenix: Parser\n");
     initTokens();
     openFile("../test/comments.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/comments.c");
     start();
     printf("The End\n");
 

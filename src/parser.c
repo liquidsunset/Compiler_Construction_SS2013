@@ -78,9 +78,9 @@ void function_definition() {
         if(token == TOKEN_IDENTIFIER) {
             identifier();
             getNextToken();
-            if(token == '(') {
+            if(tokenType == '(') {
                 getNextToken();
-                while(isIn(token, FIRST_VARIABLE_DECLARATION)) {
+                while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
                     variable_declaration();
                     getNextToken();
                 }
@@ -129,14 +129,14 @@ void factor() {
 
         return;
     }
-    if(isIn(token, FIRST_TYPE)) {
+    if(isIn(tokenType, FIRST_TYPE)) {
 
         return;
     }
-    if(token == TOKEN_LPARENS) {
+    if(tokenType == TOKEN_LPARENS) {
         getNextToken();
         expression();
-        if(token == TOKEN_RPARENS) {
+        if(tokenType == TOKEN_RPARENS) {
             getNextToken();
         }
         return;

@@ -1,8 +1,15 @@
 #include "scanner.h"
+#include "parser.h"
 
-int EOF;
+int EOF = 509;
 
-EOF = 509;
+;
+
+
+int FIRST_PREPROCESSOR;
+int FIRST_FUNCTION_DEFINITION;
+int FIRST_GLOBAL_VARIABLE_DECLARATION;
+
 
 // Reports errors of parser
 
@@ -32,17 +39,17 @@ void start() {
 }
 
 void top_declaration() {
-    if(isIn(token, FIRST_PREPROCESSOR)) {
+    if(isIn(tokenType, FIRST_PREPROCESSOR)) {
         preprocessor();
         getNextToken();
         return;
     }
-    if (isIn(token, FIRST_FUNCTION_DEFINITION)) {
+    if (isIn(tokenType, FIRST_FUNCTION_DEFINITION)) {
         function_definition();
         getNextToken();
         return;        
     }
-    if (isIn(token, FIRST_GLOBAL_VARIABLE_DECLARATION)) {
+    if (isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION)) {
         global_variable_declaration();
         getNextToken();
         return;        
@@ -52,11 +59,11 @@ void top_declaration() {
 }
 
 void preprocessor() {
-    if(token == '#') {
+    if(tokenType == '#') {
         getNextToken();
-        if(token == TOKEN_INCLUDE) {
+        if(tokenType == TOKEN_INCLUDE) {
             getNextToken();
-            if(token == TOKEN_STRING_LITERAL) {
+            if(tokenType == TOKEN_STRING_LITERAL) {
                 getNextToken();
                 // TODO: do something
             } // token == TOKEN_STRING_LITERAL
@@ -65,7 +72,7 @@ void preprocessor() {
 }
 
 void function_definition() {
-    if(isIn(token, FIRST_TYPE)) {
+    if(isIn(tokenType, FIRST_TYPE)) {
         type();
         getNextToken();
         if(token == TOKEN_IDENTIFIER) {
@@ -77,13 +84,13 @@ void function_definition() {
                     variable_declaration();
                     getNextToken();
                 }
-                if(token == ')') {
+                if(tokenType == ')') {
                     getNextToken();
-                    if(token == '{') {
+                    if(tokenType == '{') {
                         getNextToken();
                         function_body();
                         getNextToken();
-                        if(token == '}') {
+                        if(tokenType == '}') {
                             getNextToken();
                         } // token == '}'
                     } // token == '{'
@@ -94,21 +101,21 @@ void function_definition() {
 }
 
 void global_variable_declaration() {
-    if(token == TOKEN_STATIC) {
+    if(tokenType == TOKEN_STATIC) {
         getNextToken();
         variable_declaration();
     }
 }
 
 void variable_declaration() {
-    if(token == TOKEN_STATIC) {
+    if(tokenType == TOKEN_STATIC) {
         getNextToken();
     }
-    if(isIn(token, FIRST_TYPE)) {
+    if(isIn(tokenType, FIRST_TYPE)) {
         getNextToken();
-        if(token = TOKEN_IDENTIFIER) {
+        if(tokenType = TOKEN_IDENTIFIER) {
             getNextToken();
-            if(token == TOKEN_EOS) {
+            if(tokenType == TOKEN_EOS) {
                 getNextToken();
             } // token == TOKEN_EOS
         } // token = TOKEN_IDENTIFIER
@@ -118,7 +125,7 @@ void variable_declaration() {
 
 
 void factor() {
-    if(token == TOKEN_IDENTIFIER) {
+    if(tokenType == TOKEN_IDENTIFIER) {
 
         return;
     }

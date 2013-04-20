@@ -3,8 +3,6 @@
 
 int EOF = 509;
 
-;
-
 
 int FIRST_PREPROCESSOR;
 int FIRST_FUNCTION_DEFINITION;

@@ -5,7 +5,7 @@ void expression();
 
 void error(int token)
 {
-    
+    printf("Expected token %d near Line %d, Col %d", token, positionLine, positionColumn);
 }
 
 
@@ -252,7 +252,10 @@ void function_definition() {
                 getNextToken();
                 while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
                     variable_declaration();
-                    //getNextToken();
+                    if(tokenType == TOKEN_COMMA)
+                    {
+                        getNextToken();
+                    }
                 }
                 if(tokenType == TOKEN_RRB) {
                     //getNextToken();

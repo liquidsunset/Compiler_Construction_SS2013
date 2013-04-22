@@ -27,7 +27,7 @@ void factor() {
         if(tokenType == TOKEN_LRB) // function call
         {
             getNextToken();
-            while(isIn(tokenType, FIRST_EXPRESSION)
+            while(isIn(tokenType, FIRST_EXPRESSION))
             {
                 expression();
                 if(tokenType == TOKEN_SEMICOLON)
@@ -148,6 +148,11 @@ void expression()
         simple_expression();
     }
     if(tokenType == TOKEN_OR)
+    {
+        getNextToken();
+        simple_expression();
+    }
+    if(tokenType == TOKEN_ASSIGNMENT)
     {
         getNextToken();
         simple_expression();

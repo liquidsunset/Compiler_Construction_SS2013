@@ -1,8 +1,5 @@
 #include "scanner.c"
 
-// Reports errors of parser
-
-
 void function_body();
 void expression();
 
@@ -14,14 +11,14 @@ void error(int token)
 
 
 int isIn(int tokenType, int rule){
-    if((tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT
-        || tokenType == TOKEN_CONSTCHAR || tokenType == TOKEN_LRB) && rule == 0){return 1;};
-    if((tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR) && rule == 1){return 1;} // function_definition
-    if(tokenType == 10 && rule == 2){return 1;} //variable_declaration global
-    if((tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID) && rule == 3){return 1;};
+    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType == TOKEN_LRB)){return 1;}
+    if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
+    if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
+    if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID)){return 1;};
+    if(rule == FIRST_FUNCTION_STATEMENT && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || tokenType == TOKEN_WHILE || tokenType == TOKEN_IF || isIn(tokenType, FIRST_EXPRESSION))) { return 1; }
 
     return 0;
-    
+
 }
 
 // -------------------------- EBNF --------------------------------------------
@@ -231,7 +228,7 @@ void function_body()
 {
     if(tokenType == TOKEN_LCB) {
         getNextToken();
-        while(tokenType != TOKEN_RCB)
+        while(isIn(tokenType, FIRST_FUNCTION_STATEMENT))
         {
             function_statement();
         }
@@ -255,7 +252,7 @@ void function_definition() {
                 getNextToken();
                 while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
                     variable_declaration();
-                    getNextToken();
+                    //getNextToken();
                 }
                 if(tokenType == TOKEN_RRB) {
                     //getNextToken();
@@ -309,8 +306,8 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    openFile("../test/comments.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/comments.c");
+    openFile("test/easy.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c");
     start();
     printf("The End\n");
 

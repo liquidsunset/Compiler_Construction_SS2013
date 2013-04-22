@@ -24,6 +24,22 @@ int isIn(int tokenType, int rule){
 void factor() {
     if(tokenType == TOKEN_IDENTIFIER) {
         getNextToken();
+        if(tokenType == TOKEN_LRB) // function call
+        {
+            getNextToken();
+            while(isIn(tokenType, FIRST_EXPRESSION)
+            {
+                expression();
+                if(tokenType == TOKEN_SEMICOLON)
+                {
+                    getNextToken();
+                }
+            }
+            if(tokenType == TOKEN_RRB)
+            {
+                getNextToken();
+            }
+        }
         return;
     }
     if(tokenType == TOKEN_LSB) {
@@ -195,7 +211,7 @@ void variable_declaration() {
         getNextToken();
     }
     if(isIn(tokenType, FIRST_TYPE)) {
-        getNextToken();
+        type();
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
         } // token = TOKEN_IDENTIFIER

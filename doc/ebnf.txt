@@ -2,7 +2,7 @@ start : top_declaration {top_declaration} EOF
 
 top_declaration : {include} {TOKEN_STATIC variable_declaration} {function_definition}
 
-function_definition : type TOKEN_IDENTIFIER TOKEN_LRB variable_declaration TOKEN_RRB TOKEN_LCB function_body TOKEN_RCB
+function_definition : type TOKEN_IDENTIFIER TOKEN_LRB [variable_declaration [TOKEN_COMMA]] TOKEN_RRB TOKEN_LCB function_body TOKEN_RCB
 
 variable_declaration : type TOKEN_IDENTIFIER TOKEN_SEMICOLON
 

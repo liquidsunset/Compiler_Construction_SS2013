@@ -339,8 +339,8 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    //openFile("test/easy.c");
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c");
+    openFile("test/easy.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c");
     start();
     printf("The End\n");
 

@@ -251,7 +251,6 @@ void global_variable_declaration() {
 void function_definition() {
     if(isIn(tokenType, FIRST_TYPE)) {
         type();
-        
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
             if(tokenType == TOKEN_LRB) {

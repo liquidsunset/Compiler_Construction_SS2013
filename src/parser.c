@@ -207,6 +207,10 @@ void function_statement()
     if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
     {
         variable_declaration();
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
     }
     else if(tokenType == TOKEN_IF)
     {
@@ -219,6 +223,10 @@ void function_statement()
     else if(isIn(tokenType, FIRST_EXPRESSION))
     {
         expression();
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
     }
 }
 

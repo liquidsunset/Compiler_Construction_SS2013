@@ -226,14 +226,7 @@ void while_loop()
             if(tokenType == TOKEN_RRB)
             {
                 getNextToken();
-                if(tokenType == TOKEN_LCB)
-                {
-                    function_body();
-                    if(tokenType == TOKEN_RCB)
-                    {
-                        getNextToken();
-                    }
-                }
+                function_body();
             }
         }   
 

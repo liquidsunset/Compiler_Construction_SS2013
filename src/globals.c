@@ -72,6 +72,7 @@ static int TOKEN_EOF;
 static int TOKEN_INCLUDE;
 static int TOKEN_POINT;
 
+static int errorCount;
 
 
 void initTokens(){
@@ -138,4 +139,6 @@ void initTokens(){
     FIRST_TYPE = 3;
     FIRST_VARIABLE_DECLARATION = 4;
     FIRST_FUNCTION_STATEMENT = 5;
+
+    errorCount = 0;
 }

@@ -3,9 +3,14 @@
 void function_body();
 void expression();
 
-void error(int token)
+void error(char message[1024])
 {
-    printf("Expected token %d near Line %d, Col %d", token, positionLine, positionColumn);
+    printf("Error Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+}
+
+void mark(char message[1024])
+{
+    printf("Warning Near Line %d, Col %d: %s", positionLine, positionColumn, message);
 }
 
 int isIn(int tokenType, int rule){
@@ -39,6 +44,11 @@ void factor() {
             {
                 getNextToken();
             }
+            else
+            {
+                mark(") missing");
+                getNextToken();
+            }
             return;
         }
         if(tokenType == TOKEN_LSB)
@@ -48,27 +58,47 @@ void factor() {
             {
                 expression();
             }
+            else
+            {
+                error("Expression for index expected");
+            }
             if(tokenType == TOKEN_RSB)
             {
+                getNextToken();
+            }
+            else
+            {
+                mark("] missing");
                 getNextToken();
             }
             return;
         }
     }
-    if(tokenType == TOKEN_LSB) {
-        getNextToken();
-        expression();
-        if(tokenType == TOKEN_RSB) {
-            getNextToken();
-        }
-        return;
-    }
+    // if(tokenType == TOKEN_LSB) {
+    //     getNextToken();
+    //     expression();
+    //     if(tokenType == TOKEN_RSB) {
+    //         getNextToken();
+    //     }
+    //     else
+    //     {
+    //         mark(") missing");
+    //         getNextToken();
+    //     }
+    //     return;
+    // }
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
         expression();
         if(tokenType == TOKEN_RRB)
         {
+            getNextToken();
+            return;
+        }
+        else
+        {
+            mark(") missing");
             getNextToken();
             return;
         }
@@ -88,6 +118,7 @@ void factor() {
         return;
     }
     
+    error("Factor expected");
 }
 
 void type()
@@ -107,7 +138,8 @@ void type()
         getNextToken();
         return;
     }
-    
+
+    error("Type expected");
 }
 
 void term()
@@ -125,7 +157,6 @@ void simple_expression()
     if(tokenType == TOKEN_MINUS)
     {
         getNextToken();
-        //TODO: handle optional minus
     }
 
     term();
@@ -143,46 +174,55 @@ void expression()
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_LESSEQUAL)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_LESS)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_UNEQUAL)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_GREATER)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_GREATEREQUAL)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_AND)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_OR)
     {
         getNextToken();
         expression();
+        return;
     }
     if(tokenType == TOKEN_ASSIGNMENT)
     {
         getNextToken();
         expression();
+        return;
     }
 }
 
@@ -209,7 +249,15 @@ void if_else()
                     }
 
                 }
+                else
+                {
+                    error(") after if is missing");
+                }
             }
+        }
+        else
+        {
+            error("( after if is missing");
         }
     }
 }
@@ -228,6 +276,14 @@ void while_loop()
                 getNextToken();
                 function_body();
             }
+            else
+            {
+                    error(") after if is missing");
+            }
+        }
+        else
+        {
+            error("( after while is missing");
         }   
 
     }
@@ -242,6 +298,10 @@ void variable_declaration() {
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
         } // token = TOKEN_IDENTIFIER
+        else
+        {
+            error("Identifier missing");
+        }
     } // token, FIRST_TYPE
 }
 
@@ -252,6 +312,11 @@ void function_statement()
         variable_declaration();
         if(tokenType == TOKEN_SEMICOLON)
         {
+            getNextToken();
+        }
+        else
+        {
+            mark("; missing");
             getNextToken();
         }
     }
@@ -274,12 +339,22 @@ void function_statement()
         {
             getNextToken();
         }
+        else
+        {
+            mark("; missing");
+            getNextToken();
+        }
     }
     else if(isIn(tokenType, FIRST_EXPRESSION))
     {
         expression();
         if(tokenType == TOKEN_SEMICOLON)
         {
+            getNextToken();
+        }
+        else
+        {
+            mark("; missing");
             getNextToken();
         }
     }
@@ -296,6 +371,11 @@ void function_body()
         if(tokenType == TOKEN_RCB) {
             getNextToken();
         }
+        else
+        {
+            mark("} missing");
+            getNextToken();
+        }
     } // tokenType == TOKEN_LCB
 }
 
@@ -303,6 +383,10 @@ void global_variable_declaration() {
     if(tokenType == TOKEN_STATIC) {
         getNextToken();
         variable_declaration();
+    }
+    else
+    {
+        error("global variables must be static");
     }
 }
 
@@ -330,11 +414,25 @@ void function_definition() {
                     if(tokenType == TOKEN_SEMICOLON)
                     {
                         getNextToken();
+                        return;
                     }
+                    error("expected { or ;");
                      // token == '}'
                 } // token == ')'
+                else
+                {
+                    error(") missing");
+                }
             } // token == '('
+            else
+            {
+                error("( after function identifier expected");
+            }
         } // token == TOKEN_IDENTIFIER
+        else
+        {
+            error("Identifier expected");
+        }
     } // isIn(token, FIRST_TYPE)
 }
 
@@ -350,7 +448,7 @@ void top_declaration() {
         return;        
     }
 
-    //TODO: report error
+    error("Variable or function declaration expected");
 }
 
 void start() {
@@ -361,13 +459,22 @@ void start() {
         if(tokenType == TOKEN_STRING_LITERAL)
         {
             getNextToken();
-            //TODO: handle includes
+        }
+        else
+        {
+            error("Expected string literal");
         }
     }
 
     while(tokenType != TOKEN_EOF) {
-        top_declaration();
-        //getNextToken();
+        if(isIn(tokenType, FIRST_TYPE))
+        {
+            top_declaration();    
+        }
+        else
+        {
+            getNextToken();
+        }
     }
 }
 

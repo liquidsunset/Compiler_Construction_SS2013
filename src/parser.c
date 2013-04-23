@@ -5,6 +5,7 @@ void expression();
 
 void error(char message[1024])
 {
+    errorCount = errorCount + 1;
     printf("Error Near Line %d, Col %d: %s", positionLine, positionColumn, message);
 }
 

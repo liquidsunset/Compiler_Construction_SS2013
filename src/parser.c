@@ -506,7 +506,7 @@ int main(){
     openFile("test/easy.c");
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c");
     start();
-    printf("The End\n");
+    printf("Parsed with %d\n", errorCount);
 
     return 0;
 }

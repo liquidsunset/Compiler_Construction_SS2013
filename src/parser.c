@@ -201,11 +201,13 @@ void if_else()
                 {
                     getNextToken();
                     function_body();
-                    if(tokenType == TOKEN_RCB)
+                    //TODO: else branch
+                    if(tokenType == TOKEN_ELSE)
                     {
                         getNextToken();
+                        function_body();
                     }
-                    //TODO: else branch
+
                 }
             }
         }

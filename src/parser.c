@@ -276,10 +276,10 @@ void function_statement()
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
             expression();
-            if(tokenType == TOKEN_SEMICOLON)
-            {
-                getNextToken();
-            }
+        }
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
         }
     }
     else if(isIn(tokenType, FIRST_EXPRESSION))

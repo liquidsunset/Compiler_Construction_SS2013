@@ -50,7 +50,6 @@ void factor() {
                 mark(") missing");
                 getNextToken();
             }
-            return;
         }
         if(tokenType == TOKEN_LSB)
         {
@@ -72,8 +71,8 @@ void factor() {
                 mark("] missing");
                 getNextToken();
             }
-            return;
         }
+        return;
     }
     // if(tokenType == TOKEN_LSB) {
     //     getNextToken();

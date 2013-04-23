@@ -14,7 +14,7 @@ int isIn(int tokenType, int rule){
     if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
     if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID)){return 1;}
     if(rule == FIRST_VARIABLE_DECLARATION && (tokenType == TOKEN_STATIC || isIn(tokenType, FIRST_TYPE))) { return 1; }
-    if(rule == FIRST_FUNCTION_STATEMENT && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || tokenType == TOKEN_WHILE || tokenType == TOKEN_IF || isIn(tokenType, FIRST_EXPRESSION))) { return 1; }
+    if(rule == FIRST_FUNCTION_STATEMENT && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || tokenType == TOKEN_WHILE || tokenType == TOKEN_IF || tokenType == TOKEN_RETURN || isIn(tokenType, FIRST_EXPRESSION))) { return 1; }
 
     return 0;
 }
@@ -274,6 +274,10 @@ void function_statement()
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
             expression();
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+            }
         }
     }
     else if(isIn(tokenType, FIRST_EXPRESSION))

@@ -30,7 +30,7 @@ void factor() {
             while(isIn(tokenType, FIRST_EXPRESSION))
             {
                 expression();
-                if(tokenType == TOKEN_SEMICOLON)
+                if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
                 }
@@ -39,8 +39,21 @@ void factor() {
             {
                 getNextToken();
             }
+            return;
         }
-        return;
+        if(tokenType == TOKEN_LSB)
+        {
+            getNextToken();
+            if(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                expression();
+            }
+            if(tokenType == TOKEN_RSB)
+            {
+                getNextToken();
+            }
+            return;
+        }
     }
     if(tokenType == TOKEN_LSB) {
         getNextToken();
@@ -245,6 +258,14 @@ void function_statement()
     {
         while_loop();
     }
+    else if(tokenType == TOKEN_RETURN)
+    {
+        getNextToken();
+        if(isIn(tokenType, FIRST_EXPRESSION))
+        {
+            expression();
+        }
+    }
     else if(isIn(tokenType, FIRST_EXPRESSION))
     {
         expression();
@@ -339,7 +360,7 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    openFile("test/easy.c");
+    openFile("src/parser.c");
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c");
     start();
     printf("The End\n");

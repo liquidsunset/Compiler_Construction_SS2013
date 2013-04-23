@@ -441,6 +441,10 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
+            printf("%d\n",tokenType);
+            if(tokenType == 100 || tokenType == 300){
+                printf("%s\n",stringValue);
+            }
 
         }
     }

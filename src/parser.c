@@ -506,7 +506,7 @@ int main(){
     openFile("src/parser.c");
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
     start();
-    printf("The End\n");
+    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 
     return 0;
 }

@@ -120,7 +120,7 @@ void factor() {
     }
     
     error("Factor expected");
-
+}
 
 void type()
 {

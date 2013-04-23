@@ -132,47 +132,47 @@ void expression()
     if(tokenType == TOKEN_EQUAL)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_LESSEQUAL)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_LESS)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_UNEQUAL)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_GREATER)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_GREATEREQUAL)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_AND)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_OR)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
     if(tokenType == TOKEN_ASSIGNMENT)
     {
         getNextToken();
-        simple_expression();
+        expression();
     }
 }
 

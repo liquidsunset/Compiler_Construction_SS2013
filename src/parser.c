@@ -298,6 +298,27 @@ void variable_declaration() {
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
         } // token = TOKEN_IDENTIFIER
+        if(tokenType == TOKEN_LSB) // array
+        {
+            getNextToken();
+            if(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                expression();
+            }
+            else
+            {
+                error("Expression for index expected (variable_declaration)");
+            }
+            if(tokenType == TOKEN_RSB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("] missing (variable_declaration)");
+                getNextToken();
+            }
+        }
         else
         {
             error("Identifier missing (variable_declaration)");

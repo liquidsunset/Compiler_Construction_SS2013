@@ -63,6 +63,16 @@ void factor() {
         }
         return;
     }
+    if(tokenType == TOKEN_LRB)
+    {
+        getNextToken();
+        expression();
+        if(tokenType == TOKEN_RRB)
+        {
+            getNextToken();
+            return;
+        }
+    }
     if(tokenType == TOKEN_CONSTINT)
     {
         getNextToken();

@@ -73,7 +73,7 @@ static int TOKEN_INCLUDE;
 static int TOKEN_POINT;
 
 static int errorCount;
-
+static int warningCount;
 
 void initTokens(){
     TOKEN_NULL = 0;
@@ -141,4 +141,5 @@ void initTokens(){
     FIRST_FUNCTION_STATEMENT = 5;
 
     errorCount = 0;
+    warningCount = 0;
 }

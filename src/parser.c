@@ -11,6 +11,7 @@ void error(char message[1024])
 
 void mark(char message[1024])
 {
+    warningCount = warningCount + 1;
     printf("Warning Near Line %d, Col %d: %s", positionLine, positionColumn, message);
 }
 
@@ -503,10 +504,10 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    openFile("test/easy.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/easy.c");
+    openFile("test/invalid_file.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_file.c");
     start();
-    printf("Parsed with %d\n", errorCount);
+    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 
     return 0;
 }

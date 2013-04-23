@@ -47,11 +47,11 @@ void factor() {
             }
             else
             {
-                mark(") missing");
+                mark(") missing (factor)");
                 getNextToken();
             }
         }
-        if(tokenType == TOKEN_LSB)
+        if(tokenType == TOKEN_LSB) // array
         {
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
@@ -60,7 +60,7 @@ void factor() {
             }
             else
             {
-                error("Expression for index expected");
+                error("Expression for index expected (factor)");
             }
             if(tokenType == TOKEN_RSB)
             {
@@ -68,7 +68,7 @@ void factor() {
             }
             else
             {
-                mark("] missing");
+                mark("] missing (factor)");
                 getNextToken();
             }
         }
@@ -98,7 +98,7 @@ void factor() {
         }
         else
         {
-            mark(") missing");
+            mark(") missing (factor)");
             getNextToken();
             return;
         }
@@ -118,7 +118,7 @@ void factor() {
         return;
     }
     
-    error("Factor expected");
+    error("Factor expected (factor)");
 }
 
 void type()
@@ -139,7 +139,7 @@ void type()
         return;
     }
 
-    error("Type expected");
+    error("Type expected (type)");
 }
 
 void term()
@@ -251,13 +251,13 @@ void if_else()
                 }
                 else
                 {
-                    error(") after if is missing");
+                    error(") after if is missing (if_else)");
                 }
             }
         }
         else
         {
-            error("( after if is missing");
+            error("( after if is missing (if_else)");
         }
     }
 }
@@ -278,12 +278,12 @@ void while_loop()
             }
             else
             {
-                    error(") after if is missing");
+                    error(") after while is missing (while_loop)");
             }
         }
         else
         {
-            error("( after while is missing");
+            error("( after while is missing (while_loop)");
         }   
 
     }
@@ -300,7 +300,7 @@ void variable_declaration() {
         } // token = TOKEN_IDENTIFIER
         else
         {
-            error("Identifier missing");
+            error("Identifier missing (variable_declaration)");
         }
     } // token, FIRST_TYPE
 }
@@ -316,7 +316,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing");
+            mark("; missing (function_statement)");
             getNextToken();
         }
     }
@@ -341,7 +341,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing");
+            mark("; missing (function_statement)");
             getNextToken();
         }
     }
@@ -354,7 +354,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing");
+            mark("; missing (function_statement)");
             getNextToken();
         }
     }
@@ -373,7 +373,7 @@ void function_body()
         }
         else
         {
-            mark("} missing");
+            mark("} missing (function_body)");
             getNextToken();
         }
     } // tokenType == TOKEN_LCB
@@ -386,7 +386,7 @@ void global_variable_declaration() {
     }
     else
     {
-        error("global variables must be static");
+        error("global variables must be static (global_variable_declaration)");
     }
 }
 
@@ -416,22 +416,22 @@ void function_definition() {
                         getNextToken();
                         return;
                     }
-                    error("expected { or ;");
+                    error("expected { or ; (function_definition)");
                      // token == '}'
                 } // token == ')'
                 else
                 {
-                    error(") missing");
+                    error(") missing (function_definition)");
                 }
             } // token == '('
             else
             {
-                error("( after function identifier expected");
+                error("( after function identifier expected (function_definition)");
             }
         } // token == TOKEN_IDENTIFIER
         else
         {
-            error("Identifier expected");
+            error("Identifier expected (function_definition)");
         }
     } // isIn(token, FIRST_TYPE)
 }
@@ -448,7 +448,7 @@ void top_declaration() {
         return;        
     }
 
-    error("Variable or function declaration expected");
+    error("Variable or function declaration expected (top_declaration)");
 }
 
 void start() {
@@ -462,14 +462,15 @@ void start() {
         }
         else
         {
-            error("Expected string literal");
+            error("Expected string literal (start)");
         }
     }
 
     while(tokenType != TOKEN_EOF) {
         if(isIn(tokenType, FIRST_TYPE))
         {
-            top_declaration();    
+            top_declaration();
+            getchar();    
         }
         else
         {

@@ -177,7 +177,7 @@ int peek(int current, int next)
     //    isInString = 1;
     //    return 0;
     //}
-    
+    if(current == '#') return 0;
 
     if(isLetter(current) && isLetter(next)) return 0; //Letter letter: avg
     if(isDigit(current) && isDigit(next)) return 0; // Digit digit: 42

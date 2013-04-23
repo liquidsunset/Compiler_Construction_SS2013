@@ -11,7 +11,6 @@ void error(char message[1024])
 
 void mark(char message[1024])
 {
-    warningCount = warningCount + 1;
     printf("Warning Near Line %d, Col %d: %s", positionLine, positionColumn, message);
 }
 
@@ -48,11 +47,12 @@ void factor() {
             }
             else
             {
-                mark(") missing (factor)");
+                mark(") missing");
                 getNextToken();
             }
+            return;
         }
-        if(tokenType == TOKEN_LSB) // array
+        if(tokenType == TOKEN_LSB)
         {
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
@@ -61,7 +61,7 @@ void factor() {
             }
             else
             {
-                error("Expression for index expected (factor)");
+                error("Expression for index expected");
             }
             if(tokenType == TOKEN_RSB)
             {
@@ -69,11 +69,11 @@ void factor() {
             }
             else
             {
-                mark("] missing (factor)");
+                mark("] missing");
                 getNextToken();
             }
+            return;
         }
-        return;
     }
     // if(tokenType == TOKEN_LSB) {
     //     getNextToken();
@@ -99,7 +99,7 @@ void factor() {
         }
         else
         {
-            mark(") missing (factor)");
+            mark(") missing");
             getNextToken();
             return;
         }
@@ -119,7 +119,7 @@ void factor() {
         return;
     }
     
-    error("Factor expected (factor)");
+    error("Factor expected");
 }
 
 void type()
@@ -140,7 +140,7 @@ void type()
         return;
     }
 
-    error("Type expected (type)");
+    error("Type expected");
 }
 
 void term()
@@ -252,13 +252,13 @@ void if_else()
                 }
                 else
                 {
-                    error(") after if is missing (if_else)");
+                    error(") after if is missing");
                 }
             }
         }
         else
         {
-            error("( after if is missing (if_else)");
+            error("( after if is missing");
         }
     }
 }
@@ -279,12 +279,12 @@ void while_loop()
             }
             else
             {
-                    error(") after while is missing (while_loop)");
+                    error(") after if is missing");
             }
         }
         else
         {
-            error("( after while is missing (while_loop)");
+            error("( after while is missing");
         }   
 
     }
@@ -298,31 +298,10 @@ void variable_declaration() {
         type();
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
-            if(tokenType == TOKEN_LSB) // array
-            {
-                getNextToken();
-                if(isIn(tokenType, FIRST_EXPRESSION))
-                {
-                    expression();
-                }
-                else
-                {
-                    error("Expression for index expected (variable_declaration)");
-                }
-                if(tokenType == TOKEN_RSB)
-                {
-                    getNextToken();
-                }
-                else
-                {
-                    mark("] missing (variable_declaration)");
-                    getNextToken();
-                }
-            }
         } // token = TOKEN_IDENTIFIER
         else
         {
-            error("Identifier missing (variable_declaration)");
+            error("Identifier missing");
         }
     } // token, FIRST_TYPE
 }
@@ -338,7 +317,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing (function_statement)");
+            mark("; missing");
             getNextToken();
         }
     }
@@ -363,7 +342,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing (function_statement)");
+            mark("; missing");
             getNextToken();
         }
     }
@@ -376,7 +355,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing (function_statement)");
+            mark("; missing");
             getNextToken();
         }
     }
@@ -395,7 +374,7 @@ void function_body()
         }
         else
         {
-            mark("} missing (function_body)");
+            mark("} missing");
             getNextToken();
         }
     } // tokenType == TOKEN_LCB
@@ -408,7 +387,7 @@ void global_variable_declaration() {
     }
     else
     {
-        error("global variables must be static (global_variable_declaration)");
+        error("global variables must be static");
     }
 }
 
@@ -438,22 +417,22 @@ void function_definition() {
                         getNextToken();
                         return;
                     }
-                    error("expected { or ; (function_definition)");
+                    error("expected { or ;");
                      // token == '}'
                 } // token == ')'
                 else
                 {
-                    error(") missing (function_definition)");
+                    error(") missing");
                 }
             } // token == '('
             else
             {
-                error("( after function identifier expected (function_definition)");
+                error("( after function identifier expected");
             }
         } // token == TOKEN_IDENTIFIER
         else
         {
-            error("Identifier expected (function_definition)");
+            error("Identifier expected");
         }
     } // isIn(token, FIRST_TYPE)
 }
@@ -470,7 +449,7 @@ void top_declaration() {
         return;        
     }
 
-    error("Variable or function declaration expected (top_declaration)");
+    error("Variable or function declaration expected");
 }
 
 void start() {
@@ -484,15 +463,14 @@ void start() {
         }
         else
         {
-            error("Expected string literal (start)");
+            error("Expected string literal");
         }
     }
 
     while(tokenType != TOKEN_EOF) {
         if(isIn(tokenType, FIRST_TYPE))
         {
-            top_declaration();
-            getchar();    
+            top_declaration();    
         }
         else
         {
@@ -504,10 +482,10 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    openFile("test/invalid_file.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_file.c");
+    openFile("src/parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/parser.c");
     start();
-    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+    printf("The End\n");
 
     return 0;
 }

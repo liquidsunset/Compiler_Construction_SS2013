@@ -1,7 +1,17 @@
+
 #include <stdio.h> // used for tests
-#include "scanner.h"
+#include "globals.c"
 
 FILE *fp;
+
+int tokenType;
+int intValue;
+char stringValue[1024];
+int positionLine;
+int positionColumn;
+
+int lin = 1;
+int col = 1;
 
 // ---------------------------- Tools -----------------------------------------
 
@@ -30,7 +40,7 @@ int strCompare(char a[], char b[]) // TODO: Support call by reference
 int strLength(char a[])
 {
 	int i=0;
-	while(a[i]!='\0'&&i<1024) i++;
+	while(a[i]!='\0'&&i<1024) i=i+1;
 	return i;
 }
 
@@ -67,7 +77,7 @@ void strTrimQuotes(char a[], char b[])
 // Returns true if the character is within the range of [a-zA-Z]
 int isLetter(char c)
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
 }
 
 // Checks if the character c is a digit.
@@ -167,7 +177,7 @@ int peek(int current, int next)
     //    isInString = 1;
     //    return 0;
     //}
-    
+    if(current == '#') return 0;
 
     if(isLetter(current) && isLetter(next)) return 0; //Letter letter: avg
     if(isDigit(current) && isDigit(next)) return 0; // Digit digit: 42
@@ -225,7 +235,7 @@ void openFile(char path[]){
     fp = fopen(path,"r");
     if(fp == NULL)
     {
-        tokenType = 509;
+        tokenType = TOKEN_EOF;
         fclose(fp);
     }
     
@@ -246,6 +256,13 @@ int readNextCharacter(){
         {
             fclose(fp);
         }
+        col = col + 1;
+        if(temp == '\n')
+        {
+            col = 1;
+            lin = lin + 1;
+        }
+
         return temp;
     }
 }
@@ -256,99 +273,99 @@ void findToken(char status[1024],int len){
     if(len == 1)
     {
         char tokenChar = status[0];
-        if(tokenChar == '+'){tokenType = 400; return;}
-        if(tokenChar == '-'){tokenType = 401; return;}
-        if(tokenChar == '*'){tokenType = 402; return;}
-        if(tokenChar == '/'){tokenType = 403; return;}
-        if(tokenChar == '%'){tokenType = 404; return;}
-        if(tokenChar == '='){tokenType = 405; return;}
-        if(tokenChar == '<'){tokenType = 409; return;}
-        if(tokenChar == '>'){tokenType = 410; return;}
-        if(tokenChar == '&'){tokenType = 413; return;}
-        if(tokenChar == '|'){tokenType = 415; return;}
-        if(tokenChar == '^'){tokenType = 417; return;}
-        if(tokenChar == '~'){tokenType = 418; return;}
-        if(tokenChar == '!'){tokenType = 422; return;}
-        if(tokenChar == '['){tokenType = 500; return;}
-        if(tokenChar == ']'){tokenType = 501; return;}
-        if(tokenChar == '('){tokenType = 502; return;}
-        if(tokenChar == ')'){tokenType = 503; return;}
-        if(tokenChar == '{'){tokenType = 504; return;}
-        if(tokenChar == '}'){tokenType = 505; return;}
-        if(tokenChar == ';'){tokenType = 506; return;}
-        if(tokenChar == ','){tokenType = 507; return;}
-        if(tokenChar == ':'){tokenType = 508; return;}
-        if(tokenChar == '#'){tokenType = 510; return;}
+        if(tokenChar == '+'){tokenType = TOKEN_PLUS; return;}
+        if(tokenChar == '-'){tokenType = TOKEN_MINUS; return;}
+        if(tokenChar == '*'){tokenType = TOKEN_MULT; return;}
+        if(tokenChar == '/'){tokenType = TOKEN_DIVIDE; return;}
+        if(tokenChar == '%'){tokenType = TOKEN_PERCENT; return;}
+        if(tokenChar == '='){tokenType = TOKEN_ASSIGNMENT; return;}
+        if(tokenChar == '<'){tokenType = TOKEN_LESS; return;}
+        if(tokenChar == '>'){tokenType = TOKEN_GREATER; return;}
+        if(tokenChar == '&'){tokenType = TOKEN_ADDRESS; return;}
+        if(tokenChar == '|'){tokenType = TOKEN_BITWISEOR; return;}
+        if(tokenChar == '^'){tokenType = TOKEN_BITWISEEXCLOR; return;}
+        if(tokenChar == '~'){tokenType = TOKEN_BITWISENOT; return;}
+        if(tokenChar == '!'){tokenType = TOKEN_NOT; return;}
+        if(tokenChar == '['){tokenType = TOKEN_LSB; return;}
+        if(tokenChar == ']'){tokenType = TOKEN_RSB; return;}
+        if(tokenChar == '('){tokenType = TOKEN_LRB; return;}
+        if(tokenChar == ')'){tokenType = TOKEN_RRB; return;}
+        if(tokenChar == '{'){tokenType = TOKEN_LCB; return;}
+        if(tokenChar == '}'){tokenType = TOKEN_RCB; return;}
+        if(tokenChar == ';'){tokenType = TOKEN_SEMICOLON; return;}
+        if(tokenChar == ','){tokenType = TOKEN_COMMA; return;}
+        if(tokenChar == ':'){tokenType = TOKEN_COLON; return;}
+        //if(tokenChar == '#'){tokenType = 510; return;}
         if(isLetter(tokenChar))
         {
-            tokenType = 100;
+            tokenType = TOKEN_IDENTIFIER;
             stringValue[0] = tokenChar;
             stringValue[1] = '\0';
             return;
         }
         if(isDigit(tokenChar))
         {
-            tokenType = 200;
+            tokenType = TOKEN_CONSTINT;
             intValue = strToInt(status);
             return;
         }
     } // if(len == 1)
     else if(len == 2)
     {
-        if(strCompare(status, "==")){tokenType = 406; return;}
-        if(strCompare(status, "<=")){tokenType = 407; return;}
-        if(strCompare(status, ">=")){tokenType = 408; return;}
-        if(strCompare(status, "<<")){tokenType = 411; return;}
-        if(strCompare(status, ">>")){tokenType = 412; return;}
-        if(strCompare(status, "&&")){tokenType = 414; return;}
-        if(strCompare(status, "||")){tokenType = 416; return;}
-        if(strCompare(status, "!=")){tokenType = 419; return;}
-        if(strCompare(status, "++")){tokenType = 420; return;}
-        if(strCompare(status, "--")){tokenType = 421; return;}
-        if(strCompare(status, "if")){tokenType = 6; return;}
+        if(strCompare(status, "==")){tokenType = TOKEN_EQUAL; return;}
+        if(strCompare(status, "<=")){tokenType = TOKEN_LESSEQUAL; return;}
+        if(strCompare(status, ">=")){tokenType = TOKEN_GREATEREQUAL; return;}
+        if(strCompare(status, "<<")){tokenType = TOKEN_SHIFTLEFT; return;}
+        if(strCompare(status, ">>")){tokenType = TOKEN_SHIFTRIGHT; return;}
+        if(strCompare(status, "&&")){tokenType = TOKEN_AND; return;}
+        if(strCompare(status, "||")){tokenType = TOKEN_OR; return;}
+        if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
+        if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
         if(isLetter(status[0]))
         {
-            tokenType = 100;
+            tokenType = TOKEN_IDENTIFIER;
             strCopy(status, stringValue);
             return;
         }
         if(isDigit(status[0]))
         {
-            tokenType = 200;
+            tokenType = TOKEN_CONSTINT;
             intValue = strToInt(status);
             return;
         }
     } // if(len == 2)
     else{
-        if(strCompare(status, "NULL")){tokenType = 0; return;}
-        if(strCompare(status, "void")){tokenType = 1; return;}
-        if(strCompare(status, "int")){tokenType = 2; return;}
-        if(strCompare(status, "char")){tokenType = 3; return;}
-        if(strCompare(status, "double")){tokenType = 4; return;}
-        if(strCompare(status, "while")){tokenType = 5; return;}
-        if(strCompare(status, "else")){tokenType = 7; return;}
-        if(strCompare(status, "return")){tokenType = 8; return;}
-        if(strCompare(status, "struct")){tokenType = 9; return;}
+        if(strCompare(status, "NULL")){tokenType = TOKEN_NULL; return;}
+        if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
+        if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
+        if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
+        if(strCompare(status, "double")){tokenType = TOKEN_DOUBLE; return;}
+        if(strCompare(status, "while")){tokenType = TOKEN_WHILE; return;}
+        if(strCompare(status, "else")){tokenType = TOKEN_ELSE; return;}
+        if(strCompare(status, "return")){tokenType = TOKEN_RETURN; return;}
+        if(strCompare(status, "struct")){tokenType = TOKEN_STRUCT; return;}
+        if(strCompare(status, "static")){tokenType = TOKEN_STATIC; return;}
+        if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
         if(isLetter(status[0]))
         {
-            tokenType = 100;
+            tokenType = TOKEN_IDENTIFIER;
             strCopy(status, stringValue);
             return;
         }
         if(isDigit(status[0])){
-            tokenType = 200;
+            tokenType = TOKEN_CONSTINT;
             intValue = strToInt(status);
             return;
         }
         if(status[0] == '\'') // Char literal
         {
-            tokenType = 202;
+            tokenType = TOKEN_CONSTCHAR;
             strTrimQuotes(status, stringValue);
             return;
         }
         if(status[0] == '\"') // String literal
         {
-            tokenType = 300;
+            tokenType = TOKEN_STRING_LITERAL;
             strTrimQuotes(status, stringValue);
             return;
         }
@@ -363,6 +380,9 @@ void findToken(char status[1024],int len){
 
 void getNextToken()
 {
+    if(tokenType == TOKEN_EOF){
+        return;
+    }
     static int currentChar = -1;
     static int nextChar = -1;
     char status[1024];
@@ -384,7 +404,7 @@ void getNextToken()
         if(currentChar == EOF)
         {
             // set token type to EOF
-            tokenType = 509;
+            tokenType = TOKEN_EOF;
             return;
         }
 
@@ -406,7 +426,8 @@ void getNextToken()
         else
         {
             int checkPeek;
-            
+            positionColumn = col-2; // as two characters are read already
+            positionLine = lin;
             do
             {
                 checkPeek = peek(currentChar, nextChar);
@@ -420,32 +441,40 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
+//            printf("%d\n",tokenType);
+//            if(tokenType == 100 || tokenType == 300){
+//                printf("%s\n",stringValue);
+//            }
 
         }
     }
 }
+
 // ----------------------------------------------------------------------------
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
 
-int main()
+int yolo()
 {
+    initTokens();
     
     printf("\n\nNext Testfile- easy.c\n\n");
     
-    openFile("../test/easy.c");
-    if(tokenType != 509){
+    //openFile("../test/easy.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt");
+    if(tokenType != TOKEN_EOF){
         do
         {
             getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
+            printf("Line %d:%d %d\n", positionLine, positionColumn, tokenType);
+            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
         }
-        while(tokenType!= 509);
+        while(tokenType!= TOKEN_EOF);
+        getchar();
     }
     
     
@@ -457,12 +486,12 @@ int main()
         {
             getNextToken();
             printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
         }
-        while(tokenType!= 509);
+        while(tokenType!= TOKEN_EOF);
     
     
     printf("\n\nNext Testfile - operator.c\n\n");
@@ -474,14 +503,13 @@ int main()
         {
             getNextToken();
             printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
         }
-        while(tokenType!= 509);
+        while(tokenType!= TOKEN_EOF);
 
- 
     printf("\n\nNext Testfile - comments.c\n\n");
     
     openFile("../test/comments.c");
@@ -489,12 +517,12 @@ int main()
         {
             getNextToken();
             printf("%d\n", tokenType);
-            if(tokenType == 100){printf("%s\n", stringValue);}
-            if(tokenType == 300){printf("%s\n", stringValue);}
-            if(tokenType == 200){printf("%d\n", intValue);}
-            if(tokenType == 202){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
         }
-        while(tokenType!= 509);
+        while(tokenType!= TOKEN_EOF);
     
     
     printf("\n\nNext Testfile - Scanner selfscanc\n\n");
@@ -504,12 +532,12 @@ int main()
     {
         getNextToken();
         printf("%d\n", tokenType);
-        if(tokenType == 100){printf("%s\n", stringValue);}
-        if(tokenType == 300){printf("%s\n", stringValue);}
-        if(tokenType == 200){printf("%d\n", intValue);}
-        if(tokenType == 202){printf("%s\n", stringValue);}
+        if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+        if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+        if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+        if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
     }
-    while(tokenType!= 509);
+    while(tokenType!= TOKEN_EOF);
     
     
     return 0;

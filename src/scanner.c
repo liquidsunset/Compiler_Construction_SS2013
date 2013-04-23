@@ -380,6 +380,9 @@ void findToken(char status[1024],int len){
 
 void getNextToken()
 {
+    if(tokenType == TOKEN_EOF){
+        return;
+    }
     static int currentChar = -1;
     static int nextChar = -1;
     char status[1024];

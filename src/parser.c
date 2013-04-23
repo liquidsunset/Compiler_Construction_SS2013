@@ -284,6 +284,9 @@ void function_body()
         {
             function_statement();
         }
+        if(tokenType == TOKEN_RCB) {
+            getNextToken();
+        }
     } // tokenType == TOKEN_LCB
 }
 
@@ -309,15 +312,17 @@ void function_definition() {
                     }
                 }
                 if(tokenType == TOKEN_RRB) {
-                    //getNextToken();
-                    //if(tokenType == '{') {
-                        getNextToken();
+                    getNextToken();
+                    if(tokenType == TOKEN_LCB)
+                    {
                         function_body();
+                        return;
+                    }
+                    if(tokenType == TOKEN_SEMICOLON)
+                    {
                         getNextToken();
-                        if(tokenType == TOKEN_RCB) {
-                            getNextToken();
-                        } // token == '}'
-                   // } // token == '{'
+                    }
+                     // token == '}'
                 } // token == ')'
             } // token == '('
         } // token == TOKEN_IDENTIFIER

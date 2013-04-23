@@ -482,7 +482,7 @@ int main(){
     printf("Phoenix: Parser\n");
     initTokens();
     openFile("src/parser.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/parser.c");
     start();
     printf("The End\n");
 

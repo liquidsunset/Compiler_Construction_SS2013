@@ -526,8 +526,8 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    //openFile("test/invalid_file.c");
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
+    openFile("test/invalid_file.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_file.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

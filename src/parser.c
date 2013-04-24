@@ -6,13 +6,13 @@ void expression();
 void error(char message[1024])
 {
     errorCount = errorCount + 1;
-    printf("Error Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+    printf("Error Near Line %d, Col %d: %s\n", positionLine, positionColumn, message);
 }
 
 void mark(char message[1024])
 {
     warningCount = warningCount + 1;
-    printf("Warning Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+    printf("Warning Near Line %d, Col %d: %s\n", positionLine, positionColumn, message);
 }
 
 int isIn(int tokenType, int rule){
@@ -492,7 +492,7 @@ void start() {
         if(isIn(tokenType, FIRST_TYPE))
         {
             top_declaration();
-            getchar();    
+            //getchar();    
         }
         else
         {

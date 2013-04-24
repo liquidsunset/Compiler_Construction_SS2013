@@ -5,14 +5,34 @@ void expression();
 
 void error(char message[1024])
 {
+    int niceLine;
+    int niceColumn;
+
+    niceLine = positionLine;
+    niceColumn = positionColumn;
+    if(niceColumn < 0)
+    {
+        niceLine = niceLine-1;
+    }
+
     errorCount = errorCount + 1;
-    printf("Error Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+    printf("Error Near Line %d, Col %d: %s", niceLine, niceColumn, message);
 }
 
 void mark(char message[1024])
 {
+    int niceLine;
+    int niceColumn;
+
+    niceLine = positionLine;
+    niceColumn = positionColumn;
+    if(niceColumn < 0)
+    {
+        niceLine = niceLine-1;
+    }
+    
     warningCount = warningCount + 1;
-    printf("Warning Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+    printf("Warning Near Line %d, Col %d: %s", niceLine, niceColumn, message);
 }
 
 int isIn(int tokenType, int rule){

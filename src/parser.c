@@ -16,12 +16,8 @@ void error(char message[1024])
     }
 
     errorCount = errorCount + 1;
-<<<<<<< HEAD
 
     printf("Error Near Line %d, Col %d: %s\n", niceLine, niceColumn, message);
-=======
-    printf("Error Near Line %d, Col %d: %s\n", positionLine, positionColumn, message);
->>>>>>> added testcases
 }
 
 void mark(char message[1024])
@@ -37,12 +33,8 @@ void mark(char message[1024])
     }
     
     warningCount = warningCount + 1;
-<<<<<<< HEAD
 
     printf("Warning Near Line %d, Col %d: %s\n", niceLine, niceColumn, message);
-=======
-    printf("Warning Near Line %d, Col %d: %s\n", positionLine, positionColumn, message);
->>>>>>> added testcases
 }
 
 int isIn(int tokenType, int rule){
@@ -534,16 +526,17 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    openFile("../test/invalid_parser.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
+    //openFile("../test/invalid_parser.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
     errorCount = 0;
     warningCount = 0;
-    openFile("../test/valid_parser.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
+    //openFile("../test/valid_parser.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+
     return 0;
 }
 

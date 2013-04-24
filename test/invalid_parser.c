@@ -28,7 +28,7 @@ int isIn(int tokenType, int rule){
 // -------------------------- EBNF --------------------------------------------
 
 void factor() {
-    if(tokenType == TOKEN_IDENTIFIER) {
+    if(tokenType == ) {
         getNextToken();
         if(tokenType == TOKEN_LRB) // function call
         {
@@ -40,7 +40,7 @@ void factor() {
                 {
                     getNextToken();
                 }
-            }
+            
             if(tokenType == TOKEN_RRB)
             {
                 getNextToken();
@@ -74,7 +74,7 @@ void factor() {
             }
             return;
         }
-    }
+    
     // if(tokenType == TOKEN_LSB) {
     //     getNextToken();
     //     expression();
@@ -120,7 +120,7 @@ void factor() {
     }
     
     error("Factor expected");
-}
+
 
 void type()
 {
@@ -145,7 +145,7 @@ void type()
 
 void term()
 {
-    factor();
+    factor()
     while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
     {
         getNextToken();

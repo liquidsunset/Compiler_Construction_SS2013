@@ -28,7 +28,7 @@ int isIn(int tokenType, int rule){
 // -------------------------- EBNF --------------------------------------------
 
 void factor() {
-    if(tokenType == TOKEN_IDENTIFIER) {
+    if(tokenType == ) {
         getNextToken();
         if(tokenType == TOKEN_LRB) // function call
         {
@@ -96,7 +96,7 @@ void factor() {
         {
             getNextToken();
             return;
-        }
+        
         else
         {
             mark(") missing");
@@ -120,7 +120,7 @@ void factor() {
     }
     
     error("Factor expected");
-}
+
 
 void type()
 {
@@ -146,7 +146,7 @@ void type()
 void term()
 {
     factor();
-    while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
+    while(tokenType ==  || tokenType == TOKEN_DIVIDE)
     {
         getNextToken();
         factor();
@@ -206,7 +206,7 @@ void expression()
         getNextToken();
         expression();
         return;
-    }
+    
     if(tokenType == TOKEN_AND)
     {
         getNextToken();
@@ -255,7 +255,7 @@ void if_else()
                     error(") after if is missing");
                 }
             }
-        }
+        
         else
         {
             error("( after if is missing");
@@ -265,7 +265,7 @@ void if_else()
 
 void while_loop()
 {
-    if(tokenType == TOKEN_WHILE)
+    if(tokenType == )
     {
         getNextToken();
         if(tokenType == TOKEN_LRB)

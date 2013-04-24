@@ -526,14 +526,14 @@ void start() {
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    //openFile("../test/invalid_parser.c");
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
+    openFile("../test/invalid_parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
     errorCount = 0;
     warningCount = 0;
-    //openFile("../test/valid_parser.c");
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
+    openFile("../test/valid_parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

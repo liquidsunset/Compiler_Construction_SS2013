@@ -77,10 +77,22 @@ int TARGET_FLC;
 int TARGET_RDC;
 int TARGET_WRC;
 
+int isF1(int opcode) {
+	return (0 <= opcode) && (opcode < 21);
+}
+
+int isF2(int opcode) {
+	return (22 <= opcode) && (opcode < 42);
+}
+
+int isF3(int opcode) {
+	return (42 <= opcode) && (opcode < 64);
+}
+
 // Set globals
 void init() {
 
-	// F1
+	// F1 (0-21)
 	TARGET_ADDI;
 	TARGET_SUBI;
 	TARGET_MULI;
@@ -100,7 +112,7 @@ void init() {
 	TARGET_BR;
 	TARGET_BSR;
 
-	// F2
+	// F2 (22-42)
 	TARGET_ADD;
 	TARGET_SUB;
 	TARGET_MUL;
@@ -113,7 +125,7 @@ void init() {
 	TARGET_RDC;
 	TARGET_WRC;
 
-	// F3
+	// F3 (42-63)
 	TARGET_JSR;
 	
 	// TARGET_ANDI = 3;
@@ -147,36 +159,6 @@ void init() {
 	
 }
 
-// Loads code into memory and initializes registers
-void load() {
-	// TODO: read all content of file
-
-	// TODO: store in mem
-
-	// TODO: set pc to first mem address
-}
-
-
-// gets next instruction
-void fetch() {
-	
-
-	instruction = mem[pc+0];
-	instruction = instruction << 8;
-	instruction = instruction | mem[pc+1];
-	instruction = instruction << 8;
-	instruction = instruction | mem[pc+2];
-	instruction = instruction << 8;
-	instruction = instruction | mem[pc+3];
-
-	op = (instruction >> 26) & 63;
-
-	// TODO: decide if F1 or F2 or F3
-	//  and decode accordingly
-
-
-}
-
 void decode() {
 	a = (instruction >> 21) & 31; // 0x1F: 5 lsbs
 	b = (instruction >> 16) & 31; // 0x1F: 5 lsbs
@@ -190,16 +172,250 @@ void decodeF3() {
 	c = instruction & 67108863; // 0x3FFFFFF: 26 lsbs
 }
 
-// executes last fetched instruction
-void execute() {
-	// TODO: switch of instruction type
+// Loads code into memory and initializes registers
+void load() {
+	// TODO: read all content of file
 
-	// TODO: F1
+	// TODO: store in mem
 
-	// TODO: F2
-
-	// TODO: F3
+	// TODO: set pc to first mem address
 }
+
+
+// gets next instruction
+void fetch() {
+	instruction = mem[pc+0];
+	instruction = instruction << 8;
+	instruction = instruction | mem[pc+1];
+	instruction = instruction << 8;
+	instruction = instruction | mem[pc+2];
+	instruction = instruction << 8;
+	instruction = instruction | mem[pc+3];
+
+	op = (instruction >> 26) & 63;
+
+	if(isF1(op) || isF2(op))
+	{
+		decode();
+
+		// F1 immediate addressing
+		if(op == TARGET_ADDI)
+		{
+			reg[a] = reg[b] + c;
+			pc = pc + 4;
+		}
+
+		if(op == TARGET_SUBI)
+		{
+			reg[a] = reg[b] - c;
+			pc = pc + 4;
+		}
+
+		if(op == TARGET_MULI)
+		{
+			reg[a] = reg[b] * c;
+			pc = pc + 4;
+		}
+
+		if(op == TARGET_DIVI)
+		{
+			reg[a] = reg[b] / c;
+			pc = pc + 4;
+		}
+
+		if(op == TARGET_MODI)
+		{
+			reg[a] = reg[b] % c;
+			pc = pc + 4;
+		}
+
+		if(op == TARGET_CMPI)
+		{
+			reg[a] = reg[b] - c;
+			pc = pc + 4;
+		}
+
+		// F1 memory instructions
+		if(op == TARGET_LW)
+		{
+			reg[a] = mem[(reg[b]+c)/4];
+			pc = pc + 4;
+		}
+		if(op == TARGET_SW)
+		{
+			mem[(reg[b]+c)/4] = reg[a];
+			pc = pc + 4;
+		}
+		if(op == TARGET_POP)
+		{
+			reg[a] = mem[(reg[b])/4];
+			reg[b] = reg[b]+c;
+			pc = pc + 4;
+		}
+		if(op == TARGET_PSH)
+		{
+			reg[b] = reg[b]-c;
+			mem[(reg[b])/4] = reg[a];
+			pc = pc + 4;
+		}
+
+		// F1 conditional branching
+		if(op == TARGET_BEQ)
+		{
+			if(reg[a] == 0)
+			{
+				pc = pc + c * 4;
+			}
+			else
+			{
+				pc = pc + 4;
+			}
+		}
+		if(op == TARGET_BGE)
+		{
+			if(reg[a] >= 0)
+			{
+				pc = pc + c * 4;
+			}
+			else
+			{
+				pc = pc + 4;
+			}
+		}
+		if(op == TARGET_BGT)
+		{
+			if(reg[a] > 0)
+			{
+				pc = pc + c * 4;
+			}
+			else
+			{
+				pc = pc + 4;
+			}
+		}
+		if(op == TARGET_BLE)
+		{
+			if(reg[a] <= 0)
+			{
+				pc = pc + c * 4;
+			}
+			else
+			{
+				pc = pc + 4;
+			}
+		}
+		if(op == TARGET_BLT)
+		{
+			if(reg[a] < 0)
+			{
+				pc = pc + c * 4;
+			}
+			else
+			{
+				pc = pc + 4;
+			}
+		}
+		if(op == TARGET_BNE)
+		{
+			if(reg[a] != 0)
+			{
+				pc = pc + c * 4;
+			}
+			else
+			{
+				pc = pc + 4;
+			}
+		}
+
+		// F1 unconditional branching
+		if(op == TARGET_BR)
+		{
+			pc = pc + c*4;
+		}
+		if(op == TARGET_BSR)
+		{
+			reg[31] = pc + 4;
+			pc = pc + c*4;
+		}
+
+		// F2 register addressing
+		if(op == TARGET_ADD)
+		{
+			reg[a] = reg[b] + reg[c];
+			pc = pc + 4;
+		}
+		if(op == TARGET_SUB)
+		{
+			reg[a] = reg[b] - reg[c];
+			pc = pc + 4;
+		}
+		if(op == TARGET_MUL)
+		{
+			reg[a] = reg[b] * reg[c];
+			pc = pc + 4;
+		}
+		if(op == TARGET_DIV)
+		{
+			reg[a] = reg[b] / reg[c];
+			pc = pc + 4;
+		}
+		if(op == TARGET_MOD)
+		{
+			reg[a] = reg[b] % reg[c];
+			pc = pc + 4;
+		}
+		if(op == TARGET_CMP)
+		{
+			reg[a] = reg[b] - reg[c];
+			pc = pc + 4;
+		}
+
+		// F2 return from subroutine
+		if(op == TARGET_RET)
+		{
+			pc = reg[c];
+		}
+
+		// F2 IO
+		if(op == TARGET_FLO)
+		{
+			// TODO: open file
+			pc = pc + 4;
+		}
+		if(op == TARGET_FLC)
+		{
+			// TODO: close file
+			pc = pc + 4;
+		}
+		if(op == TARGET_RDC)
+		{
+			// TODO: read char
+			pc = pc + 4;
+		}
+		if(op == TARGET_WRC)
+		{
+			// TODO: close file
+			pc = pc + 4;
+		}
+
+	}
+
+
+	if(isF3(op))
+	{
+		decodeF3();
+
+		// F3 unconditional jump
+		if(op == TARGET_JSR)
+		{
+			reg[31] = pc + 4;
+			pc = c;
+		}
+		return;
+	}
+}
+
+
 
 int main() {
 	return 0;

@@ -1,0 +1,15 @@
+main: LW R1,16
+	  LW R2, 8
+
+loop: CMP R3, R1, R2
+	 BEQZ R3, exit 
+	 CMP R4, R1, R2
+	 BLT R4, calc2
+
+calc1: SUB R1, R1, R2
+	  J loop
+
+calc2: SUB R2, R2, R1
+	  J loop
+
+exit: SW 20, R3

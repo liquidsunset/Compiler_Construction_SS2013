@@ -415,12 +415,12 @@ int fetch() {
 		if(op == TARGET_JSR)
 		{
 			reg[31] = pc + 4;
-			pc = c/4;
+			pc = c*4;
 		}
 		if(op == TARGET_J)
 		{
 			printf("%d J %d", pc, c);
-			pc = c/4;
+			pc = c*4;
 		}
 	}
 

@@ -421,6 +421,10 @@ int fetch() {
 			reg[31] = pc + 4;
 			pc = c;
 		}
+		if(op == TARGET_J)
+		{
+			pc = c;
+		}
 	}
 
 	reg[0] = 0; // keep it zero

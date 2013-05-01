@@ -191,7 +191,7 @@ int fetch() {
 		return 0;
 	}
 
-	instruction = mem[pc+0];
+	instruction = (mem[pc+0] << 24) | (mem[pc+1] << 16) | (mem[pc+2] << 8) | mem[pc+3];
 
 	op = (instruction >> 26) & 63;
 

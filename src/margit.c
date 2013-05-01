@@ -7,8 +7,8 @@
 // Virtual Registers
 int reg[32];
 
-// Virtual Memory of 150kB
-char mem[MEMSIZE];
+// Virtual Memory of 4*150kB
+int mem[MEMSIZE];
 
 // Instruction register
 int ir;
@@ -81,6 +81,7 @@ int TARGET_FLO;
 int TARGET_FLC;
 int TARGET_RDC;
 int TARGET_WRC;
+int TARGET_J;
 
 int isF1(int opcode) {
 	return (0 <= opcode) && (opcode < 21);
@@ -134,6 +135,7 @@ void init() {
 
 	// F3 (43-63)
 	TARGET_JSR = 43;
+	TARGET_J = 44;
 	
 }
 
@@ -427,11 +429,9 @@ int fetch() {
 	return 1; // continue
 }
 
-
-
 int main() {
 	init();
-	load("test/main.dlx");
+	load("test/gcd.bin");
 	while(fetch());
 	return 0;
 }

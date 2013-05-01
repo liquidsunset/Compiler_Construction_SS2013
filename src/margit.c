@@ -8,19 +8,19 @@
 int reg[32];
 
 // Virtual Memory of 4*150kB
-int mem[MEMSIZE];
+unsigned int mem[MEMSIZE];
 
 // Instruction register
 int ir;
 
 // Program counter
-int pc;
+unsigned int pc;
 
-int instruction;
-int op;
-int a;
-int b;
-int c;
+unsigned int instruction;
+unsigned int op;
+unsigned int a;
+unsigned int b;
+unsigned int c;
 
 // Globals
 int TARGET_NOP;

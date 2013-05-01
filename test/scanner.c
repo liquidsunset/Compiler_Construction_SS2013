@@ -1,5 +1,5 @@
 
-#include <stdio.h> // used for tests
+//#include <stdio.h> // used for tests
 #include "globals.c"
 
 FILE *fp;
@@ -358,6 +358,10 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "struct")){tokenType = TOKEN_STRUCT; return;}
         if(strCompare(status, "static")){tokenType = TOKEN_STATIC; return;}
         if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
+        if(strCompare(status, "fopen")) {tokenType = TOKEN_FOPEN; return;}
+        if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
+        if(strCompare(status, "fread")) {tokenType = TOKEN_FREAD; return;}
+        if(strCompare(status, "fwrite")) {tokenType = TOKEN_FWRITE; return;}
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;

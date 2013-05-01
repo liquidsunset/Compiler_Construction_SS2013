@@ -437,7 +437,7 @@ int fetch() {
 		}
 	}
 
-	printf("(R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
+	printf(" (R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
 	reg[0] = 0; // keep it zero
 	return 1; // continue
 }
@@ -447,6 +447,6 @@ int main() {
 	load("test/gcd.bin");
     //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
 	while(fetch());
-    printf("%d",mem[15]);
+    printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
 	return 0;
 }

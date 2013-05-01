@@ -205,65 +205,58 @@ int fetch() {
 			reg[a] = reg[b] + c;
 			pc = pc + 4;
 		}
-
-		if(op == TARGET_SUBI)
+		else if(op == TARGET_SUBI)
 		{
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
-
-		if(op == TARGET_MULI)
+		else if(op == TARGET_MULI)
 		{
 			reg[a] = reg[b] * c;
 			pc = pc + 4;
 		}
-
-		if(op == TARGET_DIVI)
+		else if(op == TARGET_DIVI)
 		{
 			reg[a] = reg[b] / c;
 			pc = pc + 4;
 		}
-
-		if(op == TARGET_MODI)
+		else if(op == TARGET_MODI)
 		{
 			reg[a] = reg[b] % c;
 			pc = pc + 4;
 		}
-
-		if(op == TARGET_CMPI)
+		else if(op == TARGET_CMPI)
 		{
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
-
 		// F1 memory instructions
-		if(op == TARGET_LW)
+		else if(op == TARGET_LW)
 		{
 			printf("%d LW %d, %d, %d", pc, a, b, c);
 			reg[a] = mem[(reg[b]+c)/4];
 			pc = pc + 4;
 		}
-		if(op == TARGET_SW)
+		else if(op == TARGET_SW)
 		{
 			printf("%d SW %d, %d, %d", pc, a, b, c);
 			mem[(reg[b]+c)/4] = reg[a];
 			pc = pc + 4;
 		}
-		if(op == TARGET_POP)
+		else if(op == TARGET_POP)
 		{
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
 		}
-		if(op == TARGET_PSH)
+		else if(op == TARGET_PSH)
 		{
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;
 		}
-
 		// F1 conditional branching
-		if(op == TARGET_BEQ)
+		else if(op == TARGET_BEQ)
 		{
 			printf("%d BEQ %d, %d, %d", pc, a, b, c);
 			if(reg[a] == 0)
@@ -275,7 +268,7 @@ int fetch() {
 				pc = pc + 4;
 			}
 		}
-		if(op == TARGET_BGE)
+		else if(op == TARGET_BGE)
 		{
 			if(reg[a] >= 0)
 			{
@@ -286,7 +279,7 @@ int fetch() {
 				pc = pc + 4;
 			}
 		}
-		if(op == TARGET_BGT)
+		else if(op == TARGET_BGT)
 		{
 			if(reg[a] > 0)
 			{
@@ -297,7 +290,7 @@ int fetch() {
 				pc = pc + 4;
 			}
 		}
-		if(op == TARGET_BLE)
+		else if(op == TARGET_BLE)
 		{
 			if(reg[a] <= 0)
 			{
@@ -308,7 +301,7 @@ int fetch() {
 				pc = pc + 4;
 			}
 		}
-		if(op == TARGET_BLT)
+		else if(op == TARGET_BLT)
 		{
 			printf("%d BLT %d, %d, %d", pc, a, b, c);
 			if(reg[a] < 0)
@@ -320,7 +313,7 @@ int fetch() {
 				pc = pc + 4;
 			}
 		}
-		if(op == TARGET_BNE)
+		else if(op == TARGET_BNE)
 		{
 			if(reg[a] != 0)
 			{
@@ -331,46 +324,45 @@ int fetch() {
 				pc = pc + 4;
 			}
 		}
-
 		// F1 unconditional branching
-		if(op == TARGET_BR)
+		else if(op == TARGET_BR)
 		{
 			pc = pc + c*4;
 		}
-		if(op == TARGET_BSR)
+		else if(op == TARGET_BSR)
 		{
 			reg[31] = pc + 4;
 			pc = pc + c*4;
 		}
 
 		// F2 register addressing
-		if(op == TARGET_ADD)
+		else if(op == TARGET_ADD)
 		{
 			reg[a] = reg[b] + reg[c];
 			pc = pc + 4;
 		}
-		if(op == TARGET_SUB)
+		else if(op == TARGET_SUB)
 		{
 			printf("%d SUB %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - reg[c];
 			pc = pc + 4;
 		}
-		if(op == TARGET_MUL)
+		else if(op == TARGET_MUL)
 		{
 			reg[a] = reg[b] * reg[c];
 			pc = pc + 4;
 		}
-		if(op == TARGET_DIV)
+		else if(op == TARGET_DIV)
 		{
 			reg[a] = reg[b] / reg[c];
 			pc = pc + 4;
 		}
-		if(op == TARGET_MOD)
+		else if(op == TARGET_MOD)
 		{
 			reg[a] = reg[b] % reg[c];
 			pc = pc + 4;
 		}
-		if(op == TARGET_CMP)
+		else if(op == TARGET_CMP)
 		{
 			printf("%d CMP %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - reg[c];
@@ -378,13 +370,13 @@ int fetch() {
 		}
 
 		// F2 return from subroutine
-		if(op == TARGET_RET)
+		else if(op == TARGET_RET)
 		{
 			pc = reg[c];
 		}
 
 		// F2 IO
-		if(op == TARGET_FLO)
+		else if(op == TARGET_FLO)
 		{
 			int mode = O_RDONLY;
 			if(mem[reg[b]] == 'w')
@@ -395,19 +387,19 @@ int fetch() {
 
 			pc = pc + 4;
 		}
-		if(op == TARGET_FLC)
+		else if(op == TARGET_FLC)
 		{
 			close(reg[c]);
 			pc = pc + 4;
 		}
-		if(op == TARGET_RDC)
+		else if(op == TARGET_RDC)
 		{
 			char buf;
 			read(reg[a], &buf, 1);
 			reg[c] = buf;
 			pc = pc + 4;
 		}
-		if(op == TARGET_WRC)
+		else if(op == TARGET_WRC)
 		{
 			const char buf = (char)reg[c];
 			write(reg[a], &buf, 1);
@@ -415,9 +407,7 @@ int fetch() {
 		}
 
 	}
-
-
-	if(isF3(op))
+	else if(isF3(op))
 	{
 		decodeF3();
 

@@ -169,7 +169,7 @@ void load(char * filename) {
 
 		while(i < MEMSIZE)
 		{
-			char c0, c1, c2, c3;
+			unsigned char c0, c1, c2, c3;
 			c0 = fgetc(fp);
 			c1 = fgetc(fp);
 			c2 = fgetc(fp);
@@ -415,12 +415,12 @@ int fetch() {
 		if(op == TARGET_JSR)
 		{
 			reg[31] = pc + 4;
-			pc = c*4;
+			pc = c;
 		}
 		if(op == TARGET_J)
 		{
 			printf("%d J %d", pc, c);
-			pc = c*4;
+			pc = c;
 		}
 	}
 

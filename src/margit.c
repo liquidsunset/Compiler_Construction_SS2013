@@ -168,9 +168,14 @@ void load(char * filename) {
 			mem[j] = TARGET_NOP;
 		}
 
-		while(((temp = fgetc(fp)) != EOF) && (i < MEMSIZE))
+		while(i < MEMSIZE)
 		{
-			mem[i] = (char) temp;
+			char c0, c1, c2, c3;
+			c0 = fgetc(fp);
+			c1 = fgetc(fp);
+			c2 = fgetc(fp);
+			c3 = fgetc(fp);
+			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
 			i++;
 		}
 		

@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define MEMSIZE 150000
+#define MEMSIZE 1001
 
 // Virtual Registers
 int reg[32];
@@ -188,12 +188,6 @@ int fetch() {
 	}
 
 	instruction = mem[pc+0];
-	instruction = instruction << 8;
-	instruction = instruction | mem[pc+1];
-	instruction = instruction << 8;
-	instruction = instruction | mem[pc+2];
-	instruction = instruction << 8;
-	instruction = instruction | mem[pc+3];
 
 	op = (instruction >> 26) & 63;
 
@@ -432,6 +426,7 @@ int fetch() {
 int main() {
 	init();
 	load("test/gcd.bin");
+    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
 	while(fetch());
 	return 0;
 }

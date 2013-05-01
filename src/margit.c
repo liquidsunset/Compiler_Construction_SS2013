@@ -5,7 +5,7 @@
 #define MEMSIZE 1001
 
 // Virtual Registers
-int reg[32];
+unsigned int reg[32];
 
 // Virtual Memory of 4*150kB
 unsigned int mem[MEMSIZE];

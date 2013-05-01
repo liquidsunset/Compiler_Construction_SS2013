@@ -195,6 +195,11 @@ int fetch() {
 
 	op = (instruction >> 26) & 63;
 
+	if(op == TARGET_NOP)
+	{
+		return 0;
+	}
+
 	if(isF1(op) || isF2(op))
 	{
 		decode();

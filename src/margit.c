@@ -8,7 +8,7 @@
 int reg[32];
 
 // Virtual Memory of 4*150kB
-unsigned char mem[MEMSIZE];
+unsigned int mem[MEMSIZE];
 
 // Instruction register
 int ir;
@@ -169,12 +169,12 @@ void load(char * filename) {
 
 		while(i < MEMSIZE)
 		{
-			// char c0, c1, c2, c3;
-			// c0 = fgetc(fp);
-			// c1 = fgetc(fp);
-			// c2 = fgetc(fp);
-			// c3 = fgetc(fp);
-			mem[i] =  (char) fgetc(fp); //(c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
+			char c0, c1, c2, c3;
+			c0 = fgetc(fp);
+			c1 = fgetc(fp);
+			c2 = fgetc(fp);
+			c3 = fgetc(fp);
+			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
 			i++;
 		}
 		
@@ -191,7 +191,7 @@ int fetch() {
 		return 0;
 	}
 
-	instruction = (mem[pc+0] << 24) | (mem[pc+1] << 16) | (mem[pc+2] << 8) | mem[pc+3];
+	instruction = mem[pc/4]; //(mem[pc+0] << 24) | (mem[pc+1] << 16) | (mem[pc+2] << 8) | mem[pc+3];
 
 	op = (instruction >> 26) & 63;
 

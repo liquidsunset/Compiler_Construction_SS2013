@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define MEMSIZE 150000
 
@@ -95,9 +97,9 @@ int isF3(int opcode) {
 // Set globals
 void init() {
 
-	TARGET_NOP;
+	TARGET_NOP = 0;
 
-	// F1 (0-21)
+	// F1 (1-21)
 	TARGET_ADDI;
 	TARGET_SUBI;
 	TARGET_MULI;
@@ -401,22 +403,31 @@ void fetch() {
 		// F2 IO
 		if(op == TARGET_FLO)
 		{
-			// TODO: open file
+			int mode = O_RDONLY;
+			if(mem[reg[b]] == 'w')
+			{
+				mode = O_WRONLY;
+			}
+			reg[c] = open((char *) mem[reg[a]], mode);
+
 			pc = pc + 4;
 		}
 		if(op == TARGET_FLC)
 		{
-			// TODO: close file
+			close(reg[c]);
 			pc = pc + 4;
 		}
 		if(op == TARGET_RDC)
 		{
-			// TODO: read char
+			char buf;
+			read(reg[a], &buf, 1);
+			reg[c] = buf;
 			pc = pc + 4;
 		}
 		if(op == TARGET_WRC)
 		{
-			// TODO: close file
+			const char buf = (char)reg[c];
+			write(reg[a], &buf, 1);
 			pc = pc + 4;
 		}
 
@@ -440,6 +451,7 @@ void fetch() {
 
 
 int main() {
+	init();
 	load("test/main.dlx");
 	return 0;
 }

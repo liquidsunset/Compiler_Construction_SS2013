@@ -5,7 +5,7 @@
 #define MEMSIZE 1001
 
 // Virtual Registers
-unsigned int reg[32];
+int reg[32];
 
 // Virtual Memory of 4*150kB
 unsigned int mem[MEMSIZE];
@@ -155,7 +155,6 @@ void decodeF3() {
 // Loads code into memory and initializes registers
 void load(char * filename) {
 	FILE *fp;
-	int temp;
 	int i = 0;
 	int j;
 

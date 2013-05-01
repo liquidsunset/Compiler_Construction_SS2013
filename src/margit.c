@@ -1,9 +1,12 @@
+#include <stdio.h>
+
+#define MEMSIZE 150000
 
 // Virtual Registers
 int reg[32];
 
 // Virtual Memory of 150kB
-char mem[150000];
+char mem[MEMSIZE];
 
 // Instruction register
 int ir;
@@ -18,7 +21,7 @@ int b;
 int c;
 
 // Globals
-
+int TARGET_NOP;
 int TARGET_ADD;
 int TARGET_ADDI;
 int TARGET_AND;
@@ -91,6 +94,8 @@ int isF3(int opcode) {
 
 // Set globals
 void init() {
+
+	TARGET_NOP;
 
 	// F1 (0-21)
 	TARGET_ADDI;
@@ -173,12 +178,29 @@ void decodeF3() {
 }
 
 // Loads code into memory and initializes registers
-void load() {
-	// TODO: read all content of file
+void load(char * filename) {
+	FILE *fp;
+	int temp;
+	int i = 0;
+	int j;
 
-	// TODO: store in mem
+	fp = fopen(filename, "r");
 
-	// TODO: set pc to first mem address
+	if(fp != NULL)
+	{
+		for(j = 0; j < MEMSIZE; j++)
+		{
+			mem[j] = TARGET_NOP;
+		}
+
+		while((temp = fgetc(fp)) && i < MEMSIZE)
+		{
+			mem[i] = (char) temp;
+			i++;
+		}
+		
+		pc = 0;
+	}
 }
 
 
@@ -418,5 +440,6 @@ void fetch() {
 
 
 int main() {
+	load("test/main.dlx");
 	return 0;
 }

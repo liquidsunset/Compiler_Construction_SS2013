@@ -434,5 +434,6 @@ int main() {
 	load("test/gcd.bin");
     //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
 	while(fetch());
+    printf("%d",mem[15]);
 	return 0;
 }

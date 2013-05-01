@@ -439,6 +439,10 @@ void function_definition() {
         type();
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
+            if(tokenType == TOKEN_SEMICOLON){
+                getNextToken();
+                return;
+            }
             if(tokenType == TOKEN_LRB) {
                 getNextToken();
                 while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
@@ -520,12 +524,14 @@ void start() {
         {
             getNextToken();
         }
+        
     }
 }
 
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
+
     openFile("test/invalid_parser.c");
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/invalid_parser.c");
     start();

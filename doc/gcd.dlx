@@ -1,0 +1,33 @@
+main: LW R1,16
+	  LW R2, 8
+
+loop: CMP R3, R1, R2
+	 BEQZ R3, exit 
+	 CMP R4, R1, R2
+	 BLT R4, calc2
+
+calc1: SUB R1, R1, R2
+	  J loop
+
+calc2: SUB R2, R2, R1
+	  J loop
+
+exit: SW 20, R1
+
+------------------
+
+00: J 12
+04: a=105
+08: b=492
+12: LW 1, 0, 4
+16: LW 2, 0, 8
+20: CMP 3, 1, 2
+24: BEQ 3, 0, 7
+28: CMP 4,1,2
+32: BLT 4, 0, 3
+36: SUB 1,1,2
+40: J 20
+44: SUB 2,2,1
+48: J 20
+52: SW 1, 0, 60
+56: J 1000

@@ -174,6 +174,7 @@ void load(char * filename) {
 			c1 = fgetc(fp);
 			c2 = fgetc(fp);
 			c3 = fgetc(fp);
+			if(c0 == EOF) {break;}
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
 			i++;
 		}

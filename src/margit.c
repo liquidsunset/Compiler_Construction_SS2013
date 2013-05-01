@@ -419,11 +419,11 @@ int fetch() {
 		if(op == TARGET_JSR)
 		{
 			reg[31] = pc + 4;
-			pc = c;
+			pc = c/4;
 		}
 		if(op == TARGET_J)
 		{
-			pc = c;
+			pc = c/4;
 		}
 	}
 

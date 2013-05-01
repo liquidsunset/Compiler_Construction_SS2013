@@ -20,6 +20,10 @@ static int TOKEN_ELSE;
 static int TOKEN_RETURN;
 static int TOKEN_STRUCT;
 static int TOKEN_STATIC;
+static int TOKEN_FOPEN;
+static int TOKEN_FCLOSE;
+static int TOKEN_FREAD;
+static int TOKEN_FWRITE;
 
 //Identififier
 static int TOKEN_IDENTIFIER;
@@ -87,6 +91,10 @@ void initTokens(){
     TOKEN_RETURN = 8;
     TOKEN_STRUCT = 9;
     TOKEN_STATIC = 10;
+    TOKEN_FOPEN = 11;
+    TOKEN_FCLOSE = 12;
+    TOKEN_FREAD = 13;
+    TOKEN_FWRITE = 14;
     
     TOKEN_IDENTIFIER = 100;
     

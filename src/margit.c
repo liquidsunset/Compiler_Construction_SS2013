@@ -169,7 +169,7 @@ void load(char * filename) {
 
 		while(i < MEMSIZE)
 		{
-			char c0, c1, c2, c3;
+			unsigned char c0, c1, c2, c3;
 			c0 = fgetc(fp);
 			c1 = fgetc(fp);
 			c2 = fgetc(fp);
@@ -424,7 +424,7 @@ int fetch() {
 		}
 	}
 
-	printf("\n");
+	printf("(R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
 	reg[0] = 0; // keep it zero
 	return 1; // continue
 }

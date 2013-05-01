@@ -169,12 +169,19 @@ void load(char * filename) {
 
 		while(i < MEMSIZE)
 		{
+			unsigned int temp;
 			unsigned char c0, c1, c2, c3;
-			c0 = fgetc(fp);
+			temp = fgetc(fp);
+			if(temp == EOF)
+			{
+				break;
+			}
+
+			c0 = (char) temp;
 			c1 = fgetc(fp);
 			c2 = fgetc(fp);
 			c3 = fgetc(fp);
-			if(c0 == EOF) {break;}
+		
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
 			i++;
 		}

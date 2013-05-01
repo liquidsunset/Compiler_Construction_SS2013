@@ -239,11 +239,13 @@ int fetch() {
 		// F1 memory instructions
 		if(op == TARGET_LW)
 		{
+			printf("%d LW %d, %d, %d", pc, a, b, c);
 			reg[a] = mem[(reg[b]+c)/4];
 			pc = pc + 4;
 		}
 		if(op == TARGET_SW)
 		{
+			printf("%d SW %d, %d, %d", pc, a, b, c);
 			mem[(reg[b]+c)/4] = reg[a];
 			pc = pc + 4;
 		}
@@ -263,6 +265,7 @@ int fetch() {
 		// F1 conditional branching
 		if(op == TARGET_BEQ)
 		{
+			printf("%d BEQ %d, %d, %d", pc, a, b, c);
 			if(reg[a] == 0)
 			{
 				pc = pc + c * 4;
@@ -307,6 +310,7 @@ int fetch() {
 		}
 		if(op == TARGET_BLT)
 		{
+			printf("%d BLT %d, %d, %d", pc, a, b, c);
 			if(reg[a] < 0)
 			{
 				pc = pc + c * 4;
@@ -347,6 +351,7 @@ int fetch() {
 		}
 		if(op == TARGET_SUB)
 		{
+			printf("%d SUB %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - reg[c];
 			pc = pc + 4;
 		}
@@ -367,6 +372,7 @@ int fetch() {
 		}
 		if(op == TARGET_CMP)
 		{
+			printf("%d CMP %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - reg[c];
 			pc = pc + 4;
 		}
@@ -423,10 +429,12 @@ int fetch() {
 		}
 		if(op == TARGET_J)
 		{
+			printf("%d J %d", pc, c);
 			pc = c;
 		}
 	}
 
+	printf("\n");
 	reg[0] = 0; // keep it zero
 	return 1; // continue
 }

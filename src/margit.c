@@ -178,7 +178,13 @@ void load(char * filename) {
 
 
 // gets next instruction
-void fetch() {
+int fetch() {
+
+	if(pc >= MEMSIZE)
+	{
+		return 0;
+	}
+
 	instruction = mem[pc+0];
 	instruction = instruction << 8;
 	instruction = instruction | mem[pc+1];
@@ -415,8 +421,10 @@ void fetch() {
 			reg[31] = pc + 4;
 			pc = c;
 		}
-		return;
 	}
+
+	reg[0] = 0; // keep it zero
+	return 1; // continue
 }
 
 
@@ -424,5 +432,6 @@ void fetch() {
 int main() {
 	init();
 	load("test/main.dlx");
+	while(fetch());
 	return 0;
 }

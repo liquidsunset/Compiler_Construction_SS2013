@@ -24,6 +24,8 @@ static int TOKEN_FOPEN;
 static int TOKEN_FCLOSE;
 static int TOKEN_FREAD;
 static int TOKEN_FWRITE;
+static int TOKEN_MALLOC;
+static int TOKEN_SIZEOF;
 
 //Identififier
 static int TOKEN_IDENTIFIER;
@@ -60,6 +62,7 @@ static int TOKEN_UNEQUAL;
 static int TOKEN_INCREMENT;
 static int TOKEN_DECREMENT;
 static int TOKEN_NOT;
+static int TOKEN_ACCESS;
 
 //Punktuatoren
 
@@ -95,6 +98,8 @@ void initTokens(){
     TOKEN_FCLOSE = 12;
     TOKEN_FREAD = 13;
     TOKEN_FWRITE = 14;
+    TOKEN_MALLOC = 15;
+    TOKEN_SIZEOF = 16;
     
     TOKEN_IDENTIFIER = 100;
     
@@ -127,6 +132,7 @@ void initTokens(){
     TOKEN_INCREMENT = 420;
     TOKEN_DECREMENT = 421;
     TOKEN_NOT = 422;
+    TOKEN_ACCESS = 423;
     
     TOKEN_LSB = 500;
     TOKEN_RSB = 501;

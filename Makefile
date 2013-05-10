@@ -1,4 +1,6 @@
-default: margit.o
+default: parser
+
+margit: margit.o
 	mkdir -p bin/; gcc -o bin/margit bin/margit.o; ./bin/margit
 
 parser: parser.o

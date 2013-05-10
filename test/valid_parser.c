@@ -38,7 +38,8 @@ void mark(char message[1024])
 }
 
 int isIn(int tokenType, int rule){
-    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB)){return 1;}
+    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB || tokenType == TOKEN_FCLOSE || tokenType ==
+        TOKEN_FOPEN)){return 1;}
     if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
     if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
     if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID)){return 1;}
@@ -97,19 +98,145 @@ void factor() {
         }
         return;
     }
-    // if(tokenType == TOKEN_LSB) {
-    //     getNextToken();
-    //     expression();
-    //     if(tokenType == TOKEN_RSB) {
-    //         getNextToken();
-    //     }
-    //     else
-    //     {
-    //         mark(") missing");
-    //         getNextToken();
-    //     }
-    //     return;
-    // }
+    if(tokenType == TOKEN_FOPEN)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_COMMA)
+                {
+                    getNextToken();
+                    if(tokenType == TOKEN_STRING_LITERAL)
+                    {
+                        getNextToken();
+                        if(tokenType == TOKEN_RRB)
+                        {
+                            getNextToken();
+                            return;
+                        }
+                        else
+                        {
+                            mark(") expected (factor)");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        mark("File mode expected (factor)");
+                        return;
+                    }
+                }
+                else
+                {
+                    mark("Comma expected");
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+    if(tokenType == TOKEN_FCLOSE)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+    if(tokenType == TOKEN_FGETC)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+
+    if(tokenType == TOKEN_FPUTC)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+    
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
@@ -192,7 +319,12 @@ void simple_expression()
 
 void expression()
 {
+    if(tokenType == TOKEN_NOT) {
+        getNextToken();
+    }
+
     simple_expression();
+    
     if(tokenType == TOKEN_EQUAL)
     {
         getNextToken();
@@ -535,8 +667,8 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/valid_parser.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
+    //openFile("test/valid_parser.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

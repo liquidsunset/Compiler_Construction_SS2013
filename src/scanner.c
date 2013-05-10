@@ -244,12 +244,6 @@ void openFile(char path[1024]){
     lin = 1;
     col = 1;
     fp = fopen(path,"r");
-    if(fp == NULL)
-    {
-        tokenType = TOKEN_EOF;
-        fclose(fp);
-    }
-    
 }
 
 //Returns the next Character from the file
@@ -351,7 +345,6 @@ void findToken(char status[1024],int len){
         }
     } // if(len == 2)
     else{
-        if(strCompare(status, "NULL")){tokenType = TOKEN_NULL; return;}
         if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
         if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
         if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
@@ -364,8 +357,8 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
         if(strCompare(status, "fopen")) {tokenType = TOKEN_FOPEN; return;}
         if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
-        if(strCompare(status, "fread")) {tokenType = TOKEN_FREAD; return;}
-        if(strCompare(status, "fwrite")) {tokenType = TOKEN_FWRITE; return;}
+        if(strCompare(status, "fgetc")) {tokenType = TOKEN_FGETC; return;}
+        if(strCompare(status, "fputc")) {tokenType = TOKEN_FPUTC; return;}
         if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
         if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
         if(isLetter(status[0]))

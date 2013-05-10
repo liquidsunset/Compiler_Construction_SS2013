@@ -103,6 +103,43 @@ void factor() {
         }
         return;
     }
+    if(tokenType == TOKEN_SIZEOF)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            
+            if(isIn(tokenType, FIRST_TYPE))
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+            }
+            if(tokenType == TOKEN_STRUCT)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_IDENTIFIER)
+                {
+                    getNextToken();
+                    if(tokenType == TOKEN_RRB)
+                    {
+                        getNextToken();
+                        return;
+                    }
+                }
+            }
+
+            error("type expected (sizeof)")
+        }
+        else
+        {
+            mark("( expected (sizeof)");
+        }
+    }
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();

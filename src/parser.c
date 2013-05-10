@@ -227,7 +227,7 @@ void factor() {
             mark("( expected (factor)");
         }
     }
-    
+
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
@@ -439,6 +439,38 @@ void variable_declaration() {
     if(tokenType == TOKEN_STATIC) {
         getNextToken();
     }
+    if(tokenType == TOKEN_STRUCT)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_IDENTIFIER)
+        {
+            getNextToken();
+
+            if(tokenType == TOKEN_MULT) // reference
+            {
+                getNextToken();
+            }
+
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_SEMICOLON)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark("; expected (variable_declaration)");
+                }
+            }
+        }
+        else
+        {
+            error("identifier expected (variable_declaration)");
+        }
+    }
+
     if(isIn(tokenType, FIRST_TYPE)) {
         type();
         if(tokenType == TOKEN_IDENTIFIER) {
@@ -603,7 +635,61 @@ void function_definition() {
     } // isIn(token, FIRST_TYPE)
 }
 
+void struct_def() {
+    if(tokenType == TOKEN_STRUCT)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_IDENTIFIER)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_LCB)
+            {
+                while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+                {
+                    variable_declaration();
+                    if(tokenType == TOKEN_SEMICOLON)
+                    {
+                        getNextToken();
+                    }
+                    else
+                    {
+                        mark("; expected (struct)");
+                    }
+                }
+                if(tokenType == TOKEN_RCB)
+                {
+                    getNextToken();
+                    if(tokenType == TOKEN_SEMICOLON)
+                    {
+                        getNextToken();
+                    }
+                    else {
+                        mark("; expected (struct)");
+                    }
+                }
+                else
+                {
+                    mark("} expected (struct)");
+                }
+            }
+            else
+            {
+                error("{ expected (struct)");
+            }
+        }
+        else
+        {
+            error("identifier expected (struct)");
+        }
+    }
+}
+
 void top_declaration() {
+    if(tokenType == TOKEN_STRUCT) {
+        struct_def();
+        return;
+    }
+
     if (isIn(tokenType, FIRST_FUNCTION_DEFINITION)) {
         function_definition();
         //getNextToken();

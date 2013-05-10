@@ -82,6 +82,13 @@ static int TOKEN_POINT;
 static int errorCount;
 static int warningCount;
 
+// String literals:
+static int isInString;
+static int isInChar;
+
+static int currentChar;
+static int nextChar;
+
 void initTokens(){
     TOKEN_NULL = 0;
     TOKEN_VOID = 1;
@@ -156,4 +163,10 @@ void initTokens(){
 
     errorCount = 0;
     warningCount = 0;
+    
+    isInString = 0;
+    isInChar = 0;
+    
+    currentChar = -1;
+    nextChar = -1;
 }

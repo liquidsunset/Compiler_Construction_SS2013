@@ -138,9 +138,7 @@ int characterClass(char c)
 // 	1 if it is terminated
 int peek(int current, int next)
 {
-    // String literals:
-    static int isInString = 0;
-    static int isInChar = 0;
+
 
     if(current == '\"' && !isInChar && !isInString) // add the starting "
     {
@@ -284,7 +282,8 @@ int readNextCharacter(){
 void findToken(char status[1024],int len){
     if(len == 1)
     {
-        char tokenChar = status[0];
+        char tokenChar;
+        tokenChar = status[0];
         if(tokenChar == '+'){tokenType = TOKEN_PLUS; return;}
         if(tokenChar == '-'){tokenType = TOKEN_MINUS; return;}
         if(tokenChar == '*'){tokenType = TOKEN_MULT; return;}
@@ -403,8 +402,7 @@ void getNextToken()
     if(tokenType == TOKEN_EOF){
         return;
     }
-    static int currentChar = -1;
-    static int nextChar = -1;
+
     char status[1024];
     int len;
     len = 0;

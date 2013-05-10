@@ -52,6 +52,11 @@ int isIn(int tokenType, int rule){
 // -------------------------- EBNF --------------------------------------------
 
 void factor() {
+    if(tokenType == TOKEN_MULT) // reference
+    {
+        getNextToken();
+    }
+    
     if(tokenType == TOKEN_IDENTIFIER) {
         getNextToken();
         if(tokenType == TOKEN_LRB) // function call

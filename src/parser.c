@@ -192,7 +192,12 @@ void simple_expression()
 
 void expression()
 {
+    if(tokenType == TOKEN_NOT) {
+        getNextToken();
+    }
+
     simple_expression();
+    
     if(tokenType == TOKEN_EQUAL)
     {
         getNextToken();

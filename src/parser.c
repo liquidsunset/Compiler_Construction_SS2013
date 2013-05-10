@@ -140,6 +140,34 @@ void factor() {
             mark("( expected (sizeof)");
         }
     }
+
+    if(tokenType == TOKEN_MALLOC)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            
+            if(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                expression();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+            }
+            else
+            {
+                error("expression expected (malloc)");
+            }
+        }
+        else
+        {
+            mark("( expected (malloc)");
+        }
+    }
+
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();

@@ -38,7 +38,8 @@ void mark(char message[1024])
 }
 
 int isIn(int tokenType, int rule){
-    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB)){return 1;}
+    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB || tokenType == TOKEN_FCLOSE || tokenType ==
+        TOKEN_FOPEN)){return 1;}
     if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
     if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
     if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID)){return 1;}
@@ -100,30 +101,38 @@ void factor() {
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();
-        if(tokenType = TOKEN_LRB)
+        if(tokenType == TOKEN_LRB)
         {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
                 getNextToken();
-                if(tokenType == TOKEN_CONSTCHAR)
+                if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
-                    if(tokenType == TOKEN_RRB)
+                    if(tokenType == TOKEN_STRING_LITERAL)
                     {
                         getNextToken();
-                        return;
+                        if(tokenType == TOKEN_RRB)
+                        {
+                            getNextToken();
+                            return;
+                        }
+                        else
+                        {
+                            mark(") expected (factor)");
+                            return;
+                        }
                     }
                     else
                     {
-                        mark(") expected (factor)");
+                        mark("File mode expected (factor)");
                         return;
                     }
                 }
                 else
                 {
-                    mark("File mode expected (factor)");
-                    return;
+                    mark("Comma expected");
                 }
             }
             else
@@ -139,7 +148,7 @@ void factor() {
     if(tokenType == TOKEN_FCLOSE)
     {
         getNextToken();
-        if(tokenType = TOKEN_LRB)
+        if(tokenType == TOKEN_LRB)
         {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
@@ -169,7 +178,7 @@ void factor() {
     if(tokenType == TOKEN_FGETC)
     {
         getNextToken();
-        if(tokenType = TOKEN_LRB)
+        if(tokenType == TOKEN_LRB)
         {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
@@ -200,7 +209,7 @@ void factor() {
     if(tokenType == TOKEN_FPUTC)
     {
         getNextToken();
-        if(tokenType = TOKEN_LRB)
+        if(tokenType == TOKEN_LRB)
         {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
@@ -652,7 +661,7 @@ int main(){
     printf("Phoenix: Parser\n");
     initTokens();
     openFile("test/invalid_parser.c");
-    //sopenFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
     errorCount = 0;

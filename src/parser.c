@@ -101,6 +101,31 @@ void factor() {
                 getNextToken();
             }
         }
+        if(tokenType == TOKEN_ACCESS) // record
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_LSB)
+                {
+                    getNextToken();
+                    expression();
+                    if(tokenType == TOKEN_RSB)
+                    {
+                        getNextToken();
+                    }
+                    else
+                    {
+                        error("] expected (record access)");
+                    }
+                }
+            }
+            else
+            {
+                error("identifier expected (record access)");
+            }
+        }
         return;
     }
     if(tokenType == TOKEN_SIZEOF)
@@ -138,6 +163,7 @@ void factor() {
         else
         {
             mark("( expected (sizeof)");
+            getNextToken();
         }
     }
 
@@ -165,6 +191,7 @@ void factor() {
         else
         {
             mark("( expected (malloc)");
+            getNextToken();
         }
     }
 
@@ -191,28 +218,33 @@ void factor() {
                         else
                         {
                             mark(") expected (factor)");
+                            getNextToken();
                             return;
                         }
                     }
                     else
                     {
                         mark("File mode expected (factor)");
+                        getNextToken();
                         return;
                     }
                 }
                 else
                 {
                     mark("Comma expected");
+                    getNextToken();
                 }
             }
             else
             {
                 mark("Identifier expected (factor)");
+                getNextToken();
             }
         }
         else
         {
             mark("( expected (factor)");
+            getNextToken();
         }
     }
     if(tokenType == TOKEN_FCLOSE)
@@ -232,17 +264,20 @@ void factor() {
                 else
                 {
                     mark(") expected (factor)");
+                    getNextToken();
                     return;
                 }
             }
             else
             {
                 mark("Identifier expected (factor)");
+                getNextToken();
             }
         }
         else
         {
             mark("( expected (factor)");
+            getNextToken();
         }
     }
     if(tokenType == TOKEN_FGETC)
@@ -262,17 +297,20 @@ void factor() {
                 else
                 {
                     mark(") expected (factor)");
+                    getNextToken();
                     return;
                 }
             }
             else
             {
                 mark("Identifier expected (factor)");
+                getNextToken();
             }
         }
         else
         {
             mark("( expected (factor)");
+            getNextToken();
         }
     }
 
@@ -293,17 +331,20 @@ void factor() {
                 else
                 {
                     mark(") expected (factor)");
+                    getNextToken();
                     return;
                 }
             }
             else
             {
                 mark("Identifier expected (factor)");
+                getNextToken();
             }
         }
         else
         {
             mark("( expected (factor)");
+            getNextToken();
         }
     }
 
@@ -503,7 +544,7 @@ void while_loop()
             }
             else
             {
-                    error(") after while is missing (while_loop)");
+                error(") after while is missing (while_loop)");
             }
         }
         else
@@ -730,6 +771,7 @@ void struct_def() {
                     else
                     {
                         mark("; expected (struct)");
+                        getNextToken();
                     }
                 }
                 if(tokenType == TOKEN_RCB)
@@ -741,11 +783,13 @@ void struct_def() {
                     }
                     else {
                         mark("; expected (struct)");
+                        getNextToken();
                     }
                 }
                 else
                 {
                     mark("} expected (struct)");
+                    getNextToken();
                 }
             }
             else

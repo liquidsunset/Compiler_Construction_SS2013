@@ -487,6 +487,11 @@ void variable_declaration() {
 
     if(isIn(tokenType, FIRST_TYPE)) {
         type();
+        if(tokenType == TOKEN_MULT) // reference
+        {
+            getNextToken();
+        }
+
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
             if(tokenType == TOKEN_LSB) // array

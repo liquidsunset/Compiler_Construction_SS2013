@@ -658,6 +658,7 @@ void struct_def() {
             getNextToken();
             if(tokenType == TOKEN_LCB)
             {
+                getNextToken();
                 while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
                 {
                     variable_declaration();
@@ -734,7 +735,7 @@ void start() {
     }
 
     while(tokenType != TOKEN_EOF) {
-        if(isIn(tokenType, FIRST_TYPE) || isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION))
+        if(tokenType == TOKEN_STRUCT || isIn(tokenType, FIRST_TYPE) || isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION))
         {
             top_declaration();
             //getchar();    
@@ -757,7 +758,7 @@ int main(){
     warningCount = 0;
     tokenType = -1;
     openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

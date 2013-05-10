@@ -745,18 +745,27 @@ void start() {
 
 int main(){
     printf("Phoenix: Parser\n");
-    initTokens();
-    openFile("test/invalid_parser.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
-    start();
-    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+    // initTokens();
+    // openFile("test/invalid_parser.c");
+    // //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
+    // start();
+    // printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+    // errorCount = 0;
+    // warningCount = 0;
+    // tokenType = -1;
+    // openFile("test/valid_parser.c");
+    // //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
+    // start();
+    // printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/valid_parser.c");
+    openFile("test/m4.c");
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+
 
     return 0;
 }

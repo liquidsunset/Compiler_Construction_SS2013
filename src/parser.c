@@ -133,7 +133,7 @@ void factor() {
                 }
             }
 
-            error("type expected (sizeof)")
+            error("type expected (sizeof)");
         }
         else
         {

@@ -5,17 +5,40 @@ void expression();
 
 void error(char message[1024])
 {
+    int niceLine;
+    int niceColumn;
+
+    niceLine = positionLine;
+    niceColumn = positionColumn;
+    if(niceColumn < 0)
+    {
+        niceLine = niceLine-1;
+    }
+
     errorCount = errorCount + 1;
-    printf("Error Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+
+    printf("Error Near Line %d: %s\n", niceLine, message);
 }
 
 void mark(char message[1024])
 {
-    printf("Warning Near Line %d, Col %d: %s", positionLine, positionColumn, message);
+    int niceLine;
+    int niceColumn;
+
+    niceLine = positionLine;
+    niceColumn = positionColumn;
+    if(niceColumn < 0)
+    {
+        niceLine = niceLine-1;
+    }
+    
+    warningCount = warningCount + 1;
+
+    printf("Warning Near Line %d, Col %d: %s\n", niceLine, niceColumn, message);
 }
 
 int isIn(int tokenType, int rule){
-    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL)){return 1;}
+    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB)){return 1;}
     if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
     if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
     if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID)){return 1;}
@@ -47,12 +70,11 @@ void factor() {
             }
             else
             {
-                mark(") missing");
+                mark(") missing (factor)");
                 getNextToken();
             }
-            return;
         }
-        if(tokenType == TOKEN_LSB)
+        if(tokenType == TOKEN_LSB) // array
         {
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
@@ -61,7 +83,7 @@ void factor() {
             }
             else
             {
-                error("Expression for index expected");
+                error("Expression for index expected (factor)");
             }
             if(tokenType == TOKEN_RSB)
             {
@@ -69,11 +91,11 @@ void factor() {
             }
             else
             {
-                mark("] missing");
+                mark("] missing (factor)");
                 getNextToken();
             }
-            return;
         }
+        return;
     }
     // if(tokenType == TOKEN_LSB) {
     //     getNextToken();
@@ -99,7 +121,7 @@ void factor() {
         }
         else
         {
-            mark(") missing");
+            mark(") missing (factor)");
             getNextToken();
             return;
         }
@@ -119,7 +141,7 @@ void factor() {
         return;
     }
     
-    error("Factor expected");
+    error("Factor expected (factor)");
 }
 
 void type()
@@ -140,7 +162,7 @@ void type()
         return;
     }
 
-    error("Type expected");
+    error("Type expected (type)");
 }
 
 void term()
@@ -252,13 +274,13 @@ void if_else()
                 }
                 else
                 {
-                    error(") after if is missing");
+                    error(") after if is missing (if_else)");
                 }
             }
         }
         else
         {
-            error("( after if is missing");
+            error("( after if is missing (if_else)");
         }
     }
 }
@@ -279,12 +301,12 @@ void while_loop()
             }
             else
             {
-                    error(") after if is missing");
+                    error(") after while is missing (while_loop)");
             }
         }
         else
         {
-            error("( after while is missing");
+            error("( after while is missing (while_loop)");
         }   
 
     }
@@ -298,10 +320,31 @@ void variable_declaration() {
         type();
         if(tokenType == TOKEN_IDENTIFIER) {
             getNextToken();
+            if(tokenType == TOKEN_LSB) // array
+            {
+                getNextToken();
+                if(isIn(tokenType, FIRST_EXPRESSION))
+                {
+                    expression();
+                }
+                else
+                {
+                    error("Expression for index expected (variable_declaration)");
+                }
+                if(tokenType == TOKEN_RSB)
+                {
+                    getNextToken();
+                }
+                else
+                {
+                    mark("] missing (variable_declaration)");
+                    getNextToken();
+                }
+            }
         } // token = TOKEN_IDENTIFIER
         else
         {
-            error("Identifier missing");
+            error("Identifier missing (variable_declaration)");
         }
     } // token, FIRST_TYPE
 }
@@ -317,7 +360,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing");
+            mark("; missing (function_statement)");
             getNextToken();
         }
     }
@@ -342,7 +385,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing");
+            mark("; missing (function_statement)");
             getNextToken();
         }
     }
@@ -355,7 +398,7 @@ void function_statement()
         }
         else
         {
-            mark("; missing");
+            mark("; missing (function_statement)");
             getNextToken();
         }
     }
@@ -374,7 +417,7 @@ void function_body()
         }
         else
         {
-            mark("} missing");
+            mark("} missing (function_body)");
             getNextToken();
         }
     } // tokenType == TOKEN_LCB
@@ -387,7 +430,7 @@ void global_variable_declaration() {
     }
     else
     {
-        error("global variables must be static");
+        error("global variables must be static (global_variable_declaration)");
     }
 }
 
@@ -417,22 +460,22 @@ void function_definition() {
                         getNextToken();
                         return;
                     }
-                    error("expected { or ;");
+                    error("expected { or ; (function_definition)");
                      // token == '}'
                 } // token == ')'
                 else
                 {
-                    error(") missing");
+                    error(") missing (function_definition)");
                 }
             } // token == '('
             else
             {
-                error("( after function identifier expected");
+                error("( after function identifier expected (function_definition)");
             }
         } // token == TOKEN_IDENTIFIER
         else
         {
-            error("Identifier expected");
+            error("Identifier expected (function_definition)");
         }
     } // isIn(token, FIRST_TYPE)
 }
@@ -449,7 +492,7 @@ void top_declaration() {
         return;        
     }
 
-    error("Variable or function declaration expected");
+    error("Variable or function declaration expected (top_declaration)");
 }
 
 void start() {
@@ -463,29 +506,39 @@ void start() {
         }
         else
         {
-            error("Expected string literal");
+            error("Expected string literal (start)");
         }
     }
 
     while(tokenType != TOKEN_EOF) {
-        if(isIn(tokenType, FIRST_TYPE))
+        if(isIn(tokenType, FIRST_TYPE) || isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION))
         {
-            top_declaration();    
+            top_declaration();
+            //getchar();    
         }
+
         else
         {
             getNextToken();
         }
+        
     }
 }
 
 int main(){
     printf("Phoenix: Parser\n");
     initTokens();
-    openFile("src/parser.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/parser.c");
+    //openFile("test/invalid_parser.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
     start();
-    printf("The End\n");
+    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+    errorCount = 0;
+    warningCount = 0;
+    tokenType = -1;
+    openFile("test/valid_parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/valid_parser.c");
+    start();
+    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 
     return 0;
 }

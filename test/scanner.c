@@ -65,13 +65,15 @@ void strTrimQuotes(char a[1024], char b[1024])
 {
     int i;
     i = 0;
-
-    do 
-    {
+    
+    b[i] = a[i+1];
+    i = i +1;
+    
+    while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024){
         b[i] = a[i+1];
         i = i +1;
-    } while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024);
-
+    }
+    
     b[i-1] = 0;
 }
 
@@ -437,7 +439,7 @@ void getNextToken()
 
         // Support for line comments
         if(currentChar == '/' && nextChar == '/'){
-            while ((char) currentChar != '\n' && currentChar != EOF){
+            while (currentChar != '\n' && currentChar != EOF){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
             }
@@ -447,14 +449,21 @@ void getNextToken()
             int checkPeek;
             positionColumn = col-2; // as two characters are read already
             positionLine = lin;
-            do
-            {
+            
+            
+            checkPeek = peek(currentChar, nextChar);
+            len = len +1;
+            status[len - 1] = currentChar;
+            currentChar = nextChar;
+            nextChar = readNextCharacter();
+            
+            while (checkPeek == 0){
                 checkPeek = peek(currentChar, nextChar);
                 len = len +1;
                 status[len - 1] = currentChar;
                 currentChar = nextChar;
-                nextChar = readNextCharacter();                
-            } while (checkPeek == 0);
+                nextChar = readNextCharacter();
+            }
             
             status[len] = '\0';
             //Analize the token

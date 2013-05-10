@@ -2,16 +2,16 @@
 #include <stdio.h> // used for tests
 #include "globals.c"
 
-FILE *fp;
+static FILE *fp;
 
-int tokenType;
-int intValue;
-char stringValue[1024];
-int positionLine;
-int positionColumn;
+static int tokenType;
+static int intValue;
+static char stringValue[1024];
+static int positionLine;
+static int positionColumn;
 
-int lin;
-int col;
+static int lin;
+static int col;
 
 // ---------------------------- Tools -----------------------------------------
 

@@ -2,16 +2,16 @@
 //#include <stdio.h> // used for tests
 #include "globals.c"
 
-FILE *fp;
+static FILE *fp;
 
-int tokenType;
-int intValue;
-char stringValue[1024];
-int positionLine;
-int positionColumn;
+static int tokenType;
+static int intValue;
+static char stringValue[1024];
+static int positionLine;
+static int positionColumn;
 
-int lin;
-int col;
+static int lin;
+static int col;
 
 // ---------------------------- Tools -----------------------------------------
 
@@ -66,7 +66,7 @@ void strTrimQuotes(char a[1024], char b[1024])
     int i;
     i = 0;
 
-    do
+    do 
     {
         b[i] = a[i+1];
         i = i +1;
@@ -333,6 +333,8 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "||")){tokenType = TOKEN_OR; return;}
         if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
         if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
+        if(strCompare(status, "->")){tokenType = TOKEN_ACCESS; return;}
+        if(strCompare)
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;
@@ -362,6 +364,8 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
         if(strCompare(status, "fread")) {tokenType = TOKEN_FREAD; return;}
         if(strCompare(status, "fwrite")) {tokenType = TOKEN_FWRITE; return;}
+        if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
+        if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;

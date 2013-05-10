@@ -511,11 +511,12 @@ void start() {
     }
 
     while(tokenType != TOKEN_EOF) {
-        if(isIn(tokenType, FIRST_TYPE))
+        if(isIn(tokenType, FIRST_TYPE) || isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION))
         {
             top_declaration();
             //getchar();    
         }
+
         else
         {
             getNextToken();

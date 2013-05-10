@@ -97,19 +97,137 @@ void factor() {
         }
         return;
     }
-    // if(tokenType == TOKEN_LSB) {
-    //     getNextToken();
-    //     expression();
-    //     if(tokenType == TOKEN_RSB) {
-    //         getNextToken();
-    //     }
-    //     else
-    //     {
-    //         mark(") missing");
-    //         getNextToken();
-    //     }
-    //     return;
-    // }
+    if(tokenType == TOKEN_FOPEN)
+    {
+        getNextToken();
+        if(tokenType = TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_CONSTCHAR)
+                {
+                    getNextToken();
+                    if(tokenType == TOKEN_RRB)
+                    {
+                        getNextToken();
+                        return;
+                    }
+                    else
+                    {
+                        mark(") expected (factor)");
+                        return;
+                    }
+                }
+                else
+                {
+                    mark("File mode expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+    if(tokenType == TOKEN_FCLOSE)
+    {
+        getNextToken();
+        if(tokenType = TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+    if(tokenType == TOKEN_FGETC)
+    {
+        getNextToken();
+        if(tokenType = TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+
+    if(tokenType == TOKEN_FPUTC)
+    {
+        getNextToken();
+        if(tokenType = TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    return;
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+        }
+    }
+    
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();

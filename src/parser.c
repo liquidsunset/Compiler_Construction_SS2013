@@ -17,7 +17,7 @@ void error(char message[1024])
 
     errorCount = errorCount + 1;
 
-    printf("Error Near Line %d, Col %d: %s\n", niceLine, niceColumn, message);
+    printf("Error Near Line %d: %s\n", niceLine, message);
 }
 
 void mark(char message[1024])

@@ -3,6 +3,17 @@
 void function_body();
 void expression();
 
+
+struct symboltable{
+    char name[1024];
+    struct type *tp;
+    struct symboltable *next;
+};
+
+struct type{
+    int form;
+};
+
 void error(char message[1024])
 {
     int niceLine;
@@ -853,6 +864,7 @@ void start() {
         
     }
 }
+
 
 int main(){
     printf("Phoenix: Parser\n");

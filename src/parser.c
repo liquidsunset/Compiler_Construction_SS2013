@@ -4,17 +4,30 @@ void function_body();
 void expression();
 
 
-struct symboltable{
-    char name[1024];
-    struct type *tp;
-    struct symboltable *next;
+struct object_t;
+
+struct type_t {
+    int form;
+    struct object_t *fields;
+    struct type_t *base;
 };
 
-struct type{
-    int form;
+struct object_t{
+    char *name;
+    int class;
+    struct type_t *type;
+    struct object_t *next;
 };
+
+struct object_t *global;
+struct object_t *local;
 
 void addToList(){
+    struct object_t *newElement;
+    newElement = malloc(sizeof(struct object_t));
+    newElement->name = stringValue;
+    
+    newElement->next = 0;
     printf("%s\n",stringValue);
 }
 
@@ -896,7 +909,7 @@ int main(){
     warningCount = 0;
     tokenType = -1;
     openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

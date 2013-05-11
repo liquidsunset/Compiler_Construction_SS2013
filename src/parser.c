@@ -69,6 +69,7 @@ void factor() {
     }
     
     if(tokenType == TOKEN_IDENTIFIER) {
+        addToList();
         getNextToken();
         if(tokenType == TOKEN_LRB) // function call
         {
@@ -117,6 +118,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
+                addToList();
                 getNextToken();
                 if(tokenType == TOKEN_LSB)
                 {

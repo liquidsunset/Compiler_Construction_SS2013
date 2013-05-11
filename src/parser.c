@@ -64,8 +64,8 @@ int isIn(int tokenType, int rule){
         TOKEN_FOPEN || tokenType == TOKEN_SIZEOF || tokenType == TOKEN_MALLOC)){return 1;}
     if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
     if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
-    if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID)){return 1;}
-    if(rule == FIRST_VARIABLE_DECLARATION && (tokenType == TOKEN_STATIC || tokenType == TOKEN_STRUCT || isIn(tokenType, FIRST_TYPE))) { return 1; }
+    if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID || tokenType == TOKEN_STRUCT)){return 1;}
+    if(rule == FIRST_VARIABLE_DECLARATION && (tokenType == TOKEN_STATIC || isIn(tokenType, FIRST_TYPE))) { return 1; }
     if(rule == FIRST_FUNCTION_STATEMENT && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || tokenType == TOKEN_WHILE || tokenType == TOKEN_IF || tokenType == TOKEN_RETURN || isIn(tokenType, FIRST_EXPRESSION))) { return 1; }
 
     return 0;
@@ -75,6 +75,229 @@ int isIn(int tokenType, int rule){
 
 void function_body();
 void expression();
+
+void sizeof_func()
+{
+    if(tokenType == TOKEN_SIZEOF)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            
+            if(isIn(tokenType, FIRST_TYPE))
+            {
+                type();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                }
+            }
+            else
+            {
+                error("type expected (sizeof)");
+            }
+        }
+        else
+        {
+            mark("( expected (sizeof)");
+            getNextToken();
+        }
+    }
+}
+
+void malloc_func()
+{
+    if(tokenType == TOKEN_MALLOC)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            
+            if(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                expression();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                }
+            }
+            else
+            {
+                error("expression expected (malloc)");
+            }
+        }
+        else
+        {
+            mark("( expected (malloc)");
+            getNextToken();
+        }
+    }
+}
+
+void fopen_func()
+{
+    if(tokenType == TOKEN_FOPEN)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getFromList();
+                getNextToken();
+                if(tokenType == TOKEN_COMMA)
+                {
+                    getNextToken();
+                    if(tokenType == TOKEN_STRING_LITERAL)
+                    {
+                        getNextToken();
+                        if(tokenType == TOKEN_RRB)
+                        {
+                            getNextToken();
+                        }
+                        else
+                        {
+                            mark(") expected (factor)");
+                            getNextToken();
+                        }
+                    }
+                    else
+                    {
+                        mark("File mode expected (factor)");
+                        getNextToken();
+                    }
+                }
+                else
+                {
+                    mark("Comma expected");
+                    getNextToken();
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+                getNextToken();
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+            getNextToken();
+        }
+    }
+}
+
+void fclose_func()
+{
+    if(tokenType == TOKEN_FCLOSE)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getFromList();
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    getNextToken();
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+                getNextToken();
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+            getNextToken();
+        }
+    }
+}
+
+void fgetc_func()
+{
+    if(tokenType == TOKEN_FGETC)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getFromList();
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                    return;
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    getNextToken();
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+                getNextToken();
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+            getNextToken();
+        }
+    }
+}
+
+void fputc_func()
+{
+    if(tokenType == TOKEN_FPUTC)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                getFromList();
+                getNextToken();
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+                }
+                else
+                {
+                    mark(") expected (factor)");
+                    getNextToken();
+                }
+            }
+            else
+            {
+                mark("Identifier expected (factor)");
+                getNextToken();
+            }
+        }
+        else
+        {
+            mark("( expected (factor)");
+            getNextToken();
+        }
+    }
+}
 
 void factor() {
     if(tokenType == TOKEN_MULT) // reference
@@ -155,229 +378,41 @@ void factor() {
         }
         return;
     }
+
     if(tokenType == TOKEN_SIZEOF)
     {
-        getNextToken();
-        if(tokenType == TOKEN_LRB)
-        {
-            getNextToken();
-            
-            if(isIn(tokenType, FIRST_TYPE))
-            {
-                getNextToken();
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    return;
-                }
-            }
-            if(tokenType == TOKEN_STRUCT)
-            {
-                getNextToken();
-                if(tokenType == TOKEN_IDENTIFIER)
-                {
-                    getFromList();
-                    getNextToken();
-                    if(tokenType == TOKEN_RRB)
-                    {
-                        getNextToken();
-                        return;
-                    }
-                }
-            }
-
-            error("type expected (sizeof)");
-        }
-        else
-        {
-            mark("( expected (sizeof)");
-            getNextToken();
-        }
+        sizeof_func();
+        return;
     }
 
     if(tokenType == TOKEN_MALLOC)
     {
-        getNextToken();
-        if(tokenType == TOKEN_LRB)
-        {
-            getNextToken();
-            
-            if(isIn(tokenType, FIRST_EXPRESSION))
-            {
-                expression();
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    return;
-                }
-            }
-            else
-            {
-                error("expression expected (malloc)");
-            }
-        }
-        else
-        {
-            mark("( expected (malloc)");
-            getNextToken();
-        }
+        malloc_func();
+        return;
     }
 
     if(tokenType == TOKEN_FOPEN)
     {
-        getNextToken();
-        if(tokenType == TOKEN_LRB)
-        {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                getFromList();
-                getNextToken();
-                if(tokenType == TOKEN_COMMA)
-                {
-                    getNextToken();
-                    if(tokenType == TOKEN_STRING_LITERAL)
-                    {
-                        getNextToken();
-                        if(tokenType == TOKEN_RRB)
-                        {
-                            getNextToken();
-                            return;
-                        }
-                        else
-                        {
-                            mark(") expected (factor)");
-                            getNextToken();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        mark("File mode expected (factor)");
-                        getNextToken();
-                        return;
-                    }
-                }
-                else
-                {
-                    mark("Comma expected");
-                    getNextToken();
-                }
-            }
-            else
-            {
-                mark("Identifier expected (factor)");
-                getNextToken();
-            }
-        }
-        else
-        {
-            mark("( expected (factor)");
-            getNextToken();
-        }
+        fopen_func();
+        return;
     }
+
     if(tokenType == TOKEN_FCLOSE)
     {
-        getNextToken();
-        if(tokenType == TOKEN_LRB)
-        {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                getFromList();
-                getNextToken();
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    return;
-                }
-                else
-                {
-                    mark(") expected (factor)");
-                    getNextToken();
-                    return;
-                }
-            }
-            else
-            {
-                mark("Identifier expected (factor)");
-                getNextToken();
-            }
-        }
-        else
-        {
-            mark("( expected (factor)");
-            getNextToken();
-        }
+        fclose_func();
+        return;
     }
+
     if(tokenType == TOKEN_FGETC)
     {
-        getNextToken();
-        if(tokenType == TOKEN_LRB)
-        {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                getFromList();
-                getNextToken();
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    return;
-                }
-                else
-                {
-                    mark(") expected (factor)");
-                    getNextToken();
-                    return;
-                }
-            }
-            else
-            {
-                mark("Identifier expected (factor)");
-                getNextToken();
-            }
-        }
-        else
-        {
-            mark("( expected (factor)");
-            getNextToken();
-        }
+        fgetc_func();
+        return;
     }
 
     if(tokenType == TOKEN_FPUTC)
     {
-        getNextToken();
-        if(tokenType == TOKEN_LRB)
-        {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                getFromList();
-                getNextToken();
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    return;
-                }
-                else
-                {
-                    mark(") expected (factor)");
-                    getNextToken();
-                    return;
-                }
-            }
-            else
-            {
-                mark("Identifier expected (factor)");
-                getNextToken();
-            }
-        }
-        else
-        {
-            mark("( expected (factor)");
-            getNextToken();
-        }
+        fputc_func();
+        return;
     }
 
     if(tokenType == TOKEN_LRB)
@@ -430,6 +465,21 @@ void type()
     {
         getNextToken();
         return;
+    }
+
+    if(tokenType == TOKEN_STRUCT)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_IDENTIFIER)
+        {
+            getFromList();
+            getNextToken();
+            return;
+        }
+        else
+        {
+            error("identifier expected (type)");
+        }
     }
 
     error("Type expected (type)");

@@ -13,7 +13,7 @@ struct type_t {
 struct object_t{
     char *name;
     int class;
-    struct type_t *type;
+    struct type_t *type_t;
     struct object_t *next;
 };
 
@@ -93,6 +93,42 @@ int isIn(int tokenType, int rule){
 
 void function_body();
 void expression();
+
+void type()
+{
+    if(tokenType == TOKEN_INT)
+    {
+        getNextToken();
+        return;
+    }
+    if(tokenType == TOKEN_CHAR)
+    {
+        getNextToken();
+        return;
+    }
+    if(tokenType == TOKEN_VOID)
+    {
+        getNextToken();
+        return;
+    }
+    
+    if(tokenType == TOKEN_STRUCT)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_IDENTIFIER)
+        {
+            getFromList();
+            getNextToken();
+            return;
+        }
+        else
+        {
+            error("identifier expected (type)");
+        }
+    }
+    
+    error("Type expected (type)");
+}
 
 void sizeof_func()
 {
@@ -465,42 +501,6 @@ void factor() {
     }
     
     error("Factor expected (factor)");
-}
-
-void type()
-{
-    if(tokenType == TOKEN_INT)
-    {
-        getNextToken();
-        return;
-    }
-    if(tokenType == TOKEN_CHAR)
-    {
-        getNextToken();
-        return;
-    }
-    if(tokenType == TOKEN_VOID)
-    {
-        getNextToken();
-        return;
-    }
-
-    if(tokenType == TOKEN_STRUCT)
-    {
-        getNextToken();
-        if(tokenType == TOKEN_IDENTIFIER)
-        {
-            getFromList();
-            getNextToken();
-            return;
-        }
-        else
-        {
-            error("identifier expected (type)");
-        }
-    }
-
-    error("Type expected (type)");
 }
 
 void term()
@@ -974,7 +974,7 @@ int main(){
     warningCount = 0;
     tokenType = -1;
     openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/scanner.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

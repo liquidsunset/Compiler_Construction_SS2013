@@ -160,6 +160,7 @@ void factor() {
                 getNextToken();
                 if(tokenType == TOKEN_IDENTIFIER)
                 {
+                    addToList();
                     getNextToken();
                     if(tokenType == TOKEN_RRB)
                     {
@@ -214,6 +215,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
+                addToList();
                 getNextToken();
                 if(tokenType == TOKEN_COMMA)
                 {
@@ -266,6 +268,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
+                addToList();
                 getNextToken();
                 if(tokenType == TOKEN_RRB)
                 {
@@ -299,6 +302,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
+                addToList();
                 getNextToken();
                 if(tokenType == TOKEN_RRB)
                 {
@@ -333,6 +337,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
+                addToList();
                 getNextToken();
                 if(tokenType == TOKEN_RRB)
                 {
@@ -575,6 +580,7 @@ void variable_declaration() {
         getNextToken();
         if(tokenType == TOKEN_IDENTIFIER)
         {
+            addToList();
             getNextToken();
 
             if(tokenType == TOKEN_MULT) // reference
@@ -584,8 +590,10 @@ void variable_declaration() {
 
             if(tokenType == TOKEN_IDENTIFIER)
             {
+                addToList();
                 getNextToken();
-                return;            }
+                return;
+            }
         }
         else
         {
@@ -601,6 +609,7 @@ void variable_declaration() {
         }
 
         if(tokenType == TOKEN_IDENTIFIER) {
+            addToList();
             getNextToken();
             if(tokenType == TOKEN_LSB) // array
             {
@@ -719,18 +728,23 @@ void global_variable_declaration() {
 void function_definition() {
     if(isIn(tokenType, FIRST_TYPE)) {
         type();
-        if(tokenType == TOKEN_IDENTIFIER) {
+        if(tokenType == TOKEN_IDENTIFIER)
+        {
+            addToList();
             getNextToken();
-            if(tokenType == TOKEN_LRB) {
+            if(tokenType == TOKEN_LRB)
+            {
                 getNextToken();
-                while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
+                while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+                {
                     variable_declaration();
                     if(tokenType == TOKEN_COMMA)
                     {
                         getNextToken();
                     }
                 }
-                if(tokenType == TOKEN_RRB) {
+                if(tokenType == TOKEN_RRB)
+                {
                     getNextToken();
                     if(tokenType == TOKEN_LCB)
                     {
@@ -768,6 +782,7 @@ void struct_def() {
         getNextToken();
         if(tokenType == TOKEN_IDENTIFIER)
         {
+            addToList();
             getNextToken();
             if(tokenType == TOKEN_LCB)
             {

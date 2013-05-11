@@ -249,19 +249,27 @@ void openFile(char path[1024]){
 //Returns the next Character from the file
 int readNextCharacter(){
     
-    if(ftell(fp) < 0)
-    {
-
-        return EOF;
-    }
-    else
-    {
+    
+//    if(ftell(fp) < 0)
+//    {
+//
+//        return EOF;
+//    }
+//    else
+//    {
+    
+        if(fp == 0){
+            return EOF;
+        }
+    
+    
         int temp;
         temp = fgetc(fp);
 
-        if(temp == EOF)
+        if(temp < 0)
         {
             fclose(fp);
+            return EOF;
         }
         col = col + 1;
         if(temp == '\n')
@@ -271,7 +279,7 @@ int readNextCharacter(){
         }
 
         return temp;
-    }
+    //}
 }
 
 
@@ -416,7 +424,7 @@ void getNextToken()
             nextChar = readNextCharacter();
         }
 
-        if(currentChar == EOF)
+        if(currentChar == EOF || nextChar == EOF)
         {
             // set token type to EOF
             tokenType = TOKEN_EOF;
@@ -463,10 +471,10 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
-//            printf("%d\n",tokenType);
-//            if(tokenType == 100 || tokenType == 300){
-//                printf("%s\n",stringValue);
-//            }
+            printf("%d\n",tokenType);
+            if(tokenType == 100 || tokenType == 300){
+                printf("%s\n",stringValue);
+            }
 
         }
     }

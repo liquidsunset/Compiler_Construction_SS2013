@@ -338,7 +338,6 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
         if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
         if(strCompare(status, "->")){tokenType = TOKEN_ACCESS; return;}
-        if(strCompare)
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;

@@ -1,8 +1,6 @@
 #include "scanner.c"
 
-void function_body();
-void expression();
-
+// ------------------------------- Symbol table -------------------------------
 
 struct symboltable{
     char name[1024];
@@ -14,9 +12,17 @@ struct type{
     int form;
 };
 
-void addtolist(){
-    printf("%s\n",stringValue);
+void addToList(){
+    printf("Creating %s\n",stringValue);
 }
+
+void getFromList()
+{
+    printf("Reading %s\n", stringValue);
+}
+// -----------------------------------------------------------------------------
+
+// --------------------Parser error reporting ----------------------------------
 
 void error(char message[1024])
 {
@@ -49,8 +55,9 @@ void mark(char message[1024])
     
     warningCount = warningCount + 1;
 
-    printf("Warning Near Line %d, Col %d: %s\n", niceLine, niceColumn, message);
+    printf("Warning Near Line %d: %s\n", niceLine, message);
 }
+// -----------------------------------------------------------------------------
 
 int isIn(int tokenType, int rule){
     if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB || tokenType == TOKEN_FCLOSE || tokenType ==
@@ -66,6 +73,9 @@ int isIn(int tokenType, int rule){
 
 // -------------------------- EBNF --------------------------------------------
 
+void function_body();
+void expression();
+
 void factor() {
     if(tokenType == TOKEN_MULT) // reference
     {
@@ -73,7 +83,7 @@ void factor() {
     }
     
     if(tokenType == TOKEN_IDENTIFIER) {
-        addToList();
+        getFromList();
         getNextToken();
         if(tokenType == TOKEN_LRB) // function call
         {
@@ -122,7 +132,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                addToList();
+                getFromList();
                 getNextToken();
                 if(tokenType == TOKEN_LSB)
                 {
@@ -166,7 +176,7 @@ void factor() {
                 getNextToken();
                 if(tokenType == TOKEN_IDENTIFIER)
                 {
-                    addToList();
+                    getFromList();
                     getNextToken();
                     if(tokenType == TOKEN_RRB)
                     {
@@ -221,7 +231,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                addToList();
+                getFromList();
                 getNextToken();
                 if(tokenType == TOKEN_COMMA)
                 {
@@ -274,7 +284,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                addToList();
+                getFromList();
                 getNextToken();
                 if(tokenType == TOKEN_RRB)
                 {
@@ -308,7 +318,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                addToList();
+                getFromList();
                 getNextToken();
                 if(tokenType == TOKEN_RRB)
                 {
@@ -343,7 +353,7 @@ void factor() {
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                addToList();
+                getFromList();
                 getNextToken();
                 if(tokenType == TOKEN_RRB)
                 {
@@ -586,7 +596,7 @@ void variable_declaration() {
         getNextToken();
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            addToList();
+            getFromList(); // struct has to be declared already
             getNextToken();
 
             if(tokenType == TOKEN_MULT) // reference
@@ -885,7 +895,7 @@ void start() {
         
     }
 }
-
+// ----------------------------------------------------------------------------
 
 int main(){
     printf("Phoenix: Parser\n");
@@ -903,5 +913,3 @@ int main(){
 
     return 0;
 }
-
-// ----------------------------------------------------------------------------

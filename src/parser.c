@@ -14,7 +14,7 @@ struct type{
     int form;
 };
 
-void addtolist(){
+void addToList(){
     printf("%s\n",stringValue);
 }
 
@@ -896,7 +896,7 @@ int main(){
     warningCount = 0;
     tokenType = -1;
     openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/parser.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

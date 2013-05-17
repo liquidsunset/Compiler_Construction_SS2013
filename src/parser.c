@@ -49,17 +49,33 @@ int findType(){
 
 
 
+void addRecordOfRecords(){
+    
+}
+
+void addArrayOfArrays(){
+    
+}
+
+void addArrayOfRecords(){
+    
+}
+
+void addRecordOfArrays(){
+    
+}
+
 
 int addTypeToList(){
     struct type_t *newElement;
-    newElement = malloc(sizeof(struct type_t));
+    newElement = malloc(sizeof(struct type_t*));
     if(isArray){
         
     }
     newElement->form = currentType;
     if(tokenType == TOKEN_STRUCT){
         struct object_t *newObjectElement;
-        newObjectElement = malloc(sizeof(struct object_t));
+        newObjectElement = malloc(sizeof(struct object_t*));
         newElement->fields = newObjectElement;
     }
     return 0;
@@ -70,7 +86,7 @@ int addFieldToList(){
     struct object_t *newObjectElement;
     struct object_t *tempObjectElement;
     
-    tempObjectElement = malloc(sizeof(struct object_t));
+    tempObjectElement = malloc(sizeof(struct object_t*));
     
     if(localOrGlobal == 0){
         tempObjectElement = objectLocal->type_t->fields;
@@ -81,9 +97,9 @@ int addFieldToList(){
     }
     
     
-    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement = malloc(sizeof(struct object_t*));
     newObjectElement->name = stringValue;
-    newObjectElement->class = 0;
+    newObjectElement->class = objectClass;
     newObjectElement->next = 0;
     
     if(tempObjectElement != 0){
@@ -106,9 +122,9 @@ int addObjectToList(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
-    newTempObject = malloc(sizeof(struct object_t));
+    newTempObject = malloc(sizeof(struct object_t*));
     
-    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement = malloc(sizeof(struct object_t*));
     newObjectElement->name = stringValue;
     newObjectElement->next = 0;
     

@@ -3,15 +3,10 @@
 
 static int currentType;
 static int isArray;
+static int localOrGlobal; // 0 for local, 1 for global
+static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
 
 // ------------------------------- Symbol table -------------------------------
-
-
-// class variable:
-// 0 = Field
-// 1 = Type
-// 2 = VAR
-
 
 
 struct object_t;
@@ -22,8 +17,10 @@ struct type_t {
     struct type_t *base;
 };
 
+typedef char *string_t;
+
 struct object_t{
-    char *name;
+    string_t name;
     int class;
     struct type_t *type_t;
     struct object_t *next;
@@ -50,88 +47,112 @@ int findType(){
     return 0;
 }
 
-int addObjectToListGlobal(){
-    struct object_t *newElement;
-    newElement = malloc(sizeof(struct object_t));
-    newElement->name = stringValue;
-    newElement->next = 0;
+
+
+void addRecordOfRecords(){
     
-    
-    if(objectGlobal != 0){
-        while (objectGlobal->next != 0) {
-            if(strCompare(objectGlobal->name, stringValue)){
-                return -1;
-            }
-            objectGlobal = objectGlobal->next;
-        }
-        objectGlobal->next = newElement;
-    }
-    else{
-        objectGlobal = newElement;
-    }
-    
-    return 0;
 }
 
-int addObjectToListLocal(){
-    struct object_t *newElement;
-    newElement = malloc(sizeof(struct object_t));
-    newElement->name = stringValue;
-    newElement->next = 0;
-    printf("%s\n",stringValue);
+void addArrayOfArrays(){
     
-    if(objectLocal != 0){
-        while (objectLocal->next != 0) {
-            if(strCompare(objectLocal->name, stringValue)){
-                return -1;
-            }
-            objectLocal = objectLocal->next;
-        }
-        objectLocal->next = newElement;
-    }
-    else{
-        objectLocal = newElement;
-    }
-    
-    return 0;
 }
 
-int addTypeToListGlobal(){
+void addArrayOfRecords(){
+    
+}
+
+void addRecordOfArrays(){
+    
+}
+
+
+int addTypeToList(){
     struct type_t *newElement;
-    newElement = malloc(sizeof(struct type_t));
-    newElement->form = tokenType;
+    newElement = malloc(sizeof(struct type_t*));
+    if(isArray){
+        
+    }
+    newElement->form = currentType;
     if(tokenType == TOKEN_STRUCT){
         struct object_t *newObjectElement;
-        newObjectElement = malloc(sizeof(struct object_t));
+        newObjectElement = malloc(sizeof(struct object_t*));
         newElement->fields = newObjectElement;
     }
     return 0;
 }
 
-int addTypeToListLocal(){
-    return 0;
-}
 
-int addFieldToListGlobal(){
-    struct object_t *newElement;
-    newElement = malloc(sizeof(struct object_t));
-    newElement->name = stringValue;
-    newElement->class = 0;
-    newElement->next = 0;
-    while(typeGlobal != 0){}
-    return 0;
-}
-
-int addFieldToListLocal(){
-    return 0;
-}
-
-
-
-
-void printliste(){
+int addFieldToList(){
+    struct object_t *newObjectElement;
+    struct object_t *tempObjectElement;
     
+    tempObjectElement = malloc(sizeof(struct object_t*));
+    
+    if(localOrGlobal == 0){
+        tempObjectElement = objectLocal->type_t->fields;
+    }
+    
+    if(localOrGlobal == 1){
+        tempObjectElement = objectGlobal->type_t->fields;
+    }
+    
+    
+    newObjectElement = malloc(sizeof(struct object_t*));
+    newObjectElement->name = stringValue;
+    newObjectElement->class = objectClass;
+    newObjectElement->next = 0;
+    
+    if(tempObjectElement != 0){
+        while (tempObjectElement->next != 0) {
+            if(strCompare(tempObjectElement->name, stringValue)){
+                return -1;
+            }
+            tempObjectElement = tempObjectElement->next;
+        }
+        tempObjectElement->next = newObjectElement;
+    }
+    else{
+        tempObjectElement = newObjectElement;
+    }
+    
+    return 0;
 }
+
+int addObjectToList(){
+    struct object_t *newObjectElement;
+    struct object_t *newTempObject;
+    
+    newTempObject = malloc(sizeof(struct object_t*));
+    
+    newObjectElement = malloc(sizeof(struct object_t*));
+    newObjectElement->name = stringValue;
+    newObjectElement->next = 0;
+    
+    if(localOrGlobal == 0){
+        newTempObject = objectLocal;
+    }
+    
+    if(localOrGlobal == 1){
+        newTempObject = objectGlobal;
+    }
+    
+    if(newTempObject != 0){
+        while (newTempObject->next != 0) {
+            if(strCompare(newTempObject->name, stringValue)){
+                return -1;
+            }
+            newTempObject = newTempObject->next;
+        }
+        newTempObject->next = newObjectElement;
+    }
+    else{
+        newTempObject = newObjectElement;
+    }
+    
+    return 0;
+}
+
+
 
 // -----------------------------------------------------------------------------
 
@@ -814,7 +835,7 @@ void variable_declaration() {
 
         if(tokenType == TOKEN_IDENTIFIER) {
 
-            if(addObjectToListGlobal() < 0) 
+            if(addObjectToList() < 0) 
             {
                 fail("Double declaration of variable");
             }

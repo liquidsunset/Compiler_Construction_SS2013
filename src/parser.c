@@ -138,7 +138,7 @@ void mark(char message[1024])
 }
 // -----------------------------------------------------------------------------
 
-int isIn(int tokenType, int rule){
+int isIn(int tokenType, int rule) {
     if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB || tokenType == TOKEN_FCLOSE || tokenType ==
         TOKEN_FOPEN || tokenType == TOKEN_SIZEOF || tokenType == TOKEN_MALLOC)){return 1;}
     if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
@@ -986,6 +986,14 @@ void struct_def() {
     }
 }
 
+void type_declaration()
+{
+    if(tokenType == TOKEN_STRUCT)
+    {
+        struct_declaration();
+    }
+}
+
 void top_declaration() {
     if(tokenType == TOKEN_STRUCT) {
         struct_def();
@@ -1032,12 +1040,10 @@ void start() {
     }
 
     while(tokenType != TOKEN_EOF) {
-        if(tokenType == TOKEN_STRUCT || isIn(tokenType, FIRST_TYPE) || isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION))
+        if(tokenType == TOKEN_TYPEDEF || tokenType == TOKEN_STRUCT || isIn(tokenType, FIRST_TYPE) || isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION))
         {
             top_declaration();
-            //getchar();    
         }
-
         else
         {
             getNextToken();

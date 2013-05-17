@@ -6,6 +6,8 @@ static int FIRST_TYPE;
 static int FIRST_VARIABLE_DECLARATION;
 static int FIRST_EXPRESSION;
 static int FIRST_FUNCTION_STATEMENT;
+static int FIRST_TYPE_DECLARATION;
+
 //tokens:
 
 //Keywords
@@ -162,6 +164,7 @@ void initTokens(){
     FIRST_TYPE = 3;
     FIRST_VARIABLE_DECLARATION = 4;
     FIRST_FUNCTION_STATEMENT = 5;
+    FIRST_TYPE_DECLARATION = 6;
 
     errorCount = 0;
     warningCount = 0;

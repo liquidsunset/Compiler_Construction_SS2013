@@ -1,5 +1,7 @@
 #include "scanner.c"
 
+static int currentType;
+
 // ------------------------------- Symbol table -------------------------------
 
 struct object_t;
@@ -98,16 +100,19 @@ void type()
 {
     if(tokenType == TOKEN_INT)
     {
+        currentType = TOKEN_INT;
         getNextToken();
         return;
     }
     if(tokenType == TOKEN_CHAR)
     {
+        currentType = TOKEN_CHAR;
         getNextToken();
         return;
     }
     if(tokenType == TOKEN_VOID)
     {
+        currentType = TOKEN_VOID;
         getNextToken();
         return;
     }
@@ -117,6 +122,7 @@ void type()
         getNextToken();
         if(tokenType == TOKEN_IDENTIFIER)
         {
+            tokenType = TOKEN_STRUCT;
             getFromList();
             getNextToken();
             return;

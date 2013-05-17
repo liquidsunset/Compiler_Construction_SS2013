@@ -32,15 +32,18 @@ void addToList()
     printf("Adding %s\n", stringValue);
 }
 
-void addToListGlobal(){
+int addToListGlobal(){
     struct object_t *newElement;
     newElement = malloc(sizeof(struct object_t));
     newElement->name = stringValue;
     newElement->next = 0;
     printf("%s\n",stringValue);
     
-    if(global != NULL){
+    if(global != 0){
         while (global->next != 0) {
+            if(strCompare(global->name, stringValue)){
+                return -1;
+            }
             global = global->next;
         }
         global->next = newElement;
@@ -48,6 +51,32 @@ void addToListGlobal(){
     else{
         global = newElement;
     }
+    
+    return 0;
+    
+}
+
+int addToListLocal(){
+    struct object_t *newElement;
+    newElement = malloc(sizeof(struct object_t));
+    newElement->name = stringValue;
+    newElement->next = 0;
+    printf("%s\n",stringValue);
+    
+    if(local != 0){
+        while (local->next != 0) {
+            if(strCompare(local->name, stringValue)){
+                return -1;
+            }
+            local = local->next;
+        }
+        local->next = newElement;
+    }
+    else{
+        local = newElement;
+    }
+    
+    return 0;
     
 }
 // -----------------------------------------------------------------------------

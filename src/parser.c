@@ -4,15 +4,9 @@
 static int currentType;
 static int isArray;
 static int localOrGlobal; // 0 for local, 1 for global
+static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
 
 // ------------------------------- Symbol table -------------------------------
-
-
-// class variable:
-// 0 = Field
-// 1 = Type
-// 2 = VAR
-
 
 
 struct object_t;
@@ -23,8 +17,10 @@ struct type_t {
     struct type_t *base;
 };
 
+typedef char *string_t;
+
 struct object_t{
-    char *name;
+    string_t name;
     int class;
     struct type_t *type_t;
     struct object_t *next;
@@ -48,6 +44,61 @@ void addToList()
 
 
 int findType(){
+    return 0;
+}
+
+
+
+
+int addTypeToList(){
+    struct type_t *newElement;
+    newElement = malloc(sizeof(struct type_t));
+    if(isArray){
+        
+    }
+    newElement->form = currentType;
+    if(tokenType == TOKEN_STRUCT){
+        struct object_t *newObjectElement;
+        newObjectElement = malloc(sizeof(struct object_t));
+        newElement->fields = newObjectElement;
+    }
+    return 0;
+}
+
+
+int addFieldToList(){
+    struct object_t *newObjectElement;
+    struct object_t *tempObjectElement;
+    
+    tempObjectElement = malloc(sizeof(struct object_t));
+    
+    if(localOrGlobal == 0){
+        tempObjectElement = objectLocal->type_t->fields;
+    }
+    
+    if(localOrGlobal == 1){
+        tempObjectElement = objectGlobal->type_t->fields;
+    }
+    
+    
+    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = stringValue;
+    newObjectElement->class = 0;
+    newObjectElement->next = 0;
+    
+    if(tempObjectElement != 0){
+        while (tempObjectElement->next != 0) {
+            if(strCompare(tempObjectElement->name, stringValue)){
+                return -1;
+            }
+            tempObjectElement = tempObjectElement->next;
+        }
+        tempObjectElement->next = newObjectElement;
+    }
+    else{
+        tempObjectElement = newObjectElement;
+    }
+    
     return 0;
 }
 
@@ -86,57 +137,6 @@ int addObjectToList(){
 }
 
 
-int addTypeToList(){
-    struct type_t *newElement;
-    newElement = malloc(sizeof(struct type_t));
-    if(isArray){
-    
-    }
-    newElement->form = currentType;
-    if(tokenType == TOKEN_STRUCT){
-        struct object_t *newObjectElement;
-        newObjectElement = malloc(sizeof(struct object_t));
-        newElement->fields = newObjectElement;
-    }
-    return 0;
-}
-
-
-int addFieldToList(){
-    struct object_t *newObjectElement;
-    struct object_t *tempObjectElement;
-    
-    tempObjectElement = malloc(sizeof(struct object_t));
-    
-    if(localOrGlobal == 0){
-        tempObjectElement = objectLocal->type_t->fields;
-    }
-    
-    if(localOrGlobal == 1){
-        tempObjectElement = objectGlobal->type_t->fields;
-    }
-
-    
-    newObjectElement = malloc(sizeof(struct object_t));
-    newObjectElement->name = stringValue;
-    newObjectElement->class = 0;
-    newObjectElement->next = 0;
-    
-    if(tempObjectElement != 0){
-        while (tempObjectElement->next != 0) {
-            if(strCompare(tempObjectElement->name, stringValue)){
-                return -1;
-            }
-            tempObjectElement = tempObjectElement->next;
-        }
-        tempObjectElement->next = newObjectElement;
-    }
-    else{
-        tempObjectElement = newObjectElement;
-    }
-    
-    return 0;
-}
 
 // -----------------------------------------------------------------------------
 

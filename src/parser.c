@@ -4,6 +4,14 @@ static int currentType;
 
 // ------------------------------- Symbol table -------------------------------
 
+
+// class variable:
+// 0 = Field
+// 1 = Type
+// 2 = VAR
+
+
+
 struct object_t;
 
 struct type_t {
@@ -24,61 +32,105 @@ void getFromList()
     printf("Reading %s\n", stringValue);
 }
 
-struct object_t *global;
-struct object_t *local;
+struct object_t *objectGlobal;
+struct object_t *objectLocal;
+
+struct type_t *typeGlobal;
+struct type_t *typeLocal;
 
 void addToList()
 {
     printf("Adding %s\n", stringValue);
 }
 
-int addToListGlobal(){
+
+int findType(){
+    return 0;
+}
+
+int addObjectToListGlobal(){
+    struct object_t *newElement;
+    newElement = malloc(sizeof(struct object_t));
+    newElement->name = stringValue;
+    newElement->next = 0;
+    
+    
+    if(objectGlobal != 0){
+        while (objectGlobal->next != 0) {
+            if(strCompare(objectGlobal->name, stringValue)){
+                return -1;
+            }
+            objectGlobal = objectGlobal->next;
+        }
+        objectGlobal->next = newElement;
+    }
+    else{
+        objectGlobal = newElement;
+    }
+    
+    return 0;
+}
+
+int addObjectToListLocal(){
     struct object_t *newElement;
     newElement = malloc(sizeof(struct object_t));
     newElement->name = stringValue;
     newElement->next = 0;
     printf("%s\n",stringValue);
     
-    if(global != 0){
-        while (global->next != 0) {
-            if(strCompare(global->name, stringValue)){
+    if(objectLocal != 0){
+        while (objectLocal->next != 0) {
+            if(strCompare(objectLocal->name, stringValue)){
                 return -1;
             }
-            global = global->next;
+            objectLocal = objectLocal->next;
         }
-        global->next = newElement;
+        objectLocal->next = newElement;
     }
     else{
-        global = newElement;
+        objectLocal = newElement;
     }
     
     return 0;
+}
+
+int addTypeToListGlobal(){
+    struct type_t *newElement;
+    newElement = malloc(sizeof(struct type_t));
+    newElement->form = tokenType;
+    if(tokenType == TOKEN_STRUCT){
+        struct object_t *newObjectElement;
+        newObjectElement = malloc(sizeof(struct object_t));
+        newElement->fields = newObjectElement;
+    }
+    return 0;
+}
+
+int addTypeToListLocal(){
+    return 0;
+}
+
+int addFieldToListGlobal(){
+    struct object_t *newElement;
+    newElement = malloc(sizeof(struct object_t));
+    newElement->name = stringValue;
+    newElement->class = 0;
+    newElement->next = 0;
+    while(typeGlobal != 0){}
+    return 0;
+}
+
+int addFieldToListLocal(){
+    return 0;
+}
+
+
+
+
+void printliste(){
     
 }
 
-int addToListLocal(){
-    struct object_t *newElement;
-    newElement = malloc(sizeof(struct object_t));
-    newElement->name = stringValue;
-    newElement->next = 0;
-    printf("%s\n",stringValue);
-    
-    if(local != 0){
-        while (local->next != 0) {
-            if(strCompare(local->name, stringValue)){
-                return -1;
-            }
-            local = local->next;
-        }
-        local->next = newElement;
-    }
-    else{
-        local = newElement;
-    }
-    
-    return 0;
-    
-}
 // -----------------------------------------------------------------------------
 
 // --------------------Parser error reporting ----------------------------------
@@ -740,7 +792,7 @@ void variable_declaration() {
         }
 
         if(tokenType == TOKEN_IDENTIFIER) {
-            if(addToList() < 0)
+            if(addToListGlobal() < 0)
             {
                 error("Double declaration of variable");
                 return;

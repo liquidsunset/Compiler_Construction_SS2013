@@ -104,12 +104,14 @@ void type()
         getNextToken();
         return;
     }
+
     if(tokenType == TOKEN_CHAR)
     {
         currentType = TOKEN_CHAR;
         getNextToken();
         return;
     }
+
     if(tokenType == TOKEN_VOID)
     {
         currentType = TOKEN_VOID;
@@ -699,29 +701,33 @@ void variable_declaration() {
         }
 
         if(tokenType == TOKEN_IDENTIFIER) {
-            addToList();
-            getNextToken();
-            if(tokenType == TOKEN_LSB) // array
+            if(addToList() < 0)
             {
-                getNextToken();
-                if(isIn(tokenType, FIRST_EXPRESSION))
-                {
-                    expression();
-                }
-                else
-                {
-                    error("Expression for index expected (variable_declaration)");
-                }
-                if(tokenType == TOKEN_RSB)
-                {
-                    getNextToken();
-                }
-                else
-                {
-                    mark("] missing (variable_declaration)");
-                    getNextToken();
-                }
+                error("Double declaration of variable");
+                return;
             }
+            getNextToken();
+            // if(tokenType == TOKEN_LSB) // array
+            // {
+            //     getNextToken();
+            //     if(isIn(tokenType, FIRST_EXPRESSION))
+            //     {
+            //         expression();
+            //     }
+            //     else
+            //     {
+            //         error("Expression for index expected (variable_declaration)");
+            //     }
+            //     if(tokenType == TOKEN_RSB)
+            //     {
+            //         getNextToken();
+            //     }
+            //     else
+            //     {
+            //         mark("] missing (variable_declaration)");
+            //         getNextToken();
+            //     }
+            // }
         } // token = TOKEN_IDENTIFIER
         else
         {

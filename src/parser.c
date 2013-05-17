@@ -191,6 +191,7 @@ void mark(char message[1024])
 // -----------------------------------------------------------------------------
 
 int isIn(int tokenType, int rule) {
+    if(rule == FIRST_TYPE_DECLARATION && (tokenType == TOKEN_STRUCT || tokenType == TOKEN_TYPEDEF)) { return 1; }
     if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB || tokenType == TOKEN_FCLOSE || tokenType ==
         TOKEN_FOPEN || tokenType == TOKEN_SIZEOF || tokenType == TOKEN_MALLOC)){return 1;}
     if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
@@ -199,13 +200,18 @@ int isIn(int tokenType, int rule) {
     if(rule == FIRST_VARIABLE_DECLARATION && (tokenType == TOKEN_STATIC || isIn(tokenType, FIRST_TYPE))) { return 1; }
     if(rule == FIRST_FUNCTION_STATEMENT && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || tokenType == TOKEN_WHILE || tokenType == TOKEN_IF || tokenType == TOKEN_RETURN || isIn(tokenType, FIRST_EXPRESSION))) { return 1; }
 
+    if(rule == FIRST_INSTRUCTION && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || isIn(tokenType, FIRST_TYPE_DECLARATION) || tokenType == TOKEN_IDENTIFIER)) { return 1; }
+
     return 0;
 }
 
 // -------------------------- EBNF --------------------------------------------
 
-void function_body();
+void instruction();
+void if_else();
+void while_loop();
 void expression();
+void type_declaration();
 
 void type()
 {
@@ -230,6 +236,14 @@ void type()
         return;
     }
     
+    if(tokenType == TOKEN_IDENTIFIER)
+    {
+        // TODO: Get from list
+
+        getNextToken();
+        return;
+    }
+
     if(tokenType == TOKEN_STRUCT)
     {
         getNextToken();
@@ -473,17 +487,45 @@ void fputc_func()
 }
 
 void factor() {
-    if(tokenType == TOKEN_MULT) // reference
+    if(tokenType == TOKEN_LRB)
     {
         getNextToken();
-    }
-    
-    if(tokenType == TOKEN_IDENTIFIER) {
-        getFromList();
-        getNextToken();
-        if(tokenType == TOKEN_LRB) // function call
+        expression();
+
+        if(tokenType == TOKEN_RRB)
         {
             getNextToken();
+        }
+        else
+        {
+            mark(") missing (factor)");
+            getNextToken();
+        }
+
+        return;
+    }
+
+    if(tokenType == TOKEN_CONSTINT)
+    {
+        // TODO: Handle integer literal
+        getNextToken();
+        return;
+    }
+
+    if(tokenType == TOKEN_CONSTCHAR)
+    {
+        // TODO: Handle char literal
+        getNextToken();
+        return;
+    }
+
+    if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
+    {
+        // TODO: save identifier
+        getNextToken();
+
+        if(tokenType == TOKEN_LRB) // procedure call
+        {
             while(isIn(tokenType, FIRST_EXPRESSION))
             {
                 expression();
@@ -492,17 +534,46 @@ void factor() {
                     getNextToken();
                 }
             }
+
             if(tokenType == TOKEN_RRB)
             {
                 getNextToken();
             }
             else
             {
-                mark(") missing (factor)");
+                mark(") expected (factor)");
                 getNextToken();
             }
+
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("; expected after expression (factor)");
+                getNextToken();
+            }
+
+            return;
         }
-        if(tokenType == TOKEN_LSB) // array
+
+        while(tokenType == TOKEN_ACCESS)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                // TODO: store identifier
+                getNextToken();
+            }
+            else
+            {
+                error("Identifier expected (factor)");
+                return;
+            }
+        }
+
+        if(tokenType == TOKEN_LSB)
         {
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
@@ -511,44 +582,26 @@ void factor() {
             }
             else
             {
-                error("Expression for index expected (factor)");
+                error("expression expected (factor)");
             }
+
             if(tokenType == TOKEN_RSB)
             {
                 getNextToken();
             }
             else
             {
-                mark("] missing (factor)");
+                mark("] expected (factor)");
                 getNextToken();
             }
+
+            // TODO: Handle array access
+
+            return;
         }
-        if(tokenType == TOKEN_ACCESS) // record
-        {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                getFromList();
-                getNextToken();
-                if(tokenType == TOKEN_LSB)
-                {
-                    getNextToken();
-                    expression();
-                    if(tokenType == TOKEN_RSB)
-                    {
-                        getNextToken();
-                    }
-                    else
-                    {
-                        error("] expected (record access)");
-                    }
-                }
-            }
-            else
-            {
-                error("identifier expected (record access)");
-            }
-        }
+
+        // TODO: Handle variable access
+
         return;
     }
 
@@ -711,38 +764,300 @@ void expression()
     }
 }
 
-void if_else()
+void variable_declaration()
 {
-    if(tokenType == TOKEN_IF)
+    if(tokenType == TOKEN_STATIC)
+    {
+        // TODO: Handle static
+        getNextToken();
+    }
+
+    if(isIn(tokenType, FIRST_TYPE))
+    {
+        type();
+
+        while(tokenType == TOKEN_MULT)
+        {
+            // TODO: Handle references
+            getNextToken();
+        }
+
+        if(tokenType == TOKEN_IDENTIFIER)
+        {
+            // TODO: Add to symbol table (either global or local)
+            //         if(addObjectToListGlobal() < 0) 
+            //         {
+            //             fail("Double declaration of variable");
+            //         }
+            //         isArray = 0; // default value
+
+            getNextToken();
+        }
+        else
+        {
+            error("Identifier expected (variable_declaration)");
+        }
+    }
+    else
+    {
+        error("Type expected (variable_declaration)");
+    }
+}
+
+void return_statement()
+{
+    if(tokenType == TOKEN_RETURN)
     {
         getNextToken();
-        if(tokenType == TOKEN_LRB)
+
+        if(isIn(tokenType, FIRST_EXPRESSION))
+        {
+            expression();
+        }
+    }
+}
+
+void instruction()
+{
+    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+    {
+        variable_declaration();
+
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after variable declaration (instruction)");
+            getNextToken();
+        }
+
+        return;
+    }
+
+    if(tokenType == TOKEN_IF)
+    {
+        if_else();
+        return;
+    }
+
+    if(tokenType == TOKEN_WHILE)
+    {
+        while_loop();
+        return;
+    }
+
+    if(tokenType == TOKEN_RETURN)
+    {
+        return_statement();
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after return statement (instruction)");
+            getNextToken();
+        }
+
+        return;
+    }
+
+    if(isIn(tokenType, FIRST_TYPE_DECLARATION))
+    {
+        type_declaration();
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after type declaration (instruction)");
+            getNextToken();
+        }
+
+        return;
+    }
+
+    if(tokenType == TOKEN_IDENTIFIER) // not yet sure if assignment or call
+    {
+        // TODO: Save identifier
+        getNextToken();
+
+        if(tokenType == TOKEN_LRB) // procedure call
+        {
+            while(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                expression();
+                if(tokenType == TOKEN_COMMA)
+                {
+                    getNextToken();
+                }
+            }
+
+            if(tokenType == TOKEN_RRB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark(") expected (instruction)");
+                getNextToken();
+            }
+
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("; expected after expression (instruction)");
+                getNextToken();
+            }
+
+            return;
+        }
+
+        while(tokenType == TOKEN_ACCESS)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                // TODO: store identifier
+                getNextToken();
+            }
+            else
+            {
+                error("Identifier expected (factor)");
+                return;
+            }
+        }
+
+        if(tokenType == TOKEN_LSB)
         {
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
             {
                 expression();
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    function_body();
-                    //TODO: else branch
-                    if(tokenType == TOKEN_ELSE)
-                    {
-                        getNextToken();
-                        function_body();
-                    }
-
-                }
-                else
-                {
-                    error(") after if is missing (if_else)");
-                }
             }
+            else
+            {
+                error("expression expected (factor)");
+            }
+
+            if(tokenType == TOKEN_RSB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("] expected (factor)");
+                getNextToken();
+            }
+        }
+
+        if(tokenType == TOKEN_ASSIGNMENT) // assignment
+        {
+            getNextToken();
+            expression();
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("; expected after expression (instruction)");
+                getNextToken();
+            }
+
+            return;
+        }
+    }
+}
+
+void if_else()
+{
+    if(tokenType == TOKEN_IF)
+    {
+        getNextToken();
+
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();
         }
         else
         {
-            error("( after if is missing (if_else)");
+            mark("( expected (if_else)");
+            getNextToken();
+        }
+
+        if(isIn(tokenType, FIRST_EXPRESSION))
+        {
+            expression();
+
+            if(tokenType == TOKEN_LRB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark(") expected (if_else)");
+                getNextToken();
+            }
+
+            if(tokenType == TOKEN_LCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("{ expected (if_else)");
+                getNextToken();
+            }
+
+            while(isIn(tokenType, FIRST_INSTRUCTION))
+            {
+                instruction();
+            }
+
+            if(tokenType == TOKEN_RCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("} expected (if_else)");
+                getNextToken();
+            }
+
+            if(tokenType == TOKEN_ELSE)
+            {
+                if(tokenType == TOKEN_LCB)
+                {
+                    getNextToken();
+                }
+                else
+                {
+                    mark("{ expected in else branch (if_else)");
+                    getNextToken();
+                }
+
+                while(isIn(tokenType, FIRST_INSTRUCTION))
+                {
+                    instruction();
+                }
+
+                if(tokenType == TOKEN_RCB)
+                {
+                    getNextToken();
+                }
+                else
+                {
+                    mark("} expected in else branch (if_else)");
+                    getNextToken();
+                }
+            }
         }
     }
 }
@@ -755,286 +1070,220 @@ void while_loop()
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();
+        }
+        else
+        {
+            mark("( expected (while_loop)");
+            getNextToken();
+        }
+
+        if(isIn(tokenType, FIRST_EXPRESSION))
+        {
             expression();
-            if(tokenType == TOKEN_RRB)
+
+            if(tokenType == TOKEN_LRB)
             {
                 getNextToken();
-                function_body();
             }
             else
             {
-                error(") after while is missing (while_loop)");
+                mark(") expected (while_loop)");
+                getNextToken();
+            }
+
+            if(tokenType == TOKEN_LCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("{ expected (while_loop)");
+                getNextToken();
+            }
+
+            while(isIn(tokenType, FIRST_INSTRUCTION))
+            {
+                instruction();
+            }
+
+            if(tokenType == TOKEN_RCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("} expected (while_loop)");
+                getNextToken();
             }
         }
         else
         {
-            error("( after while is missing (while_loop)");
-        }   
-
+            error("expression expected (while_loop)");
+        }
     }
 }
 
-void variable_declaration() {
-    if(tokenType == TOKEN_STATIC) {
-        getNextToken();
-    }
-    if(tokenType == TOKEN_STRUCT)
+void function_declaration()
+{
+    if(isIn(tokenType, FIRST_TYPE))
     {
         getNextToken();
+
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            getFromList(); // struct has to be declared already
+            // TODO: Handle procedure
             getNextToken();
 
-            if(tokenType == TOKEN_MULT) // reference
+            if(tokenType == TOKEN_LRB)
             {
+                getNextToken();
+            }
+            else
+            {
+                mark("( expected (function_declaration)");
+                getNextToken();
+            }
+
+            while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+            {
+                variable_declaration();
+                if(tokenType == TOKEN_COMMA)
+                {
+                    getNextToken();
+                }
+            }
+
+            if(tokenType == TOKEN_RRB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark(") expected (function_declaration)");
+                getNextToken();
+            }
+
+            if(tokenType == TOKEN_LCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("{ expected (function_declaration)");
+                getNextToken();
+            }
+
+            while(isIn(tokenType, FIRST_INSTRUCTION))
+            {
+                instruction();
+            }
+
+            if(tokenType == TOKEN_RCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("} expected (function_declaration)");
+                getNextToken();
+            }
+
+        }
+        else
+        {
+            error("Identifier expected (function_declaration)");
+        }
+    }
+    else
+    {
+        error("Type expected (function_declaration)");
+    }
+}
+
+void typedef_declaration()
+{
+    if(tokenType == TOKEN_TYPEDEF)
+    {
+        getNextToken();
+
+        if(isIn(tokenType, FIRST_TYPE))
+        {
+            type();
+            while(tokenType == TOKEN_MULT)
+            {
+                // TODO: Handle references
                 getNextToken();
             }
 
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                addToList();
+                // TODO: Add type to symbol table
                 getNextToken();
-                return;
             }
-        }
-        else
-        {
-            error("identifier expected (variable_declaration)");
-        }
-    }
-
-    if(isIn(tokenType, FIRST_TYPE)) {
-        type();
-        if(tokenType == TOKEN_MULT) // reference
-        {
-            isArray = 1; // we are dealing with an array
-            getNextToken();
-        }
-
-        if(tokenType == TOKEN_IDENTIFIER) {
-
-            if(addObjectToListGlobal() < 0) 
+            else
             {
-                fail("Double declaration of variable");
+                error("Identifier expected (typedef_declaration)");
             }
-            isArray = 0; // default value
-            getNextToken();
-            // if(tokenType == TOKEN_LSB) // array
-            // {
-            //     getNextToken();
-            //     if(isIn(tokenType, FIRST_EXPRESSION))
-            //     {
-            //         expression();
-            //     }
-            //     else
-            //     {
-            //         error("Expression for index expected (variable_declaration)");
-            //     }
-            //     if(tokenType == TOKEN_RSB)
-            //     {
-            //         getNextToken();
-            //     }
-            //     else
-            //     {
-            //         mark("] missing (variable_declaration)");
-            //         getNextToken();
-            //     }
-            // }
-        } // token = TOKEN_IDENTIFIER
-        else
-        {
-            error("Identifier missing (variable_declaration)");
-        }
-    } // token, FIRST_TYPE
-}
-
-void function_statement()
-{
-    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
-    {
-        variable_declaration();
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
         }
         else
         {
-            mark("; missing (function_statement)");
-            getNextToken();
+            error("type expected (typedef_declaration)");
         }
-    }
-    else if(tokenType == TOKEN_IF)
-    {
-        if_else();
-    }
-    else if(tokenType == TOKEN_WHILE)
-    {
-        while_loop();
-    }
-    else if(tokenType == TOKEN_RETURN)
-    {
-        getNextToken();
-        if(isIn(tokenType, FIRST_EXPRESSION))
-        {
-            expression();
-        }
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; missing (function_statement)");
-            getNextToken();
-        }
-    }
-    else if(isIn(tokenType, FIRST_EXPRESSION))
-    {
-        expression();
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; missing (function_statement)");
-            getNextToken();
-        }
-    }
-}
-
-void function_body()
-{
-    if(tokenType == TOKEN_LCB) {
-        getNextToken();
-        while(isIn(tokenType, FIRST_FUNCTION_STATEMENT))
-        {
-            function_statement();
-        }
-        if(tokenType == TOKEN_RCB) {
-            getNextToken();
-        }
-        else
-        {
-            mark("} missing (function_body)");
-            getNextToken();
-        }
-    } // tokenType == TOKEN_LCB
-}
-
-void global_variable_declaration() {
-    if(tokenType == TOKEN_STATIC) {
-        getNextToken();
-        variable_declaration();
     }
     else
     {
-        error("global variables must be static (global_variable_declaration)");
+        error("typedef expected");
     }
 }
 
-void function_definition() {
-    if(isIn(tokenType, FIRST_TYPE)) {
-        type();
-        if(tokenType == TOKEN_IDENTIFIER)
-        {
-            addToList();
-            getNextToken();
-            if(tokenType == TOKEN_LRB)
-            {
-                getNextToken();
-                while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
-                {
-                    variable_declaration();
-                    if(tokenType == TOKEN_COMMA)
-                    {
-                        getNextToken();
-                    }
-                }
-                if(tokenType == TOKEN_RRB)
-                {
-                    getNextToken();
-                    if(tokenType == TOKEN_LCB)
-                    {
-                        function_body();
-                        return;
-                    }
-                    if(tokenType == TOKEN_SEMICOLON)
-                    {
-                        getNextToken();
-                        return;
-                    }
-                    error("expected { or ; (function_definition)");
-                     // token == '}'
-                } // token == ')'
-                else
-                {
-                    error(") missing (function_definition)");
-                }
-            } // token == '('
-            else
-            {
-                error("( after function identifier expected (function_definition)");
-            }
-        } // token == TOKEN_IDENTIFIER
-        else
-        {
-            error("Identifier expected (function_definition)");
-        }
-    } // isIn(token, FIRST_TYPE)
-}
-
-void struct_def() {
+void struct_declaration()
+{
     if(tokenType == TOKEN_STRUCT)
     {
         getNextToken();
+
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            addToList();
+            // TODO: Add to symbol table
             getNextToken();
+
             if(tokenType == TOKEN_LCB)
             {
                 getNextToken();
-                while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
-                {
-                    variable_declaration();
-                    if(tokenType == TOKEN_SEMICOLON)
-                    {
-                        getNextToken();
-                    }
-                    else
-                    {
-                        mark("; expected (struct)");
-                        getNextToken();
-                    }
-                }
-                if(tokenType == TOKEN_RCB)
-                {
-                    getNextToken();
-                    if(tokenType == TOKEN_SEMICOLON)
-                    {
-                        getNextToken();
-                    }
-                    else {
-                        mark("; expected (struct)");
-                        getNextToken();
-                    }
-                }
-                else
-                {
-                    mark("} expected (struct)");
-                    getNextToken();
-                }
             }
             else
             {
-                error("{ expected (struct)");
+                mark("{ expected (struct_declaration)");
+                getNextToken();
+            }
+
+            while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
+                variable_declaration();
+
+                if(tokenType == TOKEN_SEMICOLON)
+                {
+                    getNextToken();
+                }
+                else
+                {
+                    mark("; expected after variable declaration (struct_declaration)");
+                    getNextToken();
+                }
+            }
+
+            if(tokenType == TOKEN_RCB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("} expected (struct_declaration)");
+                getNextToken();
             }
         }
         else
         {
-            error("identifier expected (struct)");
+            error("Identifier expected (struct_declaration)");
         }
     }
 }
@@ -1044,27 +1293,56 @@ void type_declaration()
     if(tokenType == TOKEN_STRUCT)
     {
         struct_declaration();
+        return;
+    }
+
+    if(tokenType == TOKEN_TYPEDEF)
+    {
+        typedef_declaration();
+        return;
     }
 }
 
 void top_declaration() {
-    if(tokenType == TOKEN_STRUCT) {
-        struct_def();
+
+    if(isIn(tokenType, FIRST_TYPE_DECLARATION))
+    {
+        type_declaration();
+
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after type declaration (top_declaration)");
+            getNextToken();
+        }
         return;
     }
 
-    if (isIn(tokenType, FIRST_FUNCTION_DEFINITION)) {
-        function_definition();
-        //getNextToken();
-        return;        
-    }
-    if (isIn(tokenType, FIRST_GLOBAL_VARIABLE_DECLARATION)) {
-        global_variable_declaration();
-        getNextToken();
-        return;        
+    if(tokenType == TOKEN_STATIC)
+    {
+        variable_declaration();
+
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after variable declaration (top_declaration)");
+            getNextToken();
+        }
+        return;
     }
 
-    error("Variable or function declaration expected (top_declaration)");
+    if(isIn(tokenType, FIRST_TYPE))
+    {
+        function_declaration();
+
+        return;
+    }
 }
 
 void include_def()

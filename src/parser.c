@@ -32,13 +32,23 @@ void addToList()
     printf("Adding %s\n", stringValue);
 }
 
-void addToListWIP(){
+void addToListGlobal(){
     struct object_t *newElement;
     newElement = malloc(sizeof(struct object_t));
     newElement->name = stringValue;
-    
     newElement->next = 0;
     printf("%s\n",stringValue);
+    
+    if(global != NULL){
+        while (global->next != 0) {
+            global = global->next;
+        }
+        global->next = newElement;
+    }
+    else{
+        global = newElement;
+    }
+    
 }
 // -----------------------------------------------------------------------------
 

@@ -484,14 +484,15 @@ void getNextToken()
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
 
-//int yolo()
+//int main()
 //{
 //    initTokens();
 //    
 //    printf("\n\nNext Testfile- easy.c\n\n");
 //    
 //    //openFile("../test/easy.c");
-//    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt");
+//    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+//    tokenType = -1;
 //    if(tokenType != TOKEN_EOF){
 //        do
 //        {
@@ -505,7 +506,8 @@ void getNextToken()
 //        while(tokenType!= TOKEN_EOF);
 //        getchar();
 //    }
-//    
+//}
+//
 //    
 //    printf("\n\nNext Testfile - brackets.c\n\n");
 //    

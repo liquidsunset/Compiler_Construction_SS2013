@@ -1,6 +1,8 @@
+#include <stdlib.h>
 #include "scanner.c"
 
 static int currentType;
+static int isArray;
 
 // ------------------------------- Symbol table -------------------------------
 
@@ -135,6 +137,24 @@ void printliste(){
 
 // --------------------Parser error reporting ----------------------------------
 
+void fail(char message[1024])
+{
+    int niceLine;
+    int niceColumn;
+
+    niceLine = positionLine;
+    niceColumn = positionColumn;
+    if(niceColumn < 0)
+    {
+        niceLine = niceLine-1;
+    }
+
+    errorCount = errorCount + 1;
+
+    printf("Fail near Line %d: %s\n", niceLine, message);
+    exit(-1);
+}
+
 void error(char message[1024])
 {
     int niceLine;
@@ -149,7 +169,7 @@ void error(char message[1024])
 
     errorCount = errorCount + 1;
 
-    printf("Error Near Line %d: %s\n", niceLine, message);
+    printf("Error near Line %d: %s\n", niceLine, message);
 }
 
 void mark(char message[1024])
@@ -788,15 +808,17 @@ void variable_declaration() {
         type();
         if(tokenType == TOKEN_MULT) // reference
         {
+            isArray = 1; // we are dealing with an array
             getNextToken();
         }
 
         if(tokenType == TOKEN_IDENTIFIER) {
-            if(addToListGlobal() < 0)
+
+            if(addObjectToListGlobal() < 0) 
             {
-                error("Double declaration of variable");
-                return;
+                fail("Double declaration of variable");
             }
+            isArray = 0; // default value
             getNextToken();
             // if(tokenType == TOKEN_LSB) // array
             // {
@@ -1037,19 +1059,29 @@ void top_declaration() {
     error("Variable or function declaration expected (top_declaration)");
 }
 
-void start() {
-    getNextToken();
-    while(tokenType == TOKEN_INCLUDE)
+void include_def()
+{
+    if(tokenType == TOKEN_INCLUDE)
     {
         getNextToken();
         if(tokenType == TOKEN_STRING_LITERAL)
         {
+            // TODO: Handle include
+
             getNextToken();
         }
         else
         {
             error("Expected string literal (start)");
         }
+    }
+}
+
+void start() {
+    getNextToken();
+    while(tokenType == TOKEN_INCLUDE)
+    {
+        include_def();
     }
 
     while(tokenType != TOKEN_EOF) {

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "scanner.c"
 
 static int currentType;
@@ -83,6 +84,24 @@ int addToListLocal(){
 
 // --------------------Parser error reporting ----------------------------------
 
+void fail(char message[1024])
+{
+    int niceLine;
+    int niceColumn;
+
+    niceLine = positionLine;
+    niceColumn = positionColumn;
+    if(niceColumn < 0)
+    {
+        niceLine = niceLine-1;
+    }
+
+    errorCount = errorCount + 1;
+
+    printf("Fail near Line %d: %s\n", niceLine, message);
+    exit(-1);
+}
+
 void error(char message[1024])
 {
     int niceLine;
@@ -97,7 +116,7 @@ void error(char message[1024])
 
     errorCount = errorCount + 1;
 
-    printf("Error Near Line %d: %s\n", niceLine, message);
+    printf("Error near Line %d: %s\n", niceLine, message);
 }
 
 void mark(char message[1024])
@@ -740,10 +759,9 @@ void variable_declaration() {
         }
 
         if(tokenType == TOKEN_IDENTIFIER) {
-            if(addToList() < 0)
+            if(addToListGlobal() < 0) // TODO
             {
-                error("Double declaration of variable");
-                return;
+                fail("Double declaration of variable");
             }
             getNextToken();
             // if(tokenType == TOKEN_LSB) // array

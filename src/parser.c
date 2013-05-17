@@ -113,16 +113,58 @@ int addTypeToListLocal(){
 }
 
 int addFieldToListGlobal(){
-    struct object_t *newElement;
-    newElement = malloc(sizeof(struct object_t));
-    newElement->name = stringValue;
-    newElement->class = 0;
-    newElement->next = 0;
-    while(typeGlobal != 0){}
+    struct object_t *newObjectElement;
+    struct object_t *tempObjectElement;
+    
+    tempObjectElement = malloc(sizeof(struct object_t));
+    tempObjectElement = objectGlobal->type_t->fields;
+    
+    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = stringValue;
+    newObjectElement->class = 0;
+    newObjectElement->next = 0;
+    
+    if(tempObjectElement != 0){
+        while (tempObjectElement->next != 0) {
+            if(strCompare(tempObjectElement->name, stringValue)){
+                return -1;
+            }
+            tempObjectElement = tempObjectElement->next;
+        }
+        tempObjectElement->next = newObjectElement;
+    }
+    else{
+        tempObjectElement = newObjectElement;
+    }
+    
     return 0;
 }
 
 int addFieldToListLocal(){
+    struct object_t *newObjectElement;
+    struct object_t *tempObjectElement;
+    
+    tempObjectElement = malloc(sizeof(struct object_t));
+    tempObjectElement = objectLocal->type_t->fields;
+    
+    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = stringValue;
+    newObjectElement->class = 0;
+    newObjectElement->next = 0;
+    
+    if(tempObjectElement != 0){
+        while (tempObjectElement->next != 0) {
+            if(strCompare(tempObjectElement->name, stringValue)){
+                return -1;
+            }
+            tempObjectElement = tempObjectElement->next;
+        }
+        tempObjectElement->next = newObjectElement;
+    }
+    else{
+        tempObjectElement = newObjectElement;
+    }
+    
     return 0;
 }
 

@@ -10,6 +10,10 @@ int reg[32];
 // Virtual Memory of 4*150kB
 unsigned int mem[MEMSIZE];
 
+
+// Bump pointer for continous allocation
+int bump_ptr;
+
 // Instruction register
 int ir;
 
@@ -82,6 +86,7 @@ unsigned int TARGET_FLC;
 unsigned int TARGET_RDC;
 unsigned int TARGET_WRC;
 unsigned int TARGET_J;
+unsigned int TARGET_MALLOC;
 
 int isF1(int opcode) {
 	return (0 <= opcode) && (opcode < 21);
@@ -174,6 +179,7 @@ void load(char * filename) {
 			temp = fgetc(fp);
 			if(temp == EOF)
 			{
+				bump_ptr = i + 1;
 				break;
 			}
 
@@ -417,6 +423,17 @@ int fetch() {
 			const char buf = (char)reg[c];
 			write(reg[a], &buf, 1);
 			pc = pc + 4;
+		}
+		else if(op == TARGET_MALLOC)
+		{
+			// save value of bump pointer
+			int s = bump_ptr;
+
+			// move bump pointer by reg[a]
+			bump_ptr = bump_ptr + reg[a];
+
+			// write saved value to reg[c]
+			reg[c] = s;
 		}
 
 	}

@@ -2,6 +2,7 @@
 #include "scanner.c"
 
 static int currentType;
+static int isArray;
 
 // ------------------------------- Symbol table -------------------------------
 
@@ -755,6 +756,7 @@ void variable_declaration() {
         type();
         if(tokenType == TOKEN_MULT) // reference
         {
+            isArray = 1; // we are dealing with an array
             getNextToken();
         }
 
@@ -763,6 +765,7 @@ void variable_declaration() {
             {
                 fail("Double declaration of variable");
             }
+            isArray = 0; // default value
             getNextToken();
             // if(tokenType == TOKEN_LSB) // array
             // {
@@ -1003,19 +1006,29 @@ void top_declaration() {
     error("Variable or function declaration expected (top_declaration)");
 }
 
-void start() {
-    getNextToken();
-    while(tokenType == TOKEN_INCLUDE)
+void include_def()
+{
+    if(tokenType == TOKEN_INCLUDE)
     {
         getNextToken();
         if(tokenType == TOKEN_STRING_LITERAL)
         {
+            // TODO: Handle include
+
             getNextToken();
         }
         else
         {
             error("Expected string literal (start)");
         }
+    }
+}
+
+void start() {
+    getNextToken();
+    while(tokenType == TOKEN_INCLUDE)
+    {
+        include_def();
     }
 
     while(tokenType != TOKEN_EOF) {

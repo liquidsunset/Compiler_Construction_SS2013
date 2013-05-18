@@ -238,7 +238,7 @@ int addObjectToList(){
     newTempObject = malloc(sizeof(struct object_t*));
     
     newObjectElement = malloc(sizeof(struct object_t*));
-    newObjectElement->name = stringValue;
+    strCopy(stringValue, newObjectElement->name);
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
     
@@ -271,6 +271,7 @@ int addObjectToList(){
         lastObjectGlobal = newTempObject;
     }
     
+    addTypeToList();
     
     return 0;
 }

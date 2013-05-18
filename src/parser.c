@@ -6,7 +6,7 @@ static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
-static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
+static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR
 
 static int isRegisterUsed[32];
 // ------------------------------- Symbol table -------------------------------
@@ -226,6 +226,7 @@ int addFieldToList(){
     }
     else{
         newTempObject = newObjectElement;
+        lastObjectGlobal->type_t->fields = newTempObject;
     }
     
     return 0;
@@ -235,9 +236,12 @@ int addObjectToList(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
+    
     newTempObject = malloc(sizeof(struct object_t*));
+
     
     newObjectElement = malloc(sizeof(struct object_t*));
+    newObjectElement->name = malloc(sizeof(char) * 1024);
     strCopy(stringValue, newObjectElement->name);
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
@@ -260,8 +264,17 @@ int addObjectToList(){
         newTempObject->next = newObjectElement;
     }
     else{
-        newTempObject = newObjectElement;
+        if(isGlobal == 0){
+            objectLocal = newObjectElement;
+            newTempObject = newObjectElement;
+        }
+        if(isGlobal == 1){
+            objectGlobal = newObjectElement;
+            newTempObject = newObjectElement;
+        }
     }
+    
+
     
     if(isGlobal == 0){
         lastObjectLocal = newTempObject;
@@ -1647,7 +1660,6 @@ void start() {
 
 int main(){
     printf("\nPhoenix: Parser\n===============\n");
-        
     initTokens();
 
     errorCount = 0;

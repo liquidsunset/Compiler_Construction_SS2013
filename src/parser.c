@@ -1184,6 +1184,13 @@ void function_declaration()
                 getNextToken();
             }
 
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                // TODO: Handle function prototype
+                getNextToken();
+                return;
+            }
+
             if(tokenType == TOKEN_LCB)
             {
                 getNextToken();

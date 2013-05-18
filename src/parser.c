@@ -6,7 +6,7 @@ static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
-static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR
+static int objectClass;
 
 static int isRegisterUsed[32];
 // ------------------------------- Symbol table -------------------------------
@@ -38,6 +38,19 @@ struct object_t *objectLocal;
 
 struct object_t *lastObjectGlobal;
 struct object_t *lastObjectLocal;
+
+struct type_t *typeInt;
+struct type_t *typeChar;
+
+
+void initTypes(){
+    typeInt = malloc(sizeof(struct type_t));
+    typeChar = malloc(sizeof(struct type_t));
+    
+    typeInt->form = FORM_INT;
+    typeChar->form = FORM_CHAR;
+    
+}
 
 void addToList()
 {
@@ -1515,7 +1528,7 @@ void struct_declaration()
         if(tokenType == TOKEN_IDENTIFIER)
         {
             isStruct = 1;
-            objectClass = 1; // TODO: Magic int
+            objectClass = CLASS_TYPE; 
             isArray = 0;
             isGlobal = 1;
             addObjectToList();
@@ -1537,7 +1550,7 @@ void struct_declaration()
 
                 // type is set by type() within variable_declaration().
                 // identifier name is still set after variable_declaration() completed.
-                objectClass = 0; // TODO: Magic int
+                objectClass = CLASS_FIELD; // TODO: Magic int
                 addFieldToList();
 
                 if(tokenType == TOKEN_SEMICOLON)
@@ -1667,12 +1680,13 @@ void start() {
 int main(){
     printf("\nPhoenix: Parser\n===============\n");
     initTokens();
+    initTypes();
 
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+    //openFile("test/m4.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

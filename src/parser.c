@@ -1489,11 +1489,17 @@ void struct_declaration()
 {
     if(tokenType == TOKEN_STRUCT)
     {
+        
         getNextToken();
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            // TODO: Add to symbol table
+            isStruct = 1;
+            objectClass = 1; // TODO: Magic int
+            isArray = 0;
+            isGlobal = 1;
+            addObjectToList();
+            
             getNextToken();
 
             if(tokenType == TOKEN_LCB)
@@ -1508,6 +1514,11 @@ void struct_declaration()
 
             while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
                 variable_declaration();
+
+                // type is set by type() within variable_declaration().
+                // identifier name is still set after variable_declaration() completed.
+                objectClass = 0; // TODO: Magic int
+                addFieldToList();
 
                 if(tokenType == TOKEN_SEMICOLON)
                 {

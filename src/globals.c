@@ -84,6 +84,15 @@ static int TOKEN_EOF;
 static int TOKEN_INCLUDE;
 static int TOKEN_POINT;
 
+static int CLASS_VAR;
+static int CLASS_TYPE;
+static int CLASS_FIELD;
+
+static int FORM_ARRAY;
+static int FORM_RECORD;
+static int FORM_INT;
+static int FORM_CHAR;
+
 static int errorCount;
 static int warningCount;
 

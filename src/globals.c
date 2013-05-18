@@ -178,6 +178,16 @@ void initTokens(){
     FIRST_TYPE_DECLARATION = 6;
     FIRST_INSTRUCTION = 7;
     FIRST_TOP_DECLARATION = 8;
+    
+    CLASS_FIELD = 0;
+    CLASS_TYPE = 1;
+    CLASS_VAR = 2;
+    
+    FORM_INT = 0;
+    FORM_CHAR = 1;
+    FORM_RECORD = 2;
+    FORM_ARRAY = 3;
+    
 
     errorCount = 0;
     warningCount = 0;

@@ -2,7 +2,7 @@
 #include "scanner.c"
 
 static int currentType;    //0 = int, 1 = char
-static char typeName[1024];
+static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global

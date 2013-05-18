@@ -48,7 +48,7 @@ void addToList()
 int findTypeClassType(){
     struct object_t *tempTypeObject;
     
-    tempTypeObject = malloc(sizeof(struct object_t*));
+    tempTypeObject = malloc(sizeof(struct object_t));
     
     
     if(isGlobal == 0){
@@ -94,9 +94,9 @@ int findTypeClassVar(){
     struct object_t *tempTypeObject;
     struct type_t *newElement;
     
-    newElement = malloc(sizeof(struct type_t*));
+    newElement = malloc(sizeof(struct type_t));
     
-    tempTypeObject = malloc(sizeof(struct object_t*));
+    tempTypeObject = malloc(sizeof(struct object_t));
     
     
     if(isGlobal == 0){
@@ -144,8 +144,8 @@ int addTypeToList(){
     struct type_t *newElement;
     struct object_t *tempTypeObject;
     
-    tempTypeObject = malloc(sizeof(struct object_t*));
-    newElement = malloc(sizeof(struct type_t*));
+    tempTypeObject = malloc(sizeof(struct object_t));
+    newElement = malloc(sizeof(struct type_t));
     
 
     if(isGlobal == 0){
@@ -198,8 +198,8 @@ int addFieldToList(){
     struct object_t *newTempObject;
     
     
-    newTempObject = malloc(sizeof(struct object_t*));
-    newObjectElement = malloc(sizeof(struct object_t*));
+    newTempObject = malloc(sizeof(struct object_t));
+    newObjectElement = malloc(sizeof(struct object_t));
     
     newObjectElement->name = stringValue;
     newObjectElement->class = objectClass;
@@ -235,9 +235,9 @@ int addObjectToList(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
-    newTempObject = malloc(sizeof(struct object_t*));
+    newTempObject = malloc(sizeof(struct object_t));
     
-    newObjectElement = malloc(sizeof(struct object_t*));
+    newObjectElement = malloc(sizeof(struct object_t));
     strCopy(stringValue, newObjectElement->name);
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;

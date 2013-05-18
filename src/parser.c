@@ -487,7 +487,10 @@ void type()
         if(tokenType == TOKEN_IDENTIFIER)
         {
             tokenType = TOKEN_STRUCT;
-            getFromList();
+            strCopy(stringValue, typeName);
+
+            // TODO: Check if valid type
+
             getNextToken();
             return;
         }
@@ -1015,7 +1018,7 @@ void variable_declaration()
 
         while(tokenType == TOKEN_MULT)
         {
-            isArray = 1;
+            //isArray = 1;
             getNextToken();
         }
 
@@ -1216,6 +1219,10 @@ void instruction()
     if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
     {
         variable_declaration();
+
+        isGlobal = 0;
+        objectClass = 2; // TODO: Magic int for VAR
+        addObjectToList();
 
         if(tokenType == TOKEN_SEMICOLON)
         {

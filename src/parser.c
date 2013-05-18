@@ -3,7 +3,7 @@
 
 static int currentType;
 static int isArray;
-static int localOrGlobal; // 0 for local, 1 for global
+static int isGlobal; // 0 for local, 1 for global
 static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
 
 // ------------------------------- Symbol table -------------------------------
@@ -88,11 +88,11 @@ int addFieldToList(){
     
     tempObjectElement = malloc(sizeof(struct object_t*));
     
-    if(localOrGlobal == 0){
+    if(isGlobal == 0){
         tempObjectElement = objectLocal->type_t->fields;
     }
     
-    if(localOrGlobal == 1){
+    if(isGlobal == 1){
         tempObjectElement = objectGlobal->type_t->fields;
     }
     
@@ -128,11 +128,11 @@ int addObjectToList(){
     newObjectElement->name = stringValue;
     newObjectElement->next = 0;
     
-    if(localOrGlobal == 0){
+    if(isGlobal == 0){
         newTempObject = objectLocal;
     }
     
-    if(localOrGlobal == 1){
+    if(isGlobal == 1){
         newTempObject = objectGlobal;
     }
     

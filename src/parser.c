@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include "scanner.c"
 
-static int currentType;
+static int currentType;    //0 = int, 1 = char
 static char typeName[1024];
-static int isArrayOrStruct;
+static int isArray;
+static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
 
@@ -38,58 +39,28 @@ struct object_t *objectLocal;
 struct object_t *lastObjectGlobal;
 struct object_t *lastObjectLocal;
 
-struct type_t *typeGlobal;
-struct type_t *typeLocal;
-
-
 void addToList()
 {
     printf("Adding %s\n", stringValue);
 }
 
 
-int findType(){
-    return 0;
-}
-
-
-int addTypeToList(){
-    
-    struct type_t *newElement;
-    struct type_t *tempTypeElement;
+int findTypeClassType(){
     struct object_t *tempTypeObject;
     
-    newElement = malloc(sizeof(struct type_t*));
-    tempTypeElement = malloc(sizeof(struct type_t*));
     tempTypeObject = malloc(sizeof(struct object_t*));
     
     
     if(isGlobal == 0){
-        tempTypeElement = typeLocal;
         tempTypeObject = objectLocal;
     }
     
     if(isGlobal == 1){
-        tempTypeElement = typeGlobal;
         tempTypeObject = objectGlobal;
     }
     
-    
-    if(objectClass == 2 && isArrayOrStruct == 1){       //Type schon vorhanden => suche nach dem struct/array
-        if(tempTypeObject != 0){
-            while(tempTypeObject->next != 0){
-                if(strCompare(tempTypeObject->name, typeName)){
-                    if(isGlobal == 0){
-                        lastObjectLocal->type_t = tempTypeObject->type_t;
-                        return 0;
-                    }
-                    if(isGlobal == 1){
-                        lastObjectGlobal->type_t = tempTypeObject->type_t;
-                        return 0;
-                    }
-                }
-                tempTypeObject = tempTypeObject->next;
-            }
+    if(tempTypeObject != 0){                                //Liste leer  => nothing to do here
+        while(tempTypeObject->next != 0){
             if(strCompare(tempTypeObject->name, typeName)){
                 if(isGlobal == 0){
                     lastObjectLocal->type_t = tempTypeObject->type_t;
@@ -100,14 +71,123 @@ int addTypeToList(){
                     return 0;
                 }
             }
-        }else{
-            return -1;
+            tempTypeObject = tempTypeObject->next;
+            
+            if(strCompare(tempTypeObject->name, typeName)){
+                if(isGlobal == 0){
+                    lastObjectLocal->type_t = tempTypeObject->type_t;
+                    return 0;
+                }
+                if(isGlobal == 1){
+                    lastObjectGlobal->type_t = tempTypeObject->type_t;
+                    return 0;
+                }
+            }
+            
+        }
+    }
+    return -1;
+
+}
+
+int findTypeClassVar(){
+    struct object_t *tempTypeObject;
+    struct type_t *newElement;
+    
+    newElement = malloc(sizeof(struct type_t*));
+    
+    tempTypeObject = malloc(sizeof(struct object_t*));
+    
+    
+    if(isGlobal == 0){
+        tempTypeObject = objectLocal;
+    }
+    
+    if(isGlobal == 1){
+        tempTypeObject = objectGlobal;
+    }
+    
+    while (tempTypeObject->next != 0) {
+        if (tempTypeObject->type_t->form == currentType) {              //Type schon in einem Object????
+            if(isGlobal == 0){
+                lastObjectLocal->type_t = tempTypeObject->type_t;
+                return 0;
+            }
+            if(isGlobal == 1){
+                lastObjectGlobal->type_t = tempTypeObject->type_t;
+                return 0;
+            }
+        }
+        tempTypeObject = tempTypeObject->next;
+    }
+    if (tempTypeObject->type_t->form == currentType) {              //Type schon in einem Object????
+        if(isGlobal == 0){
+            lastObjectLocal->type_t = tempTypeObject->type_t;
+            return 0;
+        }
+        if(isGlobal == 1){
+            lastObjectGlobal->type_t = tempTypeObject->type_t;
+            return 0;
+        }
+    }
+    newElement->form = currentType;
+    
+    tempTypeObject->type_t = newElement;
+
+    
+    return 0;
+}
+
+
+int addTypeToList(){
+    
+    struct type_t *newElement;
+    struct object_t *tempTypeObject;
+    
+    tempTypeObject = malloc(sizeof(struct object_t*));
+    newElement = malloc(sizeof(struct type_t*));
+    
+
+    if(isGlobal == 0){
+        tempTypeObject = objectLocal;
+    }
+    
+    if(isGlobal == 1){
+        tempTypeObject = objectGlobal;
+    }
+    
+    
+
+    if(objectClass == 2 && (isArray == 1 || isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+        if(findTypeClassType()){
+            return 0;
         }
     }
     
-    if(objectClass == 2 && isArrayOrStruct == 0){   
-        
+    if(objectClass == 2 && (isArray == 0 && isStruct == 0)){
+        if(findTypeClassVar()){
+            return 0;
+        }
     }
+    
+        
+    if(objectClass == 1 && (isArray == 1 && isStruct == 0)){
+        newElement->form = 3;
+        newElement->base->form = currentType;
+        tempTypeObject->type_t = newElement;
+        return 0;
+    }
+    
+    if(objectClass == 1 && (isArray == 0 && isStruct == 1)){
+        newElement->form = 2;
+        tempTypeObject->type_t = newElement;
+        return 0;
+    }
+    
+    else{
+        return -1;
+    }
+
     
     return 0;
 }

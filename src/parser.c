@@ -197,6 +197,37 @@ int addObjectToList(){
 
 // -----------------------------------------------------------------------------
 
+// -------------------- Code generation ----------------------------------------
+
+int address(char identifier[1024])
+{
+    // TODO: Check if present in global symbol table
+
+    // TODO: Sum of size of previous elements in symbol table.
+
+    // TODO: Return size
+
+    return -1;
+} 
+
+int encode(int op, int a, int b, int c)
+{
+    // in compiler and linker!
+    // assuming: 0 <= op <= 2^6-1 = 63
+    // assuming: 0 <= a <= 2^5-1 = 31
+    // assuming: 0 <= b <= 2^5-1 = 31
+    // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
+    // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
+    if (c < 0)
+    {
+        c = c + 65536; // 0x10000: 2^16
+    }
+    // if << is not available
+    // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
+    return (((((op * 32) + a) * 32) + b) * 65536) + c;
+}
+// -----------------------------------------------------------------------------
+
 // --------------------Parser error reporting ----------------------------------
 
 void fail(char message[1024])
@@ -1512,8 +1543,8 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    //openFile("test/m4.c");
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+    openFile("test/m4.c");
+    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

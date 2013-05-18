@@ -11,7 +11,7 @@ static int objectClass;
 static int isRegisterUsed[32];
 // ------------------------------- Symbol table -------------------------------
 
-
+struct object_t;
 
 struct type_t {
     int form;
@@ -185,14 +185,22 @@ int addTypeToList(){
     
         
     if(objectClass == 1 && (isArray == 1 && isStruct == 0)){
-        newElement->form = 3;
+        newElement->form = FORM_ARRAY;
+        if(currentType == FORM_INT){
+            newElement->base = typeInt;
+        }
+        if (currentType == FORM_CHAR) {
+            newElement->base = typeChar;
+        }
+        
         newElement->base->form = currentType;
         tempTypeObject->type_t = newElement;
+        
         return 0;
     }
     
-    if(objectClass == 1 && (isArray == 0 && isStruct == 1)){
-        newElement->form = 2;
+    if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
+        newElement->form = FORM_RECORD;
         tempTypeObject->type_t = newElement;
         return 0;
     }
@@ -226,7 +234,7 @@ int addFieldToList(){
         newTempObject = lastObjectGlobal->type_t->fields;
     }
     
-    
+    //TODO: implementing Struct in Struct and Array in Struct
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {

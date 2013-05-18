@@ -993,7 +993,7 @@ void variable_declaration()
 {
     if(tokenType == TOKEN_STATIC)
     {
-        // TODO: Handle static
+        // TODO: Handle static?
         getNextToken();
     }
 
@@ -1003,7 +1003,7 @@ void variable_declaration()
 
         while(tokenType == TOKEN_MULT)
         {
-            // TODO: Handle references
+            isArray = 1;
             getNextToken();
         }
 

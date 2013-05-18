@@ -276,6 +276,7 @@ int readNextCharacter(){
         {
             col = 1;
             lin = lin + 1;
+            printf("\n");
         }
 
         return temp;
@@ -470,10 +471,11 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
-            printf("%d\n",tokenType);
+            printf("%d",tokenType);
             if(tokenType == 100 || tokenType == 300){
-                printf("%s\n",stringValue);
+                printf(" (%s)",stringValue);
             }
+            printf("\t");
 
         }
     }

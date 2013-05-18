@@ -7,6 +7,7 @@ static int isArrayOrStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
 
+static int isRegisterUsed[32];
 // ------------------------------- Symbol table -------------------------------
 
 
@@ -198,6 +199,23 @@ int addObjectToList(){
 // -----------------------------------------------------------------------------
 
 // -------------------- Code generation ----------------------------------------
+
+int requestRegister()
+{
+    int i;
+    i = 1;
+    while(isRegisterUsed[i] && i <= 32)
+    {
+        i = i + 1;
+    }
+    isRegisterUsed[i] = 1;
+    return i; // 32 is error
+}
+
+void releaseRegister(int i)
+{
+    isRegisterUsed[i] = 0;
+}
 
 int address(char identifier[1024])
 {
@@ -1536,7 +1554,7 @@ void start() {
 // ----------------------------------------------------------------------------
 
 int main(){
-    printf("Phoenix: Parser\n");
+    printf("\nPhoenix: Parser\n===============\n");
         
     initTokens();
 
@@ -1547,7 +1565,6 @@ int main(){
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
-
 
     return 0;
 }

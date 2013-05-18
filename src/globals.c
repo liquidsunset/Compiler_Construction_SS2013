@@ -8,6 +8,7 @@ static int FIRST_EXPRESSION;
 static int FIRST_FUNCTION_STATEMENT;
 static int FIRST_TYPE_DECLARATION;
 static int FIRST_INSTRUCTION;
+static int FIRST_TOP_DECLARATION;
 
 //tokens:
 
@@ -167,6 +168,7 @@ void initTokens(){
     FIRST_FUNCTION_STATEMENT = 5;
     FIRST_TYPE_DECLARATION = 6;
     FIRST_INSTRUCTION = 7;
+    FIRST_TOP_DECLARATION = 8;
 
     errorCount = 0;
     warningCount = 0;

@@ -212,18 +212,49 @@ void mark(char message[1024])
 // -----------------------------------------------------------------------------
 
 int isIn(int tokenType, int rule) {
-    if(rule == FIRST_TOP_DECLARATION && (tokenType == TOKEN_TYPEDEF || tokenType == TOKEN_STRUCT || tokenType == TOKEN_STATIC || isIn(tokenType, FIRST_TYPE))) { return 1; }
 
-    if(rule == FIRST_TYPE_DECLARATION && (tokenType == TOKEN_STRUCT || tokenType == TOKEN_TYPEDEF)) { return 1; }
-    if(rule == FIRST_EXPRESSION && (tokenType == TOKEN_MINUS || tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_CONSTINT || tokenType == TOKEN_CONSTCHAR || tokenType ==TOKEN_STRING_LITERAL || tokenType == TOKEN_LRB || tokenType == TOKEN_FCLOSE || tokenType ==
-        TOKEN_FOPEN || tokenType == TOKEN_SIZEOF || tokenType == TOKEN_MALLOC)){return 1;}
-    if(rule == FIRST_FUNCTION_DEFINITION && (tokenType == TOKEN_VOID || tokenType == TOKEN_INT || tokenType == TOKEN_CHAR)){return 1;} // function_definition
-    if(rule == FIRST_GLOBAL_VARIABLE_DECLARATION && tokenType == TOKEN_STATIC){return 1;} //variable_declaration global
-    if(rule == FIRST_TYPE && (tokenType == TOKEN_INT || tokenType == TOKEN_CHAR || tokenType == TOKEN_VOID || tokenType == TOKEN_STRUCT)){return 1;}
-    if(rule == FIRST_VARIABLE_DECLARATION && (tokenType == TOKEN_STATIC || isIn(tokenType, FIRST_TYPE))) { return 1; }
-    if(rule == FIRST_FUNCTION_STATEMENT && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || tokenType == TOKEN_WHILE || tokenType == TOKEN_IF || tokenType == TOKEN_RETURN || isIn(tokenType, FIRST_EXPRESSION))) { return 1; }
+    if(rule == FIRST_TOP_DECLARATION && (
+        tokenType == TOKEN_TYPEDEF ||
+        tokenType == TOKEN_STRUCT ||
+        tokenType == TOKEN_STATIC ||
+        isIn(tokenType, FIRST_TYPE) ))
+    { return 1; }
 
-    if(rule == FIRST_INSTRUCTION && (isIn(tokenType, FIRST_VARIABLE_DECLARATION) || isIn(tokenType, FIRST_TYPE_DECLARATION) || tokenType == TOKEN_IDENTIFIER)) { return 1; }
+    if(rule == FIRST_TYPE_DECLARATION && (
+        tokenType == TOKEN_STRUCT ||
+        tokenType == TOKEN_TYPEDEF))
+    { return 1; }
+
+    if(rule == FIRST_EXPRESSION && (
+        tokenType == TOKEN_MINUS ||
+        tokenType == TOKEN_IDENTIFIER ||
+        tokenType == TOKEN_CONSTINT ||
+        tokenType == TOKEN_CONSTCHAR ||
+        tokenType == TOKEN_STRING_LITERAL ||
+        tokenType == TOKEN_LRB ||
+        tokenType == TOKEN_FCLOSE ||
+        tokenType == TOKEN_FOPEN ||
+        tokenType == TOKEN_SIZEOF ||
+        tokenType == TOKEN_MALLOC))
+    { return 1; }
+
+    if(rule == FIRST_TYPE && (
+        tokenType == TOKEN_INT ||
+        tokenType == TOKEN_CHAR ||
+        tokenType == TOKEN_VOID ||
+        tokenType == TOKEN_STRUCT ))
+    { return 1; }
+
+    if(rule == FIRST_VARIABLE_DECLARATION && (
+        tokenType == TOKEN_STATIC ||
+        isIn(tokenType, FIRST_TYPE) ))
+    { return 1; }
+
+    if(rule == FIRST_INSTRUCTION && (
+        isIn(tokenType, FIRST_VARIABLE_DECLARATION) ||
+        isIn(tokenType, FIRST_TYPE_DECLARATION) ||
+        tokenType == TOKEN_IDENTIFIER))
+    { return 1; }
 
     return 0;
 }
@@ -842,23 +873,6 @@ void return_statement()
 
 void instruction()
 {
-    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
-    {
-        variable_declaration();
-
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; expected after variable declaration (instruction)");
-            getNextToken();
-        }
-
-        return;
-    }
-
     if(tokenType == TOKEN_IF)
     {
         if_else();
@@ -887,26 +901,44 @@ void instruction()
         return;
     }
 
-    if(isIn(tokenType, FIRST_TYPE_DECLARATION))
-    {
-        type_declaration();
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; expected after type declaration (instruction)");
-            getNextToken();
-        }
+    // // Don't support type declarations within functions
+    // if(isIn(tokenType, FIRST_TYPE_DECLARATION))
+    // {
+    //     type_declaration();
+    //     if(tokenType == TOKEN_SEMICOLON)
+    //     {
+    //         getNextToken();
+    //     }
+    //     else
+    //     {
+    //         mark("; expected after type declaration (instruction)");
+    //         getNextToken();
+    //     }
 
-        return;
-    }
+    //     return;
+    // }
 
-    if(tokenType == TOKEN_IDENTIFIER) // not yet sure if assignment or call
+    if(tokenType == TOKEN_IDENTIFIER) // assignment or call or typedefd declaration
     {
         // TODO: Save identifier
         getNextToken();
+
+        if(tokenType == TOKEN_IDENTIFIER) // typedefd declaration
+        {
+            // TODO: Add to list
+            getNextToken();
+
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("; expected after declaration (instruction)");
+                getNextToken();
+            }
+
+        }
 
         if(tokenType == TOKEN_LRB) // procedure call
         {
@@ -996,6 +1028,23 @@ void instruction()
 
             return;
         }
+    }
+
+    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+    {
+        variable_declaration();
+
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after variable declaration (instruction)");
+            getNextToken();
+        }
+
+        return;
     }
 }
 

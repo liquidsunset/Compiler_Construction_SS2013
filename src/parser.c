@@ -2,14 +2,14 @@
 #include "scanner.c"
 
 static int currentType;
-static int isArray;
+static char typeName[1024];
+static int isArrayOrStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR 
 
 // ------------------------------- Symbol table -------------------------------
 
 
-struct object_t;
 
 struct type_t {
     int form;
@@ -34,8 +34,12 @@ void getFromList()
 struct object_t *objectGlobal;
 struct object_t *objectLocal;
 
+struct object_t *lastObjectGlobal;
+struct object_t *lastObjectLocal;
+
 struct type_t *typeGlobal;
 struct type_t *typeLocal;
+
 
 void addToList()
 {
@@ -48,71 +52,99 @@ int findType(){
 }
 
 
-
-void addRecordOfRecords(){
-    
-}
-
-void addArrayOfArrays(){
-    
-}
-
-void addArrayOfRecords(){
-    
-}
-
-void addRecordOfArrays(){
-    
-}
-
-
 int addTypeToList(){
+    
     struct type_t *newElement;
+    struct type_t *tempTypeElement;
+    struct object_t *tempTypeObject;
+    
     newElement = malloc(sizeof(struct type_t*));
-    if(isArray){
+    tempTypeElement = malloc(sizeof(struct type_t*));
+    tempTypeObject = malloc(sizeof(struct object_t*));
+    
+    
+    if(isGlobal == 0){
+        tempTypeElement = typeLocal;
+        tempTypeObject = objectLocal;
+    }
+    
+    if(isGlobal == 1){
+        tempTypeElement = typeGlobal;
+        tempTypeObject = objectGlobal;
+    }
+    
+    
+    if(objectClass == 2 && isArrayOrStruct == 1){       //Type schon vorhanden => suche nach dem struct/array
+        if(tempTypeObject != 0){
+            while(tempTypeObject->next != 0){
+                if(strCompare(tempTypeObject->name, typeName)){
+                    if(isGlobal == 0){
+                        lastObjectLocal->type_t = tempTypeObject->type_t;
+                        return 0;
+                    }
+                    if(isGlobal == 1){
+                        lastObjectGlobal->type_t = tempTypeObject->type_t;
+                        return 0;
+                    }
+                }
+                tempTypeObject = tempTypeObject->next;
+            }
+            if(strCompare(tempTypeObject->name, typeName)){
+                if(isGlobal == 0){
+                    lastObjectLocal->type_t = tempTypeObject->type_t;
+                    return 0;
+                }
+                if(isGlobal == 1){
+                    lastObjectGlobal->type_t = tempTypeObject->type_t;
+                    return 0;
+                }
+            }
+        }else{
+            return -1;
+        }
+    }
+    
+    if(objectClass == 2 && isArrayOrStruct == 0){   
         
     }
-    newElement->form = currentType;
-    if(tokenType == TOKEN_STRUCT){
-        struct object_t *newObjectElement;
-        newObjectElement = malloc(sizeof(struct object_t*));
-        newElement->fields = newObjectElement;
-    }
+    
     return 0;
 }
 
 
 int addFieldToList(){
     struct object_t *newObjectElement;
-    struct object_t *tempObjectElement;
-    
-    tempObjectElement = malloc(sizeof(struct object_t*));
-    
-    if(isGlobal == 0){
-        tempObjectElement = objectLocal->type_t->fields;
-    }
-    
-    if(isGlobal == 1){
-        tempObjectElement = objectGlobal->type_t->fields;
-    }
+    struct object_t *newTempObject;
     
     
+    newTempObject = malloc(sizeof(struct object_t*));
     newObjectElement = malloc(sizeof(struct object_t*));
+    
     newObjectElement->name = stringValue;
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
     
-    if(tempObjectElement != 0){
-        while (tempObjectElement->next != 0) {
-            if(strCompare(tempObjectElement->name, stringValue)){
+    if(isGlobal == 0){
+        newTempObject = lastObjectLocal->type_t->fields;
+    }
+    
+    if(isGlobal == 1){
+        newTempObject = lastObjectGlobal->type_t->fields;
+    }
+    
+    
+    
+    if(newTempObject != 0){
+        while (newTempObject->next != 0) {
+            if(strCompare(newTempObject->name, stringValue)){
                 return -1;
             }
-            tempObjectElement = tempObjectElement->next;
+            newTempObject = newTempObject->next;
         }
-        tempObjectElement->next = newObjectElement;
+        newTempObject->next = newObjectElement;
     }
     else{
-        tempObjectElement = newObjectElement;
+        newTempObject = newObjectElement;
     }
     
     return 0;
@@ -126,6 +158,7 @@ int addObjectToList(){
     
     newObjectElement = malloc(sizeof(struct object_t*));
     newObjectElement->name = stringValue;
+    newObjectElement->class = objectClass;
     newObjectElement->next = 0;
     
     if(isGlobal == 0){
@@ -149,9 +182,17 @@ int addObjectToList(){
         newTempObject = newObjectElement;
     }
     
+    if(isGlobal == 0){
+        lastObjectLocal = newTempObject;
+    }
+    
+    if(isGlobal == 1){
+        lastObjectGlobal = newTempObject;
+    }
+    
+    
     return 0;
 }
-
 
 
 // -----------------------------------------------------------------------------
@@ -1420,8 +1461,8 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+    //openFile("test/m4.c");
+    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 

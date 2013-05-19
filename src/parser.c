@@ -8,7 +8,9 @@ static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR
 
+// -- Codegen
 static int isRegisterUsed[32];
+static int CODEGEN_GP;
 // ------------------------------- Symbol table -------------------------------
 
 
@@ -292,6 +294,20 @@ int addObjectToList(){
 // -----------------------------------------------------------------------------
 
 // -------------------- Code generation ----------------------------------------
+
+void initCodeGen()
+{
+    CODEGEN_GP = 28;
+}
+
+struct item_t
+{
+    int mode; // CONST, VAR, REG, REF
+    struct type_t * type;
+    int reg; // both reg and offset give us the address of the variable
+    int offset; // reg[reg] + offset -> address
+    int value;
+};
 
 int requestRegister()
 {

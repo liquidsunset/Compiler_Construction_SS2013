@@ -33,6 +33,7 @@ void getFromList()
     printf("Reading %s\n", stringValue);
 }
 
+
 struct object_t *objectGlobal;
 struct object_t *objectLocal;
 
@@ -55,6 +56,24 @@ void initTypes(){
 void addToList()
 {
     printf("Adding %s\n", stringValue);
+}
+
+
+struct object_t* findObject(){
+    struct object_t *newTempObject;
+    newTempObject = malloc(sizeof(struct object_t));
+    
+    if(isGlobal == 0){
+        newTempObject = objectLocal;
+    }
+    
+    if(isGlobal == 1){
+        newTempObject = objectGlobal;
+    }
+    
+    //TODO:  ausprogn
+    
+    return 0;
 }
 
 

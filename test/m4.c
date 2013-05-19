@@ -4,8 +4,8 @@ struct rec_t {
 	    int *arr;
 };
 
-int a;
-struct rec_t *rec;
+static int a;
+static struct rec_t *rec;
 
 void main() {
 	

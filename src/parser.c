@@ -71,7 +71,17 @@ struct object_t* findObject(){
         newTempObject = objectGlobal;
     }
     
-    //TODO:  ausprogn
+    if(newTempObject != 0){
+        while (newTempObject->next != 0) {
+            if(strCompare(newTempObject->name, stringValue)){
+                return newTempObject;
+            }
+            newTempObject = newTempObject->next;
+        }
+        if(strCompare(newTempObject->name, stringValue)){
+            return newTempObject;
+        }
+    }
     
     return 0;
 }
@@ -1577,7 +1587,7 @@ void struct_declaration()
 
                 // type is set by type() within variable_declaration().
                 // identifier name is still set after variable_declaration() completed.
-                objectClass = CLASS_FIELD; // TODO: Magic int
+                objectClass = CLASS_FIELD; 
                 addFieldToList();
 
                 if(tokenType == TOKEN_SEMICOLON)

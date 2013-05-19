@@ -24,7 +24,7 @@ typedef char *string_t;
 struct object_t{
     string_t name;
     int class;
-    struct type_t *type_t;
+    struct type_t *type;
     struct object_t *next;
 };
 
@@ -95,11 +95,11 @@ int findTypeClassType(){
         while(tempTypeObject->next != 0){
             if(strCompare(tempTypeObject->name, typeName)){
                 if(isGlobal == 0){
-                    lastObjectLocal->type_t = tempTypeObject->type_t;
+                    lastObjectLocal->type = tempTypeObject->type;
                     return 0;
                 }
                 if(isGlobal == 1){
-                    lastObjectGlobal->type_t = tempTypeObject->type_t;
+                    lastObjectGlobal->type = tempTypeObject->type;
                     return 0;
                 }
             }
@@ -107,11 +107,11 @@ int findTypeClassType(){
             
             if(strCompare(tempTypeObject->name, typeName)){
                 if(isGlobal == 0){
-                    lastObjectLocal->type_t = tempTypeObject->type_t;
+                    lastObjectLocal->type = tempTypeObject->type;
                     return 0;
                 }
                 if(isGlobal == 1){
-                    lastObjectGlobal->type_t = tempTypeObject->type_t;
+                    lastObjectGlobal->type = tempTypeObject->type;
                     return 0;
                 }
             }
@@ -140,31 +140,31 @@ int findTypeClassVar(){
     }
     
     while (tempTypeObject->next != 0) {
-        if (tempTypeObject->type_t->form == currentType) {              //Type schon in einem Object????
+        if (tempTypeObject->type->form == currentType) {              //Type schon in einem Object????
             if(isGlobal == 0){
-                lastObjectLocal->type_t = tempTypeObject->type_t;
+                lastObjectLocal->type = tempTypeObject->type;
                 return 0;
             }
             if(isGlobal == 1){
-                lastObjectGlobal->type_t = tempTypeObject->type_t;
+                lastObjectGlobal->type = tempTypeObject->type;
                 return 0;
             }
         }
         tempTypeObject = tempTypeObject->next;
     }
-    if (tempTypeObject->type_t->form == currentType) {              //Type schon in einem Object????
+    if (tempTypeObject->type->form == currentType) {              //Type schon in einem Object????
         if(isGlobal == 0){
-            lastObjectLocal->type_t = tempTypeObject->type_t;
+            lastObjectLocal->type = tempTypeObject->type;
             return 0;
         }
         if(isGlobal == 1){
-            lastObjectGlobal->type_t = tempTypeObject->type_t;
+            lastObjectGlobal->type = tempTypeObject->type;
             return 0;
         }
     }
     newElement->form = currentType;
     
-    tempTypeObject->type_t = newElement;
+    tempTypeObject->type = newElement;
 
     
     return 0;
@@ -213,14 +213,14 @@ int addTypeToList(){
         }
         
         newElement->base->form = currentType;
-        tempTypeObject->type_t = newElement;
+        tempTypeObject->type = newElement;
         
         return 0;
     }
     
     if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
         newElement->form = FORM_RECORD;
-        tempTypeObject->type_t = newElement;
+        tempTypeObject->type = newElement;
         return 0;
     }
     
@@ -246,11 +246,11 @@ int addFieldToList(){
     newObjectElement->next = 0;
     
     if(isGlobal == 0){
-        newTempObject = lastObjectLocal->type_t->fields;
+        newTempObject = lastObjectLocal->type->fields;
     }
     
     if(isGlobal == 1){
-        newTempObject = lastObjectGlobal->type_t->fields;
+        newTempObject = lastObjectGlobal->type->fields;
     }
     
     //TODO: implementing Struct in Struct and Array in Struct
@@ -266,7 +266,7 @@ int addFieldToList(){
     }
     else{
         newTempObject = newObjectElement;
-        lastObjectGlobal->type_t->fields = newTempObject;
+        lastObjectGlobal->type->fields = newTempObject;
     }
     
     return 0;

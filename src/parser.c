@@ -6,14 +6,14 @@ static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
-static int objectClass; // class variable: 0 = Field, 1 = Type, 2 = VAR
+static int objectClass;
 
 // -- Codegen
 static int isRegisterUsed[32];
 static int CODEGEN_GP;
 // ------------------------------- Symbol table -------------------------------
 
-
+struct object_t;
 
 struct type_t {
     int form;
@@ -35,15 +35,47 @@ void getFromList()
     printf("Reading %s\n", stringValue);
 }
 
+
 struct object_t *objectGlobal;
 struct object_t *objectLocal;
 
 struct object_t *lastObjectGlobal;
 struct object_t *lastObjectLocal;
 
+struct type_t *typeInt;
+struct type_t *typeChar;
+
+
+void initTypes(){
+    typeInt = malloc(sizeof(struct type_t));
+    typeChar = malloc(sizeof(struct type_t));
+    
+    typeInt->form = FORM_INT;
+    typeChar->form = FORM_CHAR;
+    
+}
+
 void addToList()
 {
     printf("Adding %s\n", stringValue);
+}
+
+
+struct object_t* findObject(){
+    struct object_t *newTempObject;
+    newTempObject = malloc(sizeof(struct object_t));
+    
+    if(isGlobal == 0){
+        newTempObject = objectLocal;
+    }
+    
+    if(isGlobal == 1){
+        newTempObject = objectGlobal;
+    }
+    
+    //TODO:  ausprogn
+    
+    return 0;
 }
 
 
@@ -174,14 +206,22 @@ int addTypeToList(){
     
         
     if(objectClass == 1 && (isArray == 1 && isStruct == 0)){
-        newElement->form = 3;
+        newElement->form = FORM_ARRAY;
+        if(currentType == FORM_INT){
+            newElement->base = typeInt;
+        }
+        if (currentType == FORM_CHAR) {
+            newElement->base = typeChar;
+        }
+        
         newElement->base->form = currentType;
         tempTypeObject->type_t = newElement;
+        
         return 0;
     }
     
-    if(objectClass == 1 && (isArray == 0 && isStruct == 1)){
-        newElement->form = 2;
+    if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
+        newElement->form = FORM_RECORD;
         tempTypeObject->type_t = newElement;
         return 0;
     }
@@ -215,7 +255,7 @@ int addFieldToList(){
         newTempObject = lastObjectGlobal->type_t->fields;
     }
     
-    
+    //TODO: implementing Struct in Struct and Array in Struct
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
@@ -1531,7 +1571,7 @@ void struct_declaration()
         if(tokenType == TOKEN_IDENTIFIER)
         {
             isStruct = 1;
-            objectClass = 1; // TODO: Magic int
+            objectClass = CLASS_TYPE; 
             isArray = 0;
             isGlobal = 1;
             addObjectToList();
@@ -1553,7 +1593,7 @@ void struct_declaration()
 
                 // type is set by type() within variable_declaration().
                 // identifier name is still set after variable_declaration() completed.
-                objectClass = 0; // TODO: Magic int
+                objectClass = CLASS_FIELD; // TODO: Magic int
                 addFieldToList();
 
                 if(tokenType == TOKEN_SEMICOLON)
@@ -1683,6 +1723,7 @@ void start() {
 int main(){
     printf("\nPhoenix: Parser\n===============\n");
     initTokens();
+    initTypes();
 
     errorCount = 0;
     warningCount = 0;

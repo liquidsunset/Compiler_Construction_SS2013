@@ -4,9 +4,11 @@ struct rec_t {
 	    int *arr;
 };
 
+static int a;
+static struct rec_t *rec;
+
 void main() {
-	int a;
-	struct rec_t *rec;
+	
 
 	a = 5;
 	rec = malloc(sizeof(struct rec_t));

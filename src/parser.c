@@ -33,6 +33,7 @@ struct object_t{
     int class;
     struct type_t *type;
     struct object_t *next;
+    int offset;
 };
 
 void getFromList()

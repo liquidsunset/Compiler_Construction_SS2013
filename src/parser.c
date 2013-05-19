@@ -11,6 +11,11 @@ static int objectClass;
 // -- Codegen
 static int isRegisterUsed[32];
 static int CODEGEN_GP;
+static int CODEGEN_MODE_CONST;
+static int CODEGEN_MODE_VAR;
+static int CODEGEN_MODE_REG;
+static int CODEGEN_MODE_REF;
+
 // ------------------------------- Symbol table -------------------------------
 
 struct object_t;
@@ -333,68 +338,6 @@ int addObjectToList(){
 
 // -----------------------------------------------------------------------------
 
-// -------------------- Code generation ----------------------------------------
-
-void initCodeGen()
-{
-    CODEGEN_GP = 28;
-}
-
-struct item_t
-{
-    int mode; // CONST, VAR, REG, REF
-    struct type_t * type;
-    int reg; // both reg and offset give us the address of the variable
-    int offset; // reg[reg] + offset -> address
-    int value;
-};
-
-int requestRegister()
-{
-    int i;
-    i = 1;
-    while(isRegisterUsed[i] && i <= 32)
-    {
-        i = i + 1;
-    }
-    isRegisterUsed[i] = 1;
-    return i; // 32 is error
-}
-
-void releaseRegister(int i)
-{
-    isRegisterUsed[i] = 0;
-}
-
-int address(char identifier[1024])
-{
-    // TODO: Check if present in global symbol table
-
-    // TODO: Sum of size of previous elements in symbol table.
-
-    // TODO: Return size
-
-    return -1;
-} 
-
-int encode(int op, int a, int b, int c)
-{
-    // in compiler and linker!
-    // assuming: 0 <= op <= 2^6-1 = 63
-    // assuming: 0 <= a <= 2^5-1 = 31
-    // assuming: 0 <= b <= 2^5-1 = 31
-    // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
-    // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
-    if (c < 0)
-    {
-        c = c + 65536; // 0x10000: 2^16
-    }
-    // if << is not available
-    // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
-    return (((((op * 32) + a) * 32) + b) * 65536) + c;
-}
-// -----------------------------------------------------------------------------
-
 // --------------------Parser error reporting ----------------------------------
 
 void fail(char message[1024])
@@ -447,6 +390,190 @@ void mark(char message[1024])
     warningCount = warningCount + 1;
 
     printf("Warning Near Line %d: %s\n", niceLine, message);
+}
+// -----------------------------------------------------------------------------
+
+
+// -------------------- Code generation ----------------------------------------
+
+void initCodeGen()
+{
+    CODEGEN_GP = 28;
+
+    CODEGEN_MODE_CONST = 1;
+    CODEGEN_MODE_VAR = 2;
+    CODEGEN_MODE_REG = 3;
+    CODEGEN_MODE_REF = 4;
+}
+
+struct item_t
+{
+    int mode; // CONST, VAR, REG, REF
+    struct type_t * type;
+    int reg; // both reg and offset give us the address of the variable
+    int offset; // reg[reg] + offset -> address
+    int value;
+};
+
+int requestRegister()
+{
+    int i;
+    i = 1;
+    while(isRegisterUsed[i] && i <= 32)
+    {
+        i = i + 1;
+    }
+    isRegisterUsed[i] = 1;
+    return i; // 32 is error
+}
+
+void releaseRegister(int i)
+{
+    isRegisterUsed[i] = 0;
+}
+
+int address(char identifier[1024])
+{
+    // TODO: Check if present in global symbol table
+
+    // TODO: Sum of size of previous elements in symbol table.
+
+    // TODO: Return size
+
+    return -1;
+} 
+
+void storeString(struct item_t * item, char string[1024])
+{
+    // TODO
+}
+
+void put(int op, int a, int b, int c)
+{
+    int instruction;
+
+    // in compiler and linker!
+    // assuming: 0 <= op <= 2^6-1 = 63
+    // assuming: 0 <= a <= 2^5-1 = 31
+    // assuming: 0 <= b <= 2^5-1 = 31
+    // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
+    // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
+    if (c < 0)
+    {
+        c = c + 65536; // 0x10000: 2^16
+    }
+    // if << is not available
+    // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
+    instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
+
+    // TODO: write to file
+}
+
+void const2Reg(struct item_t * item)
+{
+    item->mode = CODEGEN_MODE_REG;
+    item->reg = requestRegister();
+
+    put(TARGET_ADDI, item->reg, 0, item->value);
+
+    item->value = 0;
+    item->offset = 0;
+}
+
+void var2Reg(struct item_t * item)
+{
+    int newReg;
+    
+    item->mode = CODEGEN_MODE_REG;
+    newReg = requestRegister();
+
+    put(TARGET_LW, newReg, item->reg, item->offset);
+
+    item->reg = newReg;
+    item->offset = 0;
+}
+
+void load(struct item_t * item)
+{
+    if(item->mode == CODEGEN_MODE_CONST)
+    {
+        const2Reg(item);
+        return;
+    }
+    if(item->mode == CODEGEN_MODE_VAR)
+    {
+        var2Reg(item);
+        return;
+    }
+    if(item->mode == CODEGEN_MODE_REF)
+    {
+        //ref2Reg(item); // later
+        return;
+    }
+}
+
+void assignmentOperator(
+    struct item_t * leftItem,
+    struct item_t * rightItem)
+{
+
+}
+
+void simpleExpressionBinaryOperator(
+    struct item_t * leftItem,
+    struct item_t * rightItem,
+    int operatorSymbol)
+{
+    if(operatorSymbol == TOKEN_OR)
+    {
+        // .. later
+        return;
+    }
+    if(leftItem->type == FORM_INT && rightItem->type == FORM_INT) // TODO: Compare with references to TYPE objects
+    {
+        if(rightItem->mode == CODEGEN_MODE_CONST)
+        {
+            if(leftItem->mode == CODEGEN_MODE_CONST)
+            {
+                if(operatorSymbol == TOKEN_PLUS)
+                {
+                    leftItem->value = leftItem->value + rightItem->value;
+                }
+                else{if(operatorSymbol == TOKEN_MINUS)
+                {
+                    leftItem->value = leftItem->value - rightItem->value;
+                }}
+            }
+            else
+            {
+                load(leftItem);
+                if(operatorSymbol == TOKEN_PLUS)
+                {
+                    put(TARGET_ADDI, leftItem->reg, leftItem->reg, rightItem->value);
+                }
+                else{if(operatorSymbol == TOKEN_MINUS){
+                    put(TARGET_SUBI, leftItem->reg, leftItem->reg, rightItem->value);
+                }}
+            }
+        }
+        else
+        {
+            load(leftItem);
+            load(rightItem);
+            if(operatorSymbol == TOKEN_PLUS)
+            {
+                put(TARGET_ADD, leftItem->reg, leftItem->reg, rightItem->reg);
+            }
+            else {if(operatorSymbol == TOKEN_MINUS){
+                put(TARGET_SUB, leftItem->reg, leftItem->reg, rightItem->reg);
+            }}
+            releaseRegister(rightItem->reg);
+        }
+    }
+    else
+    {
+        error("Integer expression expected");
+    }
 }
 // -----------------------------------------------------------------------------
 
@@ -503,7 +630,7 @@ int isIn(int tokenType, int rule) {
 void instruction();
 void if_else();
 void while_loop();
-void expression();
+void expression(struct item_t * item);
 void type_declaration();
 
 void type()
@@ -600,7 +727,7 @@ void malloc_func()
             
             if(isIn(tokenType, FIRST_EXPRESSION))
             {
-                expression();
+                expression(0);
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
@@ -782,11 +909,13 @@ void fputc_func()
     }
 }
 
-void factor() {
+void factor(struct item_t * item) {
+    struct object_t * object;
+
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
-        expression();
+        expression(0);
 
         if(tokenType == TOKEN_RRB)
         {
@@ -803,7 +932,17 @@ void factor() {
 
     if(tokenType == TOKEN_CONSTINT)
     {
-        // TODO: Handle integer literal
+        item->mode = CODEGEN_MODE_CONST;
+        item->type = FORM_INT; // TODO: pointer to global int type
+        item->value = intValue;
+
+        getNextToken();
+        return;
+    }
+
+    if(tokenType == TOKEN_STRING_LITERAL)
+    {
+        storeString(item, stringValue);
         getNextToken();
         return;
     }
@@ -817,14 +956,31 @@ void factor() {
 
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
-        // TODO: save identifier
+        object = findObject(); // implicetly uses stringValue
+        if(object != 0)
+        {
+            item->mode = CODEGEN_MODE_VAR;
+            item->type = object->type;
+
+            // TODO: distinction between global and local scope
+            item->reg = CODEGEN_GP;
+
+            item->offset = object->offset;
+
+            //selector(item); // array, record access
+        }
+        else
+        {
+            error("Undeclared variable");
+        }
+
         getNextToken();
 
         if(tokenType == TOKEN_LRB) // procedure call
         {
             while(isIn(tokenType, FIRST_EXPRESSION))
             {
-                expression();
+                expression(0);
                 if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
@@ -874,7 +1030,7 @@ void factor() {
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
             {
-                expression();
+                expression(0);
             }
             else
             {
@@ -940,7 +1096,7 @@ void factor() {
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
-        expression();
+        expression(0);
         if(tokenType == TOKEN_RRB)
         {
             getNextToken();
@@ -973,11 +1129,11 @@ void factor() {
 
 void term()
 {
-    factor();
+    factor(0);
     while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
     {
         getNextToken();
-        factor();
+        factor(0);
     }
 }
 
@@ -996,66 +1152,66 @@ void simple_expression()
     }
 }
 
-void expression()
+void expression(struct item_t * item)
 {
     if(tokenType == TOKEN_NOT) {
         getNextToken();
     }
 
-    simple_expression();
+    simple_expression(0);
     
     if(tokenType == TOKEN_EQUAL)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_LESSEQUAL)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_LESS)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_UNEQUAL)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_GREATER)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_GREATEREQUAL)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_AND)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_OR)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
     if(tokenType == TOKEN_ASSIGNMENT)
     {
         getNextToken();
-        expression();
+        expression(0);
         return;
     }
 }
@@ -1108,13 +1264,17 @@ void return_statement()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
-            expression();
+            expression(0);
         }
     }
 }
 
 void instruction()
 {
+    struct item_t * leftItem;
+    struct item_t * rightItem;
+    struct object_t * object;
+
     if(tokenType == TOKEN_IF)
     {
         if_else();
@@ -1186,7 +1346,7 @@ void instruction()
         {
             while(isIn(tokenType, FIRST_EXPRESSION))
             {
-                expression();
+                expression(0);
                 if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
@@ -1236,7 +1396,7 @@ void instruction()
             getNextToken();
             if(isIn(tokenType, FIRST_EXPRESSION))
             {
-                expression();
+                expression(0);
             }
             else
             {
@@ -1257,7 +1417,34 @@ void instruction()
         if(tokenType == TOKEN_ASSIGNMENT) // assignment
         {
             getNextToken();
-            expression();
+
+            leftItem = malloc(sizeof(struct item_t));
+
+            // values still set from identifier before ASSIGNMENT
+            object = findObject(); // implicitly uses stringValue
+            if(object != 0)
+            {
+                leftItem->mode = CODEGEN_MODE_VAR;
+                leftItem->type = object->type;
+
+                // TODO: distinction between global and local scope
+                leftItem->reg = CODEGEN_GP;
+
+                leftItem->offset = object->offset;
+
+                //selector(leftItem); // array, record access
+            }
+            else
+            {
+                error("Undeclared variable");
+            }
+
+            rightItem = malloc(sizeof(struct item_t));
+
+            expression(rightItem);
+
+            assignmentOperator(leftItem, rightItem);
+
             if(tokenType == TOKEN_SEMICOLON)
             {
                 getNextToken();
@@ -1312,7 +1499,7 @@ void if_else()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
-            expression();
+            expression(0);
 
             if(tokenType == TOKEN_LRB)
             {
@@ -1397,7 +1584,7 @@ void while_loop()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
-            expression();
+            expression(0);
 
             if(tokenType == TOKEN_LRB)
             {

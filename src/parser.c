@@ -1276,11 +1276,8 @@ void factor(struct item_t * item) {
 void term(struct item_t * item)
 {
     int operatorSymbol;
-    //struct item_t * leftItem;
     struct item_t * rightItem;
 
-    // leftItem = malloc(sizeof(struct item_t));
-    // factor(leftItem);
     factor(item);
 
     while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
@@ -2161,6 +2158,7 @@ int main(){
     printf("\nPhoenix: Parser\n===============\n");
     initTokens();
     initTypes();
+    initCodeGen();
 
     errorCount = 0;
     warningCount = 0;

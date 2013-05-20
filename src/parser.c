@@ -648,7 +648,7 @@ void simpleExpressionBinaryOperator(
         // .. later
         return;
     }
-    if(leftItem->type == FORM_INT && rightItem->type == FORM_INT) // TODO: Compare with references to TYPE objects
+    if(leftItem->type == typeInt && rightItem->type == typeInt) 
     {
         if(rightItem->mode == CODEGEN_MODE_CONST)
         {
@@ -758,7 +758,7 @@ void type(struct item_t * item)
     {
         currentType = TOKEN_INT;
         item->mode = CODEGEN_MODE_CONST;
-        item->type = FORM_INT; //TOOD
+        item->type = typeInt;
         item->reg = 0;
         item->offset = 0;
         item->value = SIZE_INT;
@@ -1071,7 +1071,7 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_CONSTINT)
     {
         item->mode = CODEGEN_MODE_CONST;
-        item->type = FORM_INT; // TODO: pointer to global int type
+        item->type = typeInt; // TODO: pointer to global int type
         item->reg = 0;
         item->offset = 0;
         item->value = intValue;
@@ -1096,7 +1096,7 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
-        object = findObject(); // implicitly uses stringValue
+        object = findObject(objectGlobal); // implicitly uses stringValue
         if(object != 0)
         {
             item->mode = CODEGEN_MODE_VAR;
@@ -1637,7 +1637,7 @@ void instruction()
             leftItem = malloc(sizeof(struct item_t));
 
             // values still set from identifier before ASSIGNMENT
-            object = findObject(); // implicitly uses stringValue
+            object = findObject(objectGlobal); // implicitly uses stringValue
             if(object != 0)
             {
                 leftItem->mode = CODEGEN_MODE_VAR;

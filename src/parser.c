@@ -548,6 +548,13 @@ void put(int op, int a, int b, int c)
     // TODO: write to file
 }
 
+void ref2Reg(struct item_t * item)
+{
+    item->mode = CODEGEN_MODE_REG;
+    put(TARGET_LW, item->reg, item->reg, item->offset);
+    item->offset = 0;
+}
+
 void const2Reg(struct item_t * item)
 {
     item->mode = CODEGEN_MODE_REG;
@@ -586,7 +593,7 @@ void load(struct item_t * item)
     }
     if(item->mode == CODEGEN_MODE_REF)
     {
-        //ref2Reg(item); // later
+        ref2Reg(item);
         return;
     }
 }
@@ -595,9 +602,9 @@ void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
 {
-    if(leftItem->type != rightItem->type)
+    if((leftItem->type->form != 0) && (leftItem->type != rightItem->type))
     {
-        error("Types of assignment dont match");
+        mark("Types of assignment dont match");
     }
     // leftItem must be in VAR mode
     load(rightItem); 
@@ -1094,7 +1101,7 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
-        expression(0);
+        expression(item);
 
         if(tokenType == TOKEN_RRB)
         {
@@ -1153,88 +1160,45 @@ void factor(struct item_t * item) {
         else
         {
             error("Undeclared variable");
+            return;
         }
 
         getNextToken();
 
-        if(tokenType == TOKEN_LRB) // procedure call
-        {
-            while(isIn(tokenType, FIRST_EXPRESSION))
-            {
-                expression(0);
-                if(tokenType == TOKEN_COMMA)
-                {
-                    getNextToken();
-                }
-            }
+        // // We do not support procedure calls now
+        // if(tokenType == TOKEN_LRB) // procedure call
+        // {
+        //     while(isIn(tokenType, FIRST_EXPRESSION))
+        //     {
+        //         expression(0);
+        //         if(tokenType == TOKEN_COMMA)
+        //         {
+        //             getNextToken();
+        //         }
+        //     }
 
-            if(tokenType == TOKEN_RRB)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark(") expected (factor)");
-                getNextToken();
-            }
+        //     if(tokenType == TOKEN_RRB)
+        //     {
+        //         getNextToken();
+        //     }
+        //     else
+        //     {
+        //         mark(") expected (factor)");
+        //         getNextToken();
+        //     }
 
-            if(tokenType == TOKEN_SEMICOLON)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark("; expected after expression (factor)");
-                getNextToken();
-            }
+        //     if(tokenType == TOKEN_SEMICOLON)
+        //     {
+        //         getNextToken();
+        //     }
+        //     else
+        //     {
+        //         mark("; expected after expression (factor)");
+        //         getNextToken();
+        //     }
 
-            return;
-        }
-
-        while(tokenType == TOKEN_ACCESS)
-        {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                // TODO: store identifier
-                getNextToken();
-            }
-            else
-            {
-                error("Identifier expected (factor)");
-                return;
-            }
-        }
-
-        if(tokenType == TOKEN_LSB)
-        {
-            getNextToken();
-            if(isIn(tokenType, FIRST_EXPRESSION))
-            {
-                expression(0);
-            }
-            else
-            {
-                error("expression expected (factor)");
-            }
-
-            if(tokenType == TOKEN_RSB)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark("] expected (factor)");
-                getNextToken();
-            }
-
-            // TODO: Handle array access
-
-            return;
-        }
-
-        // TODO: Handle variable access
-
+        //     return;
+        // }
         return;
     }
 
@@ -1277,7 +1241,7 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
-        expression(0);
+        expression(item);
         if(tokenType == TOKEN_RRB)
         {
             getNextToken();
@@ -1467,8 +1431,37 @@ void return_statement(struct item_t * item)
     }
 }
 
-void field() {}
-void index() {}
+void field(
+    struct item_t * item,
+    struct object_t * object)
+{
+    load(item);
+    item->mode = CODEGEN_MODE_REF;
+    item->offset = object->offset;
+    item->type = object->type;
+}
+
+void index(
+    struct item_t * item,
+    struct item_t * indexItem)
+{
+    if(indexItem->mode == CODEGEN_MODE_CONST)
+    {
+        load(item);
+        item->mode = CODEGEN_MODE_REF;
+        item->offset = indexItem->value * 4; // we only use basic types or references of size of 4 bytes
+    }
+    else
+    {
+        load(indexItem);
+        put(TARGET_MULI, indexItem->reg, indexItem->reg, 4);
+        load(item);
+        item->mode = CODEGEN_MODE_REF;
+        put(TARGET_ADD, item->reg, item->reg, indexItem->reg);
+        releaseRegister(indexItem->reg);
+    }
+    item->type = item->type->base;
+}
 
 void selector(struct item_t * item)
 {

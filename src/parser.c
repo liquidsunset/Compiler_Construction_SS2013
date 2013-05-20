@@ -78,11 +78,13 @@ struct object_t *findObject(struct object_t *firstElement){
     if(firstElement != 0){
         while (firstElement->next != 0) {
             if(strCompare(firstElement->name, stringValue)){
+                printf("\nSymbol table: found %s\n", stringValue);
                 return firstElement;
             }
             firstElement = firstElement->next;
         }
         if(strCompare(firstElement->name, stringValue)){
+            printf("\nSymbol table: found %s\n", stringValue);
             return firstElement;
         }
     }
@@ -602,7 +604,7 @@ void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
 {
-    if((leftItem->type->form != 0) && (leftItem->type != rightItem->type))
+    if((leftItem->type->form == FORM_INT) && (leftItem->type != rightItem->type))
     {
         mark("Types of assignment dont match");
     }
@@ -1145,6 +1147,7 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
         object = findObject(objectGlobal); // implicitly uses stringValue
+        getNextToken();
         if(object != 0)
         {
             item->mode = CODEGEN_MODE_VAR;
@@ -1162,8 +1165,6 @@ void factor(struct item_t * item) {
             error("Undeclared variable");
             return;
         }
-
-        getNextToken();
 
         // // We do not support procedure calls now
         // if(tokenType == TOKEN_LRB) // procedure call

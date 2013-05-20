@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "scanner.c"
 
-static int currentType;    //0 = int, 1 = char
+static int currentType;    //2 = int, 3 = char
 static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
@@ -24,6 +24,7 @@ struct object_t;
 
 struct type_t {
     int form;
+    int size;
     struct object_t *fields;
     struct type_t *base;
 };
@@ -49,6 +50,9 @@ struct object_t *objectLocal;
 
 struct object_t *lastObjectGlobal;
 struct object_t *lastObjectLocal;
+
+struct object_t *lastFieldElementGlobal;
+struct object_t *lastFieldElementLocal;
 
 struct type_t *typeInt;
 struct type_t *typeChar;
@@ -81,7 +85,17 @@ struct object_t* findObject(){
         newTempObject = objectGlobal;
     }
     
-    //TODO:  ausprogn
+    if(newTempObject != 0){
+        while (newTempObject->next != 0) {
+            if(strCompare(newTempObject->name, stringValue)){
+                return newTempObject;
+            }
+            newTempObject = newTempObject->next;
+        }
+        if(strCompare(newTempObject->name, stringValue)){
+            return newTempObject;
+        }
+    }
     
     return 0;
 }
@@ -230,6 +244,7 @@ int addTypeToList(){
     
     if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
         newElement->form = FORM_RECORD;
+        newElement->size = 0;
         tempTypeObject->type = newElement;
         return 0;
     }
@@ -242,6 +257,38 @@ int addTypeToList(){
     return 0;
 }
 
+int addTypeToField(){
+    
+    if(currentType == FORM_INT){
+        if(isGlobal == 0){
+            lastFieldElementLocal->type = typeInt;
+            lastFieldElementLocal->type->size = 4;
+            lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
+        }
+        if(isGlobal == 1){
+            lastFieldElementGlobal->type = typeInt;
+            lastFieldElementGlobal->type->size = 4;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
+        }
+    }
+    
+    if(currentType == FORM_CHAR){
+        if(isGlobal == 0){
+            lastFieldElementLocal->type = typeChar;
+            lastFieldElementLocal->type->size = 4;
+            lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
+        }
+        if(isGlobal == 1){
+            lastFieldElementGlobal->type = typeChar;
+            lastFieldElementGlobal->type->size = 4;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
+        }
+    }
+    
+    return 0;
+    
+}
+
 
 int addFieldToList(){
     struct object_t *newObjectElement;
@@ -250,10 +297,13 @@ int addFieldToList(){
     
     newTempObject = malloc(sizeof(struct object_t));
     newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = malloc(sizeof(char) * 1024);
     
-    newObjectElement->name = stringValue;
+    
+    strCopy(stringValue, newObjectElement->name);
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
+
     
     if(isGlobal == 0){
         newTempObject = lastObjectLocal->type->fields;
@@ -273,11 +323,15 @@ int addFieldToList(){
             newTempObject = newTempObject->next;
         }
         newTempObject->next = newObjectElement;
+        lastFieldElementGlobal = newTempObject->next;
     }
     else{
         newTempObject = newObjectElement;
         lastObjectGlobal->type->fields = newTempObject;
+        lastFieldElementGlobal = newTempObject;
     }
+    
+    addTypeToField();
     
     return 0;
 }
@@ -1893,7 +1947,7 @@ void struct_declaration()
 
                 // type is set by type() within variable_declaration().
                 // identifier name is still set after variable_declaration() completed.
-                objectClass = CLASS_FIELD; // TODO: Magic int
+                objectClass = CLASS_FIELD; 
                 addFieldToList();
 
                 if(tokenType == TOKEN_SEMICOLON)

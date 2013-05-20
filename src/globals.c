@@ -245,13 +245,12 @@ void initTokens(){
     CLASS_FIELD = 0;
     CLASS_TYPE = 1;
     CLASS_VAR = 2;
-    
-    FORM_INT = 0;
-    FORM_CHAR = 1;
-    FORM_RECORD = 2;
-    FORM_ARRAY = 3;
-    
 
+    FORM_RECORD = 0;
+    FORM_ARRAY = 1;
+    FORM_INT = 2;
+    FORM_CHAR = 3;
+    
     errorCount = 0;
     warningCount = 0;
     

@@ -262,7 +262,6 @@ int readNextCharacter(){
             return EOF;
         }
     
-    
         int temp;
         temp = fgetc(fp);
 
@@ -276,7 +275,7 @@ int readNextCharacter(){
         {
             col = 1;
             lin = lin + 1;
-            printf("\n");
+            //printf("\n");
         }
 
         return temp;
@@ -475,7 +474,10 @@ void getNextToken()
             if(tokenType == 100 || tokenType == 300){
                 printf(" (%s)",stringValue);
             }
-            printf("\t");
+            if(tokenType == 200){
+                printf(" (%d)",intValue);
+            }
+            printf("\n");
 
         }
     }

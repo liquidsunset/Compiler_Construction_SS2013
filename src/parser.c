@@ -1311,11 +1311,12 @@ void factor(struct item_t * item) {
 void term(struct item_t * item)
 {
     int operatorSymbol;
-    struct item_t * leftItem;
+    //struct item_t * leftItem;
     struct item_t * rightItem;
 
-    leftItem = malloc(sizeof(struct item_t));
-    factor(leftItem);
+    // leftItem = malloc(sizeof(struct item_t));
+    // factor(leftItem);
+    factor(item);
 
     while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
     {
@@ -1323,14 +1324,14 @@ void term(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         factor(rightItem);
-        termBinaryOperator(leftItem, rightItem, operatorSymbol);
+        termBinaryOperator(item, rightItem, operatorSymbol);
     }
 }
 
 void simple_expression(struct item_t * item)
 {
     int operatorSymbol;
-    struct item_t * leftItem;
+    //struct item_t * leftItem;
     struct item_t * rightItem;
 
     if(tokenType == TOKEN_MINUS)
@@ -1338,15 +1339,17 @@ void simple_expression(struct item_t * item)
         getNextToken();
     }
 
-    leftItem = malloc(sizeof(struct item_t));
-    term(leftItem);
+    //leftItem = malloc(sizeof(struct item_t));
+    //term(leftItem);
+    term(item);
+
     while(tokenType == TOKEN_PLUS || tokenType == TOKEN_MINUS)
     {
         operatorSymbol = tokenType;
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         term(rightItem);
-        simpleExpressionBinaryOperator(leftItem, rightItem, operatorSymbol);
+        simpleExpressionBinaryOperator(item, rightItem, operatorSymbol);
     }
 }
 

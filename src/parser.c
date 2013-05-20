@@ -118,7 +118,7 @@ int findTypeClassType(){
                 }
                 if(isGlobal == 1){
                     lastObjectGlobal->type = tempTypeObject->type;
-                    return 0;
+
                 }
             }
             tempTypeObject = tempTypeObject->next;
@@ -400,11 +400,11 @@ int addObjectToList(){
 
     
     if(isGlobal == 0){
-        lastObjectLocal = newTempObject;
+        lastObjectLocal = newObjectElement;
     }
     
     if(isGlobal == 1){
-        lastObjectGlobal = newTempObject;
+        lastObjectGlobal = newObjectElement;
     }
     
     addTypeToList();

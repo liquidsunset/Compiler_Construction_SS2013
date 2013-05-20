@@ -730,6 +730,11 @@ int isIn(int tokenType, int rule) {
         tokenType == TOKEN_TYPEDEF))
     { return 1; }
 
+    if(rule == FIRST_BASIC_TYPES && (
+        tokenType == TOKEN_INT ||
+        tokenType == TOKEN_CHAR))
+    { return 1; }
+
     if(rule == FIRST_EXPRESSION && (
         tokenType == TOKEN_MINUS ||
         tokenType == TOKEN_IDENTIFIER ||
@@ -774,6 +779,8 @@ void type_declaration();
 
 void type(struct item_t * item)
 {
+    struct object_t * object;
+
     if(tokenType == TOKEN_INT)
     {
         getNextToken();
@@ -807,8 +814,12 @@ void type(struct item_t * item)
     
     if(tokenType == TOKEN_IDENTIFIER)
     {
-        // TODO: Get from list
+        object = findObject(objectGlobal);
 
+        if(object == 0)
+        {
+            error("Unknown type");
+        }
         getNextToken();
         return;
     }
@@ -1417,7 +1428,6 @@ void variable_declaration()
     {
         item = malloc(sizeof(struct item_t));
         type(item);
-        object = findObject(objectGlobal);
 
         if(tokenType == TOKEN_MULT)
         {
@@ -1428,16 +1438,7 @@ void variable_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            getNextToken();
-
-            if(object != 0)
-            {
-                addObjectToList();
-            }
-            else
-            {
-                error("Unknown type (variable declaration)");
-            }            
+            getNextToken();        
         }
         else
         {

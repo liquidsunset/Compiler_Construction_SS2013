@@ -9,6 +9,8 @@ static int isGlobal; // 0 for local, 1 for global
 static int objectClass;
 
 // -- Codegen
+static int SIZE_INT;
+
 static int isRegisterUsed[32];
 static int CODEGEN_GP;
 static int CODEGEN_MODE_CONST;
@@ -355,7 +357,7 @@ void fail(char message[1024])
 
     errorCount = errorCount + 1;
 
-    printf("Fail near Line %d: %s\n", niceLine, message);
+    printf("\nFail near Line %d: %s\n", niceLine, message);
     exit(-1);
 }
 
@@ -373,7 +375,7 @@ void error(char message[1024])
 
     errorCount = errorCount + 1;
 
-    printf("Error near Line %d: %s\n", niceLine, message);
+    printf("\nError near Line %d: %s\n", niceLine, message);
 }
 
 void mark(char message[1024])
@@ -390,7 +392,7 @@ void mark(char message[1024])
     
     warningCount = warningCount + 1;
 
-    printf("Warning Near Line %d: %s\n", niceLine, message);
+    printf("\nWarning Near Line %d: %s\n", niceLine, message);
 }
 // -----------------------------------------------------------------------------
 
@@ -400,6 +402,8 @@ void mark(char message[1024])
 void initCodeGen()
 {
     CODEGEN_GP = 28;
+
+    SIZE_INT = 4;
 
     CODEGEN_MODE_CONST = 1;
     CODEGEN_MODE_VAR = 2;
@@ -517,6 +521,90 @@ void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
 {
+    int newReg;
+
+    if(leftItem->mode == CODEGEN_MODE_VAR)
+    {
+        if(rightItem->mode == CODEGEN_MODE_CONST) // constant at compile time
+        {
+            newReg = requestRegister();
+            put(TARGET_ADDI, newReg, 0, rightItem->value); // store constant value in newReg
+            put(TARGET_SW, newReg, leftItem->reg, leftItem->offset); // Save content of newReg to address of leftItem
+            releaseRegister(newReg);
+            return;
+        }
+
+        if(rightItem->mode == CODEGEN_MODE_VAR) // stored in memory
+        {
+            newReg = requestRegister();
+            put(TARGET_LW, newReg, rightItem->reg, rightItem->offset); // Load right item to newReg
+            put(TARGET_SW, newReg, leftItem->reg, leftItem->offset); // Save content of newReg to address of leftItem
+            releaseRegister(newReg);
+            return;
+        }
+
+        if(rightItem->mode == CODEGEN_MODE_REG) // stored in register
+        {
+            newReg = requestRegister();
+            put(TARGET_ADD, newReg, rightItem->reg, 0);
+            releaseRegister(rightItem->reg);  
+            put(TARGET_SW, newReg, leftItem->reg, leftItem->offset); // Save content of newReg to address of leftItem
+            releaseRegister(newReg);
+
+        }
+    }
+}
+
+void termBinaryOperator(
+    struct item_t * leftItem,
+    struct item_t * rightItem,
+    int operatorSymbol)
+{
+    if(leftItem->type == FORM_INT && rightItem->type == FORM_INT)
+    {
+        if(rightItem->mode == CODEGEN_MODE_CONST)
+        {
+            if(leftItem->mode == CODEGEN_MODE_CONST)
+            {
+                if(operatorSymbol == TOKEN_MULT)
+                {
+                    leftItem->value = leftItem->value * rightItem->value;
+                }
+                else{if(operatorSymbol == TOKEN_DIVIDE)
+                {
+                    leftItem->value = leftItem->value / rightItem->value;
+                }}
+            }
+            else
+            {
+                load(leftItem);
+                if(operatorSymbol == TOKEN_MULT)
+                {
+                    put(TARGET_MULI, leftItem->reg, leftItem->reg, rightItem->value);
+                }
+                else{if(operatorSymbol == TOKEN_DIVIDE){
+                    put(TARGET_DIVI, leftItem->reg, leftItem->reg, rightItem->value);
+                }}
+            }
+        }
+        else
+        {
+            load(leftItem);
+            load(rightItem);
+            if(operatorSymbol == TOKEN_MULT)
+            {
+                put(TARGET_MUL, leftItem->reg, leftItem->reg, rightItem->reg);
+            }
+            else {if(operatorSymbol == TOKEN_DIVIDE){
+                put(TARGET_DIV, leftItem->reg, leftItem->reg, rightItem->reg);
+            }}
+            releaseRegister(rightItem->reg);
+        }
+    }
+    else
+    {
+        error("Integer expression expected");
+    }
 
 }
 
@@ -634,11 +722,16 @@ void while_loop();
 void expression(struct item_t * item);
 void type_declaration();
 
-void type()
+void type(struct item_t * item)
 {
     if(tokenType == TOKEN_INT)
     {
         currentType = TOKEN_INT;
+        item->mode = CODEGEN_MODE_CONST;
+        item->type = FORM_INT; //TOOD
+        item->reg = 0;
+        item->offset = 0;
+        item->value = SIZE_INT;
         getNextToken();
         return;
     }
@@ -687,7 +780,7 @@ void type()
     error("Type expected (type)");
 }
 
-void sizeof_func()
+void sizeof_func(struct item_t * item)
 {
     if(tokenType == TOKEN_SIZEOF)
     {
@@ -698,7 +791,7 @@ void sizeof_func()
             
             if(isIn(tokenType, FIRST_TYPE))
             {
-                type();
+                type(item);
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
@@ -717,8 +810,10 @@ void sizeof_func()
     }
 }
 
-void malloc_func()
+void malloc_func(struct item_t * item)
 {
+    int newReg;
+
     if(tokenType == TOKEN_MALLOC)
     {
         getNextToken();
@@ -728,9 +823,26 @@ void malloc_func()
             
             if(isIn(tokenType, FIRST_EXPRESSION))
             {
-                expression(0);
+                expression(item);
                 if(tokenType == TOKEN_RRB)
                 {
+                    getNextToken();
+                    if(item->mode == CODEGEN_MODE_CONST) // only allow allocation known during compile time
+                    {
+                        newReg = requestRegister();
+                        put(TARGET_MALLOC, newReg, 0, item->value);
+                        item->mode = CODEGEN_MODE_REG;
+                        item->reg = newReg;
+                        item->value = 0;
+                    }
+                    else
+                    {
+                        error("Invalid allocation");
+                    }
+                }
+                else
+                {
+                    mark(") expected (malloc)");
                     getNextToken();
                 }
             }
@@ -771,31 +883,31 @@ void fopen_func()
                         }
                         else
                         {
-                            mark(") expected (factor)");
+                            mark(") expected (fopen_func)");
                             getNextToken();
                         }
                     }
                     else
                     {
-                        mark("File mode expected (factor)");
+                        mark("File mode expected (fopen_func)");
                         getNextToken();
                     }
                 }
                 else
                 {
-                    mark("Comma expected");
+                    mark("Comma expected (fopen_func)");
                     getNextToken();
                 }
             }
             else
             {
-                mark("Identifier expected (factor)");
+                mark("Identifier expected (fopen_func)");
                 getNextToken();
             }
         }
         else
         {
-            mark("( expected (factor)");
+            mark("( expected (fopen_func)");
             getNextToken();
         }
     }
@@ -819,19 +931,19 @@ void fclose_func()
                 }
                 else
                 {
-                    mark(") expected (factor)");
+                    mark(") expected (fclose_func)");
                     getNextToken();
                 }
             }
             else
             {
-                mark("Identifier expected (factor)");
+                mark("Identifier expected (fclose_func)");
                 getNextToken();
             }
         }
         else
         {
-            mark("( expected (factor)");
+            mark("( expected (fclose_func)");
             getNextToken();
         }
     }
@@ -856,19 +968,19 @@ void fgetc_func()
                 }
                 else
                 {
-                    mark(") expected (factor)");
+                    mark(") expected (fgetc_func)");
                     getNextToken();
                 }
             }
             else
             {
-                mark("Identifier expected (factor)");
+                mark("Identifier expected (fgetc_func)");
                 getNextToken();
             }
         }
         else
         {
-            mark("( expected (factor)");
+            mark("( expected (fgetc_func)");
             getNextToken();
         }
     }
@@ -892,19 +1004,19 @@ void fputc_func()
                 }
                 else
                 {
-                    mark(") expected (factor)");
+                    mark(") expected (fputc_func)");
                     getNextToken();
                 }
             }
             else
             {
-                mark("Identifier expected (factor)");
+                mark("Identifier expected (fputc_func)");
                 getNextToken();
             }
         }
         else
         {
-            mark("( expected (factor)");
+            mark("( expected (fputc_func)");
             getNextToken();
         }
     }
@@ -935,6 +1047,8 @@ void factor(struct item_t * item) {
     {
         item->mode = CODEGEN_MODE_CONST;
         item->type = FORM_INT; // TODO: pointer to global int type
+        item->reg = 0;
+        item->offset = 0;
         item->value = intValue;
 
         getNextToken();
@@ -957,7 +1071,7 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
-        object = findObject(); // implicetly uses stringValue
+        object = findObject(); // implicitly uses stringValue
         if(object != 0)
         {
             item->mode = CODEGEN_MODE_VAR;
@@ -1060,13 +1174,13 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_SIZEOF)
     {
-        sizeof_func();
+        sizeof_func(item);
         return;
     }
 
     if(tokenType == TOKEN_MALLOC)
     {
-        malloc_func();
+        malloc_func(item);
         return;
     }
 
@@ -1128,28 +1242,45 @@ void factor(struct item_t * item) {
     error("Factor expected (factor)");
 }
 
-void term()
+void term(struct item_t * item)
 {
-    factor(0);
+    int operatorSymbol;
+    struct item_t * leftItem;
+    struct item_t * rightItem;
+
+    leftItem = malloc(sizeof(struct item_t));
+    factor(leftItem);
+
     while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
     {
+        operatorSymbol = tokenType;
         getNextToken();
-        factor(0);
+        rightItem = malloc(sizeof(struct item_t));
+        factor(rightItem);
+        termBinaryOperator(leftItem, rightItem, operatorSymbol);
     }
 }
 
-void simple_expression()
+void simple_expression(struct item_t * item)
 {
+    int operatorSymbol;
+    struct item_t * leftItem;
+    struct item_t * rightItem;
+
     if(tokenType == TOKEN_MINUS)
     {
         getNextToken();
     }
 
-    term();
+    leftItem = malloc(sizeof(struct item_t));
+    term(leftItem);
     while(tokenType == TOKEN_PLUS || tokenType == TOKEN_MINUS)
     {
+        operatorSymbol = tokenType;
         getNextToken();
-        term();
+        rightItem = malloc(sizeof(struct item_t));
+        term(rightItem);
+        simpleExpressionBinaryOperator(leftItem, rightItem, operatorSymbol);
     }
 }
 
@@ -1159,7 +1290,7 @@ void expression(struct item_t * item)
         getNextToken();
     }
 
-    simple_expression(0);
+    simple_expression(item);
     
     if(tokenType == TOKEN_EQUAL)
     {
@@ -1209,16 +1340,18 @@ void expression(struct item_t * item)
         expression(0);
         return;
     }
-    if(tokenType == TOKEN_ASSIGNMENT)
-    {
-        getNextToken();
-        expression(0);
-        return;
-    }
+    // if(tokenType == TOKEN_ASSIGNMENT)
+    // {
+    //     getNextToken();
+    //     expression(0);
+    //     return;
+    // }
 }
 
 void variable_declaration()
 {
+    struct item_t * item;
+
     if(tokenType == TOKEN_STATIC)
     {
         // TODO: Handle static?
@@ -1227,7 +1360,8 @@ void variable_declaration()
 
     if(isIn(tokenType, FIRST_TYPE))
     {
-        type();
+        item = malloc(sizeof(struct item_t));
+        type(item);
 
         while(tokenType == TOKEN_MULT)
         {
@@ -1257,7 +1391,7 @@ void variable_declaration()
     }
 }
 
-void return_statement()
+void return_statement(struct item_t * item)
 {
     if(tokenType == TOKEN_RETURN)
     {
@@ -1265,7 +1399,7 @@ void return_statement()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
-            expression(0);
+            expression(item);
         }
     }
 }
@@ -1290,7 +1424,8 @@ void instruction()
 
     if(tokenType == TOKEN_RETURN)
     {
-        return_statement();
+        leftItem = malloc(sizeof(struct item_t));
+        return_statement(leftItem);
         if(tokenType == TOKEN_SEMICOLON)
         {
             getNextToken();
@@ -1715,13 +1850,16 @@ void function_declaration()
 
 void typedef_declaration()
 {
+    struct item_t * item;
+
     if(tokenType == TOKEN_TYPEDEF)
     {
         getNextToken();
 
         if(isIn(tokenType, FIRST_TYPE))
         {
-            type();
+            item = malloc(sizeof(struct item_t));
+            type(item);
             while(tokenType == TOKEN_MULT)
             {
                 // TODO: Handle references

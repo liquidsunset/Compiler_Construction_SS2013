@@ -575,8 +575,6 @@ void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
 {
-    int newReg;
-
     if(leftItem->type != rightItem->type)
     {
         error("Types dont match");
@@ -584,6 +582,7 @@ void assignmentOperator(
     // leftItem must be in VAR mode
     load(rightItem); 
     put(TARGET_SW, rightItem->reg, leftItem->reg, leftItem->offset);
+    releaseRegister(rightItem->reg); 
 }
 
 void termBinaryOperator(
@@ -591,7 +590,7 @@ void termBinaryOperator(
     struct item_t * rightItem,
     int operatorSymbol)
 {
-    if(leftItem->type == FORM_INT && rightItem->type == FORM_INT)
+    if(leftItem->type == rightItem->type)
     {
         if(rightItem->mode == CODEGEN_MODE_CONST)
         {
@@ -634,7 +633,7 @@ void termBinaryOperator(
     }
     else
     {
-        error("Integer expression expected");
+        error("Types dont match");
     }
 
 }
@@ -843,8 +842,6 @@ void sizeof_func(struct item_t * item)
 
 void malloc_func(struct item_t * item)
 {
-    int newReg;
-
     if(tokenType == TOKEN_MALLOC)
     {
         getNextToken();
@@ -1432,6 +1429,55 @@ void return_statement(struct item_t * item)
     }
 }
 
+void field() {}
+void index() {}
+
+void selector(struct item_t * item)
+{
+    struct object_t * object;
+    struct item_t * indexItem;
+
+    while((tokenType == TOKEN_ACCESS) || (tokenType == TOKEN_LSB))
+    {
+        if(tokenType == TOKEN_ACCESS)
+        {
+            getNextToken();
+            if(tokenType == TOKEN_IDENTIFIER)
+            {
+                object = findObject(item->type->fields);
+                if(object != 0)
+                {
+                    field(item, object);
+                }
+                else
+                {
+                    error("Unknown field (selector)");
+                }
+                getNextToken();
+            }
+            else
+            {
+                error("Identifier expected (selector)");
+            }
+
+        }
+        else {if(tokenType == TOKEN_LSB){
+            getNextToken();
+            indexItem = malloc(sizeof(struct item_t));
+            expression(indexItem);
+            index(item, indexItem);
+            if(tokenType == TOKEN_RSB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                error("] missing (selector)");
+            }
+        }}
+    }
+}
+
 void instruction()
 {
     struct item_t * leftItem;
@@ -1504,6 +1550,7 @@ void instruction()
                 getNextToken();
             }
 
+            return;
         }
 
         if(tokenType == TOKEN_LRB) // procedure call
@@ -1540,48 +1587,53 @@ void instruction()
             return;
         }
 
-        while(tokenType == TOKEN_ACCESS)
+        // while(tokenType == TOKEN_ACCESS)
+        // {
+        //     getNextToken();
+        //     if(tokenType == TOKEN_IDENTIFIER)
+        //     {
+        //         // TODO: store identifier
+        //         getNextToken();
+        //     }
+        //     else
+        //     {
+        //         error("Identifier expected (factor)");
+        //         return;
+        //     }
+        // }
+
+        // if(tokenType == TOKEN_LSB)
+        // {
+        //     getNextToken();
+        //     if(isIn(tokenType, FIRST_EXPRESSION))
+        //     {
+        //         expression(0);
+        //     }
+        //     else
+        //     {
+        //         error("expression expected (factor)");
+        //     }
+
+        //     if(tokenType == TOKEN_RSB)
+        //     {
+        //         getNextToken();
+        //     }
+        //     else
+        //     {
+        //         mark("] expected (factor)");
+        //         getNextToken();
+        //     }
+        // }
+
+        
+
+        if((tokenType == TOKEN_ACCESS) || (tokenType == TOKEN_LSB))
         {
-            getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                // TODO: store identifier
-                getNextToken();
-            }
-            else
-            {
-                error("Identifier expected (factor)");
-                return;
-            }
+            leftItem = malloc(sizeof(struct item_t));
+            selector(leftItem);
         }
-
-        if(tokenType == TOKEN_LSB)
+        else
         {
-            getNextToken();
-            if(isIn(tokenType, FIRST_EXPRESSION))
-            {
-                expression(0);
-            }
-            else
-            {
-                error("expression expected (factor)");
-            }
-
-            if(tokenType == TOKEN_RSB)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark("] expected (factor)");
-                getNextToken();
-            }
-        }
-
-        if(tokenType == TOKEN_ASSIGNMENT) // assignment
-        {
-            getNextToken();
-
             leftItem = malloc(sizeof(struct item_t));
 
             // values still set from identifier before ASSIGNMENT
@@ -1602,9 +1654,13 @@ void instruction()
             {
                 error("Undeclared variable");
             }
+        }
+
+        if(tokenType == TOKEN_ASSIGNMENT) // assignment
+        {
+            getNextToken();
 
             rightItem = malloc(sizeof(struct item_t));
-
             expression(rightItem);
 
             assignmentOperator(leftItem, rightItem);

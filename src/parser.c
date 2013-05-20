@@ -756,13 +756,18 @@ void type(struct item_t * item)
 {
     if(tokenType == TOKEN_INT)
     {
+        getNextToken();
+
+        isArray = 0;
+        isStruct = 0;
+
         currentType = TOKEN_INT;
         item->mode = CODEGEN_MODE_CONST;
         item->type = FORM_INT; //TOOD
         item->reg = 0;
         item->offset = 0;
         item->value = SIZE_INT;
-        getNextToken();
+        
         return;
     }
 
@@ -791,9 +796,13 @@ void type(struct item_t * item)
     if(tokenType == TOKEN_STRUCT)
     {
         getNextToken();
+
+        isArray = 0;
+        isStruct = 1;
+
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            tokenType = TOKEN_STRUCT;
+            currentType = TOKEN_STRUCT;
             strCopy(stringValue, typeName);
 
             // TODO: Check if valid type
@@ -1388,9 +1397,10 @@ void variable_declaration()
         item = malloc(sizeof(struct item_t));
         type(item);
 
-        while(tokenType == TOKEN_MULT)
+        if(tokenType == TOKEN_MULT)
         {
-            //isArray = 1;
+            isArray = 1;
+            isStruct = 0;
             getNextToken();
         }
 

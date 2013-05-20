@@ -523,36 +523,13 @@ void assignmentOperator(
 {
     int newReg;
 
-    if(leftItem->mode == CODEGEN_MODE_VAR)
+    if(leftItem->type != rightItem->type)
     {
-        if(rightItem->mode == CODEGEN_MODE_CONST) // constant at compile time
-        {
-            newReg = requestRegister();
-            put(TARGET_ADDI, newReg, 0, rightItem->value); // store constant value in newReg
-            put(TARGET_SW, newReg, leftItem->reg, leftItem->offset); // Save content of newReg to address of leftItem
-            releaseRegister(newReg);
-            return;
-        }
-
-        if(rightItem->mode == CODEGEN_MODE_VAR) // stored in memory
-        {
-            newReg = requestRegister();
-            put(TARGET_LW, newReg, rightItem->reg, rightItem->offset); // Load right item to newReg
-            put(TARGET_SW, newReg, leftItem->reg, leftItem->offset); // Save content of newReg to address of leftItem
-            releaseRegister(newReg);
-            return;
-        }
-
-        if(rightItem->mode == CODEGEN_MODE_REG) // stored in register
-        {
-            newReg = requestRegister();
-            put(TARGET_ADD, newReg, rightItem->reg, 0);
-            releaseRegister(rightItem->reg);  
-            put(TARGET_SW, newReg, leftItem->reg, leftItem->offset); // Save content of newReg to address of leftItem
-            releaseRegister(newReg);
-
-        }
+        error("Types dont match");
     }
+    // leftItem must be in VAR mode
+    load(rightItem); 
+    put(TARGET_SW, rightItem->reg, leftItem->reg, leftItem->offset);
 }
 
 void termBinaryOperator(
@@ -829,11 +806,8 @@ void malloc_func(struct item_t * item)
                     getNextToken();
                     if(item->mode == CODEGEN_MODE_CONST) // only allow allocation known during compile time
                     {
-                        newReg = requestRegister();
-                        put(TARGET_MALLOC, newReg, 0, item->value);
-                        item->mode = CODEGEN_MODE_REG;
-                        item->reg = newReg;
-                        item->value = 0;
+                        load(item);
+                        put(TARGET_MALLOC, item->reg, 0, item->reg);
                     }
                     else
                     {

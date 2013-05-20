@@ -9,7 +9,7 @@ static int FIRST_FUNCTION_STATEMENT;
 static int FIRST_TYPE_DECLARATION;
 static int FIRST_INSTRUCTION;
 static int FIRST_TOP_DECLARATION;
-
+static int FIRST_BASIC_TYPES;
 //tokens:
 
 //Keywords
@@ -241,6 +241,7 @@ void initTokens(){
     FIRST_TYPE_DECLARATION = 6;
     FIRST_INSTRUCTION = 7;
     FIRST_TOP_DECLARATION = 8;
+    FIRST_BASIC_TYPES = 9;
     
     CLASS_FIELD = 0;
     CLASS_TYPE = 1;

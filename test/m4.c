@@ -1,11 +1,11 @@
 struct rec_t {
 	    int f;
 	    int g;
-	    int *arr;
+	    int * arr;
 };
 
 static int a;
-static struct rec_t *rec;
+static struct rec_t * rec;
 
 void main()
 {

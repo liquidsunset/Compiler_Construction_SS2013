@@ -776,6 +776,7 @@ void if_else();
 void while_loop();
 void expression(struct item_t * item);
 void type_declaration();
+void selector(struct item_t * item);
 
 void type(struct item_t * item)
 {
@@ -1111,7 +1112,7 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_CONSTINT)
     {
         item->mode = CODEGEN_MODE_CONST;
-        item->type = typeInt; // TODO: pointer to global int type
+        item->type = typeInt;
         item->reg = 0;
         item->offset = 0;
         item->value = intValue;
@@ -1147,7 +1148,7 @@ void factor(struct item_t * item) {
 
             item->offset = object->offset;
 
-            //selector(item); // array, record access
+            selector(item); // array, record access
         }
         else
         {
@@ -1416,7 +1417,6 @@ void expression(struct item_t * item)
 void variable_declaration()
 {
     struct item_t * item;
-    struct object_t * object;
 
     if(tokenType == TOKEN_STATIC)
     {
@@ -1660,35 +1660,25 @@ void instruction()
         //     }
         // }
 
-        
+        leftItem = malloc(sizeof(struct item_t));
 
-        if((tokenType == TOKEN_ACCESS) || (tokenType == TOKEN_LSB))
+        // values still set from identifier before ASSIGNMENT
+        object = findObject(objectGlobal); // implicitly uses stringValue
+        if(object != 0)
         {
-            leftItem = malloc(sizeof(struct item_t));
-            selector(leftItem);
+            leftItem->mode = CODEGEN_MODE_VAR;
+            leftItem->type = object->type;
+
+            // TODO: distinction between global and local scope
+            leftItem->reg = CODEGEN_GP;
+
+            leftItem->offset = object->offset;
+
+            selector(leftItem); // array, record access
         }
         else
         {
-            leftItem = malloc(sizeof(struct item_t));
-
-            // values still set from identifier before ASSIGNMENT
-            object = findObject(objectGlobal); // implicitly uses stringValue
-            if(object != 0)
-            {
-                leftItem->mode = CODEGEN_MODE_VAR;
-                leftItem->type = object->type;
-
-                // TODO: distinction between global and local scope
-                leftItem->reg = CODEGEN_GP;
-
-                leftItem->offset = object->offset;
-
-                //selector(leftItem); // array, record access
-            }
-            else
-            {
-                error("Undeclared variable");
-            }
+            error("Undeclared variable");
         }
 
         if(tokenType == TOKEN_ASSIGNMENT) // assignment

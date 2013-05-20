@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "scanner.c"
 
-static int currentType;    //0 = int, 1 = char
+static int currentType;    //2 = int, 3 = char
 static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
@@ -39,6 +39,9 @@ struct object_t *objectLocal;
 
 struct object_t *lastObjectGlobal;
 struct object_t *lastObjectLocal;
+
+struct object_t *lastFieldElementGlobal;
+struct object_t *lastFieldElementLocal;
 
 struct type_t *typeInt;
 struct type_t *typeChar;
@@ -242,6 +245,34 @@ int addTypeToList(){
     return 0;
 }
 
+int addTypeToField(){
+    
+    if(currentType == FORM_INT){
+        if(isGlobal == 0){
+            lastFieldElementLocal->type = typeInt;
+        }
+        if(isGlobal == 1){
+            lastFieldElementGlobal->type = typeChar;
+        }
+        
+        return 0;
+    }
+    
+    if(currentType == FORM_CHAR){
+        if(isGlobal == 0){
+            lastFieldElementLocal->type = typeChar;
+        }
+        if(isGlobal == 1){
+            lastFieldElementGlobal->type = typeChar;
+        }
+        
+        return 0;
+    }
+    
+    return 0;
+    
+}
+
 
 int addFieldToList(){
     struct object_t *newObjectElement;
@@ -250,8 +281,10 @@ int addFieldToList(){
     
     newTempObject = malloc(sizeof(struct object_t));
     newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = malloc(sizeof(char) * 1024);
     
-    newObjectElement->name = stringValue;
+    
+    strCopy(stringValue, newObjectElement->name);
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
     
@@ -273,11 +306,15 @@ int addFieldToList(){
             newTempObject = newTempObject->next;
         }
         newTempObject->next = newObjectElement;
+        lastFieldElementGlobal = newTempObject->next;
     }
     else{
         newTempObject = newObjectElement;
         lastObjectGlobal->type->fields = newTempObject;
+        lastFieldElementGlobal = newTempObject;
     }
+    
+    addTypeToField();
     
     return 0;
 }

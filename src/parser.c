@@ -73,30 +73,24 @@ void addToList()
 }
 
 
-struct object_t* findObject(){
-    struct object_t *newTempObject;
-    newTempObject = malloc(sizeof(struct object_t));
+struct object_t *findObject(struct object_t *firstElement){
     
-    if(isGlobal == 0){
-        newTempObject = objectLocal;
-    }
-    
-    if(isGlobal == 1){
-        newTempObject = objectGlobal;
-    }
-    
-    if(newTempObject != 0){
-        while (newTempObject->next != 0) {
-            if(strCompare(newTempObject->name, stringValue)){
-                return newTempObject;
+    if(firstElement != 0){
+        while (firstElement->next != 0) {
+            if(strCompare(firstElement->name, stringValue)){
+                return firstElement;
             }
-            newTempObject = newTempObject->next;
+            firstElement = firstElement->next;
         }
-        if(strCompare(newTempObject->name, stringValue)){
-            return newTempObject;
+        if(strCompare(firstElement->name, stringValue)){
+            return firstElement;
         }
     }
     
+    return 0;
+}
+
+struct type_t *findType(){
     return 0;
 }
 
@@ -205,11 +199,11 @@ int addTypeToList(){
     
 
     if(isGlobal == 0){
-        tempTypeObject = objectLocal;
+        tempTypeObject = lastObjectLocal;
     }
     
     if(isGlobal == 1){
-        tempTypeObject = objectGlobal;
+        tempTypeObject = lastObjectGlobal;
     }
     
     
@@ -221,9 +215,16 @@ int addTypeToList(){
     }
     
     if(objectClass == 2 && (isArray == 0 && isStruct == 0)){
-        if(findTypeClassVar()){
-            return 0;
+        if(currentType == FORM_INT){
+            tempTypeObject->type = typeInt;
+            tempTypeObject->type->size = 4;
         }
+        if(currentType == FORM_CHAR){
+            tempTypeObject->type = typeChar;
+            tempTypeObject->type->size = 4;
+        }
+        
+        return 0;
     }
     
         
@@ -304,7 +305,6 @@ int addFieldToList(){
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
 
-    
     if(isGlobal == 0){
         newTempObject = lastObjectLocal->type->fields;
     }
@@ -2069,6 +2069,7 @@ void top_declaration() {
 
     if(tokenType == TOKEN_STATIC)
     {
+
         variable_declaration();
 
         if(tokenType == TOKEN_SEMICOLON)

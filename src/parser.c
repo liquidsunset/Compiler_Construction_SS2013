@@ -260,7 +260,27 @@ int addTypeToList(){
 
 int addTypeToField(){
     
-    if(currentType == FORM_INT){
+    if(currentType == FORM_INT && isArray == 1 && isStruct == 0){
+        struct type_t *newType;
+        newType = malloc(sizeof(struct type_t));
+        newType->size = 4;
+        newType->form = FORM_ARRAY;
+        newType->base = typeInt;
+        
+        if(isGlobal == 0){
+            lastFieldElementLocal->type = newType;
+            lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
+        }
+        if(isGlobal == 1){
+            lastFieldElementGlobal->type = newType;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
+        }
+        return 0;
+        
+    }
+
+    
+    if(currentType == FORM_INT ){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeInt;
             lastFieldElementLocal->type->size = 4;

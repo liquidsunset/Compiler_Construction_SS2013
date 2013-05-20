@@ -15,6 +15,7 @@ struct object_t;
 
 struct type_t {
     int form;
+    int size;
     struct object_t *fields;
     struct type_t *base;
 };
@@ -233,6 +234,7 @@ int addTypeToList(){
     
     if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
         newElement->form = FORM_RECORD;
+        newElement->size = 0;
         tempTypeObject->type = newElement;
         return 0;
     }
@@ -250,23 +252,27 @@ int addTypeToField(){
     if(currentType == FORM_INT){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeInt;
+            lastFieldElementLocal->type->size = 4;
+            lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
         }
         if(isGlobal == 1){
-            lastFieldElementGlobal->type = typeChar;
+            lastFieldElementGlobal->type = typeInt;
+            lastFieldElementGlobal->type->size = 4;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
-        
-        return 0;
     }
     
     if(currentType == FORM_CHAR){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeChar;
+            lastFieldElementLocal->type->size = 4;
+            lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeChar;
+            lastFieldElementGlobal->type->size = 4;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
-        
-        return 0;
     }
     
     return 0;
@@ -287,6 +293,7 @@ int addFieldToList(){
     strCopy(stringValue, newObjectElement->name);
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
+
     
     if(isGlobal == 0){
         newTempObject = lastObjectLocal->type->fields;

@@ -2082,6 +2082,10 @@ void top_declaration() {
 
         variable_declaration();
 
+        isGlobal = 1;
+        objectClass = CLASS_VAR;
+        addObjectToList();
+
         if(tokenType == TOKEN_SEMICOLON)
         {
             getNextToken();

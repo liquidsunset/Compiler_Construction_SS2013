@@ -597,7 +597,7 @@ void assignmentOperator(
 {
     if(leftItem->type != rightItem->type)
     {
-        error("Types dont match");
+        error("Types of assignment dont match");
     }
     // leftItem must be in VAR mode
     load(rightItem); 
@@ -1405,6 +1405,7 @@ void expression(struct item_t * item)
 void variable_declaration()
 {
     struct item_t * item;
+    struct object_t * object;
 
     if(tokenType == TOKEN_STATIC)
     {
@@ -1416,6 +1417,7 @@ void variable_declaration()
     {
         item = malloc(sizeof(struct item_t));
         type(item);
+        object = findObject(objectGlobal);
 
         if(tokenType == TOKEN_MULT)
         {
@@ -1426,14 +1428,16 @@ void variable_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            // TODO: Add to symbol table (either global or local)
-            //         if(addObjectToListGlobal() < 0) 
-            //         {
-            //             fail("Double declaration of variable");
-            //         }
-            //         isArray = 0; // default value
-
             getNextToken();
+
+            if(object != 0)
+            {
+                addObjectToList();
+            }
+            else
+            {
+                error("Unknown type (variable declaration)");
+            }            
         }
         else
         {

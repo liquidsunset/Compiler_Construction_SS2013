@@ -7,9 +7,8 @@ struct rec_t {
 static int a;
 static struct rec_t *rec;
 
-void main() {
-	
-
+void main()
+{
 	a = 5;
 	rec = malloc(sizeof(struct rec_t));
 	rec->arr = malloc(sizeof(int) * 3);

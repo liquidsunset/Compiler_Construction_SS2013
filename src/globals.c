@@ -284,7 +284,8 @@ void initTokens(){
     TARGET_BNE = 16;
     TARGET_BR = 17;
     TARGET_BSR = 18;
-
+    TARGET_MALLOC = 19;
+    
     // F2 (23-43)
     TARGET_ADD = 23;
     TARGET_SUB = 24;

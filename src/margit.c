@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "globals.c"
 
 #define MEMSIZE 1001
 
@@ -10,6 +11,12 @@ int reg[32];
 // Virtual Memory of 4*150kB
 unsigned int mem[MEMSIZE];
 
+// Global pointer
+unsigned int GP;
+
+// Bump pointer for continous allocation
+unsigned int bump_ptr;
+
 // Instruction register
 int ir;
 
@@ -18,70 +25,11 @@ unsigned int pc;
 
 unsigned int instruction;
 unsigned int op;
-unsigned int a;
-unsigned int b;
-unsigned int c;
+int a;
+int b;
+int c;
 
 // Globals
-unsigned int TARGET_NOP;
-unsigned int TARGET_ADD;
-unsigned int TARGET_ADDI;
-unsigned int TARGET_AND;
-unsigned int TARGET_ANDI;
-unsigned int TARGET_BEQZ;
-unsigned int TARGET_BNEZ;
-unsigned int TARGET_DIV;
-unsigned int TARGET_DIVI;
-unsigned int TARGET_J;
-unsigned int TARGET_JAL;
-unsigned int TARGET_JALR;
-unsigned int TARGET_JR;
-unsigned int TARGET_LHI;
-unsigned int TARGET_LW;
-unsigned int TARGET_MUL;
-unsigned int TARGET_MULI;
-unsigned int TARGET_OR;
-unsigned int TARGET_ORI;
-unsigned int TARGET_SEQ;
-unsigned int TARGET_SEQI;
-unsigned int TARGET_SLE;
-unsigned int TARGET_SLEI;
-unsigned int TARGET_SLL;
-unsigned int TARGER_SLLI;
-unsigned int TARGET_SLT;
-unsigned int TARGET_SLTI;
-unsigned int TARGET_SNE;
-unsigned int TARGET_SNEI;
-unsigned int TARGET_SRA;
-unsigned int TARGET_SRAI;
-unsigned int TARGET_SRL;
-unsigned int TARGET_SRLI;
-unsigned int TARGET_SUB;
-unsigned int TARGET_SUBI;
-unsigned int TARGET_SW;
-unsigned int TARGET_XOR;
-unsigned int TARGET_XORI;
-unsigned int TARGET_MODI;
-unsigned int TARGET_CMPI;
-unsigned int TARGET_MOD;
-unsigned int TARGET_CMP;
-unsigned int TARGET_POP;
-unsigned int TARGET_PSH;
-unsigned int TARGET_BEQ;
-unsigned int TARGET_BGE;
-unsigned int TARGET_BGT;
-unsigned int TARGET_BLE;
-unsigned int TARGET_BLT;
-unsigned int TARGET_BNE;
-unsigned int TARGET_BR;
-unsigned int TARGET_BSR;
-unsigned int TARGET_RET;
-unsigned int TARGET_JSR;
-unsigned int TARGET_FLO;
-unsigned int TARGET_FLC;
-unsigned int TARGET_RDC;
-unsigned int TARGET_WRC;
-unsigned int TARGET_J;
 
 int isF1(int opcode) {
 	return (0 <= opcode) && (opcode < 21);
@@ -98,44 +46,44 @@ int isF3(int opcode) {
 // Set globals
 void init() {
 
-	TARGET_NOP = 0;
+	// TARGET_NOP = 0;
 
-	// F1 (1-23)
-	TARGET_ADDI = 1;
-	TARGET_SUBI = 2;
-	TARGET_MULI = 3;
-	TARGET_DIVI = 4;
-	TARGET_MODI = 5;
-	TARGET_CMPI = 6;
-	TARGET_LW = 7;
-	TARGET_SW = 8;
-	TARGET_POP = 9;
-	TARGET_PSH = 10;
-	TARGET_BEQ = 11;
-	TARGET_BGE = 12;
-	TARGET_BGT = 13;
-	TARGET_BLE = 14;
-	TARGET_BLT = 15;
-	TARGET_BNE = 16;
-	TARGET_BR = 17;
-	TARGET_BSR = 18;
+	// // F1 (1-23)
+	// TARGET_ADDI = 1;
+	// TARGET_SUBI = 2;
+	// TARGET_MULI = 3;
+	// TARGET_DIVI = 4;
+	// TARGET_MODI = 5;
+	// TARGET_CMPI = 6;
+	// TARGET_LW = 7;
+	// TARGET_SW = 8;
+	// TARGET_POP = 9;
+	// TARGET_PSH = 10;
+	// TARGET_BEQ = 11;
+	// TARGET_BGE = 12;
+	// TARGET_BGT = 13;
+	// TARGET_BLE = 14;
+	// TARGET_BLT = 15;
+	// TARGET_BNE = 16;
+	// TARGET_BR = 17;
+	// TARGET_BSR = 18;
 
-	// F2 (23-43)
-	TARGET_ADD = 23;
-	TARGET_SUB = 24;
-	TARGET_MUL = 25;
-	TARGET_DIV = 26;
-	TARGET_MOD = 27;
-	TARGET_CMP = 28;
-	TARGET_RET = 29;
-	TARGET_FLO = 30;
-	TARGET_FLC = 31;
-	TARGET_RDC = 32;
-	TARGET_WRC = 33;
+	// // F2 (23-43)
+	// TARGET_ADD = 23;
+	// TARGET_SUB = 24;
+	// TARGET_MUL = 25;
+	// TARGET_DIV = 26;
+	// TARGET_MOD = 27;
+	// TARGET_CMP = 28;
+	// TARGET_RET = 29;
+	// TARGET_FLO = 30;
+	// TARGET_FLC = 31;
+	// TARGET_RDC = 32;
+	// TARGET_WRC = 33;
 
-	// F3 (43-63)
-	TARGET_JSR = 43;
-	TARGET_J = 44;
+	// // F3 (43-63)
+	// TARGET_JSR = 43;
+	// TARGET_J = 44;
 	
 }
 
@@ -174,6 +122,8 @@ void load(char * filename) {
 			temp = fgetc(fp);
 			if(temp == EOF)
 			{
+				bump_ptr = i;
+				GP = bump_ptr;
 				break;
 			}
 
@@ -183,8 +133,10 @@ void load(char * filename) {
 			c3 = fgetc(fp);
 		
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
+			// printf("%x\n", mem[i]);
 			i++;
 		}
+		printf("Loaded %d bytes", (i*4));
 		
 		pc = 0;
 	}
@@ -205,6 +157,12 @@ int fetch() {
 
 	if(op == TARGET_NOP)
 	{
+		printf("\nHit NOP %d\n", TARGET_NOP);
+		return 0;
+	}
+	if(pc >= (GP*4))
+	{
+		printf("PC is higher than GP");
 		return 0;
 	}
 
@@ -215,31 +173,37 @@ int fetch() {
 		// F1 immediate addressing
 		if(op == TARGET_ADDI)
 		{
+			printf("%d ADDI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] + c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_SUBI)
 		{
+			printf("%d SUBI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MULI)
 		{
+			printf("%d MULI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] * c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_DIVI)
 		{
+			printf("%d DIVI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] / c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MODI)
 		{
+			printf("%d MODI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] % c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_CMPI)
 		{
+			printf("%d CMPI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
@@ -258,12 +222,14 @@ int fetch() {
 		}
 		else if(op == TARGET_POP)
 		{
+			printf("%d POP %d, %d, %d", pc, a, b, c);
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PSH)
 		{
+			printf("%d PSH %d, %d, %d", pc, a, b, c);
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;
@@ -283,6 +249,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BGE)
 		{
+			printf("%d BGE %d, %d, %d", pc, a, b, c);
 			if(reg[a] >= 0)
 			{
 				pc = pc + c * 4;
@@ -294,6 +261,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BGT)
 		{
+			printf("%d BGT %d, %d, %d", pc, a, b, c);
 			if(reg[a] > 0)
 			{
 				pc = pc + c * 4;
@@ -351,6 +319,7 @@ int fetch() {
 		// F2 register addressing
 		else if(op == TARGET_ADD)
 		{
+			printf("%d ADD %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] + reg[c];
 			pc = pc + 4;
 		}
@@ -362,16 +331,19 @@ int fetch() {
 		}
 		else if(op == TARGET_MUL)
 		{
+			printf("%d MUL %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] * reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_DIV)
 		{
+			printf("%d DIV %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] / reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MOD)
 		{
+			printf("%d MOD %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] % reg[c];
 			pc = pc + 4;
 		}
@@ -385,12 +357,14 @@ int fetch() {
 		// F2 return from subroutine
 		else if(op == TARGET_RET)
 		{
+			printf("%d RET %d", pc, c);
 			pc = reg[c];
 		}
 
 		// F2 IO
 		else if(op == TARGET_FLO)
 		{
+			printf("%d FLO %d, %d, %d", pc, a, b, c);
 			int mode = O_RDONLY;
 			if(mem[reg[b]] == 'w')
 			{
@@ -402,11 +376,14 @@ int fetch() {
 		}
 		else if(op == TARGET_FLC)
 		{
+			printf("%d FLC %d, %d, %d", pc, a, b, c);
 			close(reg[c]);
 			pc = pc + 4;
 		}
 		else if(op == TARGET_RDC)
 		{
+			printf("%d RDC %d, %d, %d", pc, a, b, c);
+
 			char buf;
 			read(reg[a], &buf, 1);
 			reg[c] = buf;
@@ -414,8 +391,23 @@ int fetch() {
 		}
 		else if(op == TARGET_WRC)
 		{
+			printf("%d WRC %d, %d, %d", pc, a, b, c);
 			const char buf = (char)reg[c];
 			write(reg[a], &buf, 1);
+			pc = pc + 4;
+		}
+		else if(op == TARGET_MALLOC)
+		{
+			printf("%d MALLOC %d, %d, %d", pc, a, b, c);
+			// save value of bump pointer
+			int s = 4 * bump_ptr;
+
+			// move bump pointer by reg[c]
+			bump_ptr = bump_ptr + reg[c]/4;
+
+			// write saved value to reg[a]
+			reg[a] = s;
+
 			pc = pc + 4;
 		}
 
@@ -437,16 +429,27 @@ int fetch() {
 		}
 	}
 
-	printf(" (R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
+	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)",
+		reg[1], reg[2], reg[3], reg[4], reg[5], reg[6], reg[7], reg[8], reg[28]);
 	reg[0] = 0; // keep it zero
+	reg[28] = GP*4;
 	return 1; // continue
 }
 
 int main() {
+	initTokens();
 	init();
-	load("test/gcd.bin");
-    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
-	while(fetch());
-    printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
+	//load("test/gcd.bin");
+	load("a.out");
+    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/a.out");
+	getchar();
+	while(fetch())
+	{
+        getchar();
+	}
+	printf("Values: a=%d, reg->f=%d, reg->g=%d, reg->arr[0]=%d, reg->arr[1]=%d, reg->arr[2]=%d", 
+		mem[GP-1], mem[GP+0], mem[GP+1], mem[mem[GP+2]/4+0], mem[mem[GP+2]/4+1], mem[mem[GP+2]/4+2]);
+    //printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
+    printf("\nExecution stopped.\n");
 	return 0;
 }

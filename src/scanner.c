@@ -2,16 +2,17 @@
 #include <stdio.h> // used for tests
 #include "globals.c"
 
-FILE *fp;
+static FILE *fp;
 
-int tokenType;
-int intValue;
-char stringValue[1024];
-int positionLine;
-int positionColumn;
+static int tokenType;
+static int intValue;
+static char stringValue[1024];
+static int positionLine;
+static int positionColumn;
+static int eofFlag;
 
-int lin;
-int col;
+static int lin;
+static int col;
 
 // ---------------------------- Tools -----------------------------------------
 
@@ -65,13 +66,15 @@ void strTrimQuotes(char a[1024], char b[1024])
 {
     int i;
     i = 0;
-
-    do
-    {
+    
+    b[i] = a[i+1];
+    i = i +1;
+    
+    while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024){
         b[i] = a[i+1];
         i = i +1;
-    } while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024);
-
+    }
+    
     b[i-1] = 0;
 }
 
@@ -138,9 +141,7 @@ int characterClass(char c)
 // 	1 if it is terminated
 int peek(int current, int next)
 {
-    // String literals:
-    static int isInString = 0;
-    static int isInChar = 0;
+
 
     if(current == '\"' && !isInChar && !isInString) // add the starting "
     {
@@ -244,39 +245,42 @@ void openFile(char path[1024]){
     lin = 1;
     col = 1;
     fp = fopen(path,"r");
-    if(fp == NULL)
-    {
-        tokenType = TOKEN_EOF;
-        fclose(fp);
-    }
-    
 }
 
 //Returns the next Character from the file
 int readNextCharacter(){
     
-    if(ftell(fp) < 0)
-    {
+    
+//    if(ftell(fp) < 0)
+//    {
+//
+//        return EOF;
+//    }
+//    else
+//    {
+    
+        if(fp == 0){
+            return EOF;
+        }
+    
+        int temp;
+        temp = fgetc(fp);
 
-        return EOF;
-    }
-    else
-    {
-        int temp = fgetc(fp);
-
-        if(temp == EOF)
+        if(temp < 0)
         {
             fclose(fp);
+            return EOF;
         }
         col = col + 1;
         if(temp == '\n')
         {
             col = 1;
             lin = lin + 1;
+            //printf("\n");
         }
 
         return temp;
-    }
+    //}
 }
 
 
@@ -284,7 +288,8 @@ int readNextCharacter(){
 void findToken(char status[1024],int len){
     if(len == 1)
     {
-        char tokenChar = status[0];
+        char tokenChar;
+        tokenChar = status[0];
         if(tokenChar == '+'){tokenType = TOKEN_PLUS; return;}
         if(tokenChar == '-'){tokenType = TOKEN_MINUS; return;}
         if(tokenChar == '*'){tokenType = TOKEN_MULT; return;}
@@ -333,6 +338,7 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "||")){tokenType = TOKEN_OR; return;}
         if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
         if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
+        if(strCompare(status, "->")){tokenType = TOKEN_ACCESS; return;}
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;
@@ -347,7 +353,6 @@ void findToken(char status[1024],int len){
         }
     } // if(len == 2)
     else{
-        if(strCompare(status, "NULL")){tokenType = TOKEN_NULL; return;}
         if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
         if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
         if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
@@ -360,8 +365,10 @@ void findToken(char status[1024],int len){
         if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
         if(strCompare(status, "fopen")) {tokenType = TOKEN_FOPEN; return;}
         if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
-        if(strCompare(status, "fread")) {tokenType = TOKEN_FREAD; return;}
-        if(strCompare(status, "fwrite")) {tokenType = TOKEN_FWRITE; return;}
+        if(strCompare(status, "fgetc")) {tokenType = TOKEN_FGETC; return;}
+        if(strCompare(status, "fputc")) {tokenType = TOKEN_FPUTC; return;}
+        if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
+        if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;
@@ -399,8 +406,11 @@ void getNextToken()
     if(tokenType == TOKEN_EOF){
         return;
     }
-    static int currentChar = -1;
-    static int nextChar = -1;
+    if(eofFlag == 1){
+        tokenType = TOKEN_EOF;
+        return;
+    }
+
     char status[1024];
     int len;
     len = 0;
@@ -418,7 +428,7 @@ void getNextToken()
             nextChar = readNextCharacter();
         }
 
-        if(currentChar == EOF)
+        if(currentChar == EOF || nextChar == EOF)
         {
             // set token type to EOF
             tokenType = TOKEN_EOF;
@@ -430,14 +440,22 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
+//                if(nextChar == -1){
+//                    tokenType = TOKEN_EOF;
+//                    return;
+//                }
             }
         }
 
         // Support for line comments
         if(currentChar == '/' && nextChar == '/'){
-            while ((char) currentChar != '\n' && currentChar != EOF){
+            while (currentChar != '\n' && currentChar != EOF){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
+                if(nextChar == -1){
+                    tokenType = TOKEN_EOF;
+                    return;
+                }
             }
         }
         else
@@ -445,22 +463,39 @@ void getNextToken()
             int checkPeek;
             positionColumn = col-2; // as two characters are read already
             positionLine = lin;
-            do
-            {
+            
+            
+            checkPeek = peek(currentChar, nextChar);
+            len = len +1;
+            status[len - 1] = currentChar;
+            if(nextChar > 0){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
+            
+            while (checkPeek == 0){
                 checkPeek = peek(currentChar, nextChar);
                 len = len +1;
                 status[len - 1] = currentChar;
                 currentChar = nextChar;
-                nextChar = readNextCharacter();                
-            } while (checkPeek == 0);
+                nextChar = readNextCharacter();
+            }
             
             status[len] = '\0';
             //Analize the token
             findToken(status, len);
             len = 0;
-            printf("%d\n",tokenType);
-            if(tokenType == 100 || tokenType == 300){
-                printf("%s\n",stringValue);
+            // printf("%d",tokenType);
+            // if(tokenType == 100 || tokenType == 300){
+            //     printf(" (%s)",stringValue);
+            // }
+            // if(tokenType == 200){
+            //     printf(" (%d)",intValue);
+            // }
+            // printf("\n");
+            
+            if(nextChar < 0){
+                eofFlag = 1;
             }
 
         }
@@ -471,95 +506,97 @@ void getNextToken()
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
+//
+//int main()
+//{
+//    initTokens();
+//    
+//    printf("\n\nNext Testfile- easy.c\n\n");
+//    
+//    //openFile("../test/easy.c");
+//    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+//    tokenType = -1;
+//    if(tokenType != TOKEN_EOF){
+//        do
+//        {
+//            getNextToken();
+//            printf("Line %d:%d %d\n", positionLine, positionColumn, tokenType);
+//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= TOKEN_EOF);
+//        //getchar();
+//    }
+//}
 
-int yolo()
-{
-    initTokens();
-    
-    printf("\n\nNext Testfile- easy.c\n\n");
-    
-    //openFile("../test/easy.c");
-    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/compilerbau/compilerbau/test.txt");
-    if(tokenType != TOKEN_EOF){
-        do
-        {
-            getNextToken();
-            printf("Line %d:%d %d\n", positionLine, positionColumn, tokenType);
-            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= TOKEN_EOF);
-        getchar();
-    }
-    
-    
-    printf("\n\nNext Testfile - brackets.c\n\n");
-    
-    openFile("../test/brackets.c");
-    
-        do
-        {
-            getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= TOKEN_EOF);
-    
-    
-    printf("\n\nNext Testfile - operator.c\n\n");
-
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c");
-    openFile("../test/operator.c");
-
-        do
-        {
-            getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= TOKEN_EOF);
-
-    printf("\n\nNext Testfile - comments.c\n\n");
-    
-    openFile("../test/comments.c");
-        do
-        {
-            getNextToken();
-            printf("%d\n", tokenType);
-            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-        }
-        while(tokenType!= TOKEN_EOF);
-    
-    
-    printf("\n\nNext Testfile - Scanner selfscanc\n\n");
-    
-    openFile("../src/scanner.c");
-    do
-    {
-        getNextToken();
-        printf("%d\n", tokenType);
-        if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-        if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-        if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-        if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-    }
-    while(tokenType!= TOKEN_EOF);
-    
-    
-    return 0;
-    
-    
-
-}
-// ----------------------------------------------------------------------------
+//    
+//    printf("\n\nNext Testfile - brackets.c\n\n");
+//    
+//    openFile("../test/brackets.c");
+//    
+//        do
+//        {
+//            getNextToken();
+//            printf("%d\n", tokenType);
+//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= TOKEN_EOF);
+//    
+//    
+//    printf("\n\nNext Testfile - operator.c\n\n");
+//
+//    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c");
+//    openFile("../test/operator.c");
+//
+//        do
+//        {
+//            getNextToken();
+//            printf("%d\n", tokenType);
+//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= TOKEN_EOF);
+//
+//    printf("\n\nNext Testfile - comments.c\n\n");
+//    
+//    openFile("../test/comments.c");
+//        do
+//        {
+//            getNextToken();
+//            printf("%d\n", tokenType);
+//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
+//        }
+//        while(tokenType!= TOKEN_EOF);
+//    
+//    
+//    printf("\n\nNext Testfile - Scanner selfscanc\n\n");
+//    
+//    openFile("../src/scanner.c");
+//    do
+//    {
+//        getNextToken();
+//        printf("%d\n", tokenType);
+//        if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
+//        if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
+//        if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
+//        if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
+//    }
+//    while(tokenType!= TOKEN_EOF);
+//    
+//    
+//    return 0;
+//    
+//    
+//
+//}
+//// ----------------------------------------------------------------------------

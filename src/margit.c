@@ -415,8 +415,8 @@ int main() {
 	init();
 	//load("test/gcd.bin");
 	load("a.out");
+    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/a.out");
 	getchar();
-    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
 	while(fetch());
     printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
 	return 0;

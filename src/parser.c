@@ -8,6 +8,7 @@ static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass;
 static int lastOffsetPointer;
+static int lastFieldPointer;
 
 // -- Codegen
 static int SIZE_INT;
@@ -68,6 +69,7 @@ void initTypes(){
     typeChar->form = FORM_CHAR;
     typeChar->size = 4;
     lastOffsetPointer = 0;
+    lastFieldPointer = 0;
     
 }
 
@@ -278,12 +280,17 @@ int addTypeToField(){
         newType->form = FORM_ARRAY;
         newType->base = typeInt;
         
+        
+        
         if(isGlobal == 0){
             lastFieldElementLocal->type = newType;
             lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
+            
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = newType;
+            lastFieldElementGlobal->offset = lastFieldPointer;
+            lastFieldPointer = lastFieldPointer + newType->size;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
         return 0;
@@ -299,6 +306,8 @@ int addTypeToField(){
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeInt;
+            lastFieldElementGlobal->offset = lastFieldPointer;
+            lastFieldPointer = lastFieldPointer + typeInt->size;
             //lastFieldElementGlobal->type->size = 4;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
@@ -312,6 +321,8 @@ int addTypeToField(){
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeChar;
+            lastFieldElementGlobal->offset = lastFieldPointer;
+            lastFieldPointer = lastFieldPointer + typeChar->size;
             //lastFieldElementGlobal->type->size = 4;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }

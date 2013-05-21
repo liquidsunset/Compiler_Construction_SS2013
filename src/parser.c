@@ -544,6 +544,7 @@ void storeString(struct item_t * item, char string[1024])
 void put(int op, int a, int b, int c)
 {
     int instruction;
+    int file;
 
     // in compiler and linker!
     // assuming: 0 <= op <= 2^6-1 = 63
@@ -560,6 +561,12 @@ void put(int op, int a, int b, int c)
     instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
 
     // TODO: write to file
+    file = fopen("a.out", "a");
+    fputc((instruction >> 24) & 255, file);
+    fputc((instruction >> 16) & 255, file);
+    fputc((instruction >> 8) & 255, file);
+    fputc(instruction & 255, file);
+    fclose(file);
 }
 
 void ref2Reg(struct item_t * item)

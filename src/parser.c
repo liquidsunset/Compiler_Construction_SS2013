@@ -850,7 +850,13 @@ void type(struct item_t * item)
             currentType = TOKEN_STRUCT;
             strCopy(stringValue, typeName);
 
-            // TODO: Check if valid type
+            object = findObject(objectGlobal);
+
+            item->mode = CODEGEN_MODE_CONST;
+            item->type = typeInt;
+            item->reg = 0;
+            item->offset = 0;
+            item->value = object->type->size;
 
             getNextToken();
             return;

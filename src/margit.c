@@ -445,7 +445,7 @@ int main() {
 	getchar();
 	while(fetch())
 	{
-		getchar();
+        getchar();
 	}
     //printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
     printf("\nExecution stopped.\n");

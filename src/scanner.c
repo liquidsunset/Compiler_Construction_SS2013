@@ -9,6 +9,7 @@ static int intValue;
 static char stringValue[1024];
 static int positionLine;
 static int positionColumn;
+static int eofFlag;
 
 static int lin;
 static int col;
@@ -405,6 +406,10 @@ void getNextToken()
     if(tokenType == TOKEN_EOF){
         return;
     }
+    if(eofFlag == 1){
+        tokenType = TOKEN_EOF;
+        return;
+    }
 
     char status[1024];
     int len;
@@ -435,10 +440,10 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
-                if(nextChar == -1){
-                    tokenType = TOKEN_EOF;
-                    return;
-                }
+//                if(nextChar == -1){
+//                    tokenType = TOKEN_EOF;
+//                    return;
+//                }
             }
         }
 
@@ -488,6 +493,10 @@ void getNextToken()
                 printf(" (%d)",intValue);
             }
             printf("\n");
+            
+            if(nextChar < 0){
+                eofFlag = 1;
+            }
 
         }
     }

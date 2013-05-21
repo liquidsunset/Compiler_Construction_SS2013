@@ -122,7 +122,7 @@ void load(char * filename) {
 			temp = fgetc(fp);
 			if(temp == EOF)
 			{
-				bump_ptr = i + 1;
+				bump_ptr = i;
 				GP = bump_ptr;
 				break;
 			}
@@ -403,7 +403,7 @@ int fetch() {
 			int s = bump_ptr;
 
 			// move bump pointer by reg[c]
-			bump_ptr = bump_ptr + reg[c];
+			bump_ptr = bump_ptr + reg[c]/4;
 
 			// write saved value to reg[a]
 			reg[a] = s;
@@ -429,7 +429,8 @@ int fetch() {
 		}
 	}
 
-	printf(" (R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
+	printf(" (R1: %d, R2: %d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)\n",
+		reg[1], reg[2], reg[3], reg[4], reg[5], reg[6], reg[7], reg[8], reg[28]);
 	reg[0] = 0; // keep it zero
 	reg[28] = GP*4;
 	return 1; // continue

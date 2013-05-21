@@ -136,7 +136,7 @@ void load(char * filename) {
 			printf("%x\n", mem[i]);
 			i++;
 		}
-		;
+		printf("Loaded %d bytes", (i*4));
 		
 		pc = 0;
 	}

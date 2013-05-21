@@ -2205,13 +2205,13 @@ int main(){
     initTokens();
     initTypes();
     initCodeGen();
-
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
     openFile("test/m4.c");
     //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
+    writeVarToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 
     return 0;

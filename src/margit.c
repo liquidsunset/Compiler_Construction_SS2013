@@ -11,9 +11,11 @@ int reg[32];
 // Virtual Memory of 4*150kB
 unsigned int mem[MEMSIZE];
 
+// Global pointer
+unsigned int GP;
 
 // Bump pointer for continous allocation
-int bump_ptr;
+unsigned int bump_ptr;
 
 // Instruction register
 int ir;
@@ -121,6 +123,7 @@ void load(char * filename) {
 			if(temp == EOF)
 			{
 				bump_ptr = i + 1;
+				GP = bump_ptr;
 				break;
 			}
 
@@ -130,8 +133,10 @@ void load(char * filename) {
 			c3 = fgetc(fp);
 		
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
+			printf("%d\t", mem[i]);
 			i++;
 		}
+		;
 		
 		pc = 0;
 	}
@@ -395,12 +400,14 @@ int fetch() {
 		}
 	}
 
-	printf(" (R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
+	printf("%d (R1: %d, R2: %d, R3: %d)\n", pc, reg[1], reg[2], reg[3]);
 	reg[0] = 0; // keep it zero
+	reg[28] = GP;
 	return 1; // continue
 }
 
 int main() {
+	initTokens();
 	init();
 	load("test/gcd.bin");
     //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");

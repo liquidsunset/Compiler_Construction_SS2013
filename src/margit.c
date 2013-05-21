@@ -160,7 +160,7 @@ int fetch() {
 		printf("\nHit NOP %d", TARGET_NOP);
 		return 0;
 	}
-	if(pc >= GP)
+	if(pc >= (GP*4))
 	{
 		printf("PC is higher than GP");
 		return 0;
@@ -400,7 +400,7 @@ int fetch() {
 		{
 			printf("%d MALLOC %d, %d, %d", pc, a, b, c);
 			// save value of bump pointer
-			int s = bump_ptr;
+			int s = 4 * bump_ptr;
 
 			// move bump pointer by reg[c]
 			bump_ptr = bump_ptr + reg[c]/4;

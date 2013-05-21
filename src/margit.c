@@ -133,7 +133,7 @@ void load(char * filename) {
 			c3 = fgetc(fp);
 		
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
-			printf("%d\t", mem[i]);
+			printf("%x\n", mem[i]);
 			i++;
 		}
 		;
@@ -156,6 +156,10 @@ int fetch() {
 	op = (instruction >> 26) & 63;
 
 	if(op == TARGET_NOP)
+	{
+		return 0;
+	}
+	if(pc >= GP)
 	{
 		return 0;
 	}
@@ -409,7 +413,9 @@ int fetch() {
 int main() {
 	initTokens();
 	init();
-	load("test/gcd.bin");
+	//load("test/gcd.bin");
+	load("a.out");
+	getchar();
     //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
 	while(fetch());
     printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);

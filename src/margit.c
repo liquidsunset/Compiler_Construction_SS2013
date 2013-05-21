@@ -157,7 +157,7 @@ int fetch() {
 
 	if(op == TARGET_NOP)
 	{
-		printf("\nHit NOP");
+		printf("\nHit NOP %d", TARGET_NOP);
 		return 0;
 	}
 	if(pc >= GP)
@@ -191,16 +191,19 @@ int fetch() {
 		}
 		else if(op == TARGET_DIVI)
 		{
+			printf("%d DIVI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] / c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MODI)
 		{
+			printf("%d MODI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] % c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_CMPI)
 		{
+			printf("%d CMPI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
@@ -219,12 +222,14 @@ int fetch() {
 		}
 		else if(op == TARGET_POP)
 		{
+			printf("%d POP %d, %d, %d", pc, a, b, c);
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PSH)
 		{
+			printf("%d PSH %d, %d, %d", pc, a, b, c);
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;
@@ -244,6 +249,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BGE)
 		{
+			printf("%d BGE %d, %d, %d", pc, a, b, c);
 			if(reg[a] >= 0)
 			{
 				pc = pc + c * 4;
@@ -255,6 +261,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BGT)
 		{
+			printf("%d BGT %d, %d, %d", pc, a, b, c);
 			if(reg[a] > 0)
 			{
 				pc = pc + c * 4;
@@ -336,6 +343,7 @@ int fetch() {
 		}
 		else if(op == TARGET_MOD)
 		{
+			printf("%d MOD %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] % reg[c];
 			pc = pc + 4;
 		}
@@ -349,12 +357,14 @@ int fetch() {
 		// F2 return from subroutine
 		else if(op == TARGET_RET)
 		{
+			printf("%d RET %d, %d, %d", pc, c);
 			pc = reg[c];
 		}
 
 		// F2 IO
 		else if(op == TARGET_FLO)
 		{
+			printf("%d FLO %d, %d, %d", pc, a, b, c);
 			int mode = O_RDONLY;
 			if(mem[reg[b]] == 'w')
 			{
@@ -366,11 +376,14 @@ int fetch() {
 		}
 		else if(op == TARGET_FLC)
 		{
+			printf("%d FLC %d, %d, %d", pc, a, b, c);
 			close(reg[c]);
 			pc = pc + 4;
 		}
 		else if(op == TARGET_RDC)
 		{
+			printf("%d RDC %d, %d, %d", pc, a, b, c);
+
 			char buf;
 			read(reg[a], &buf, 1);
 			reg[c] = buf;
@@ -378,6 +391,7 @@ int fetch() {
 		}
 		else if(op == TARGET_WRC)
 		{
+			printf("%d WRC %d, %d, %d", pc, a, b, c);
 			const char buf = (char)reg[c];
 			write(reg[a], &buf, 1);
 			pc = pc + 4;

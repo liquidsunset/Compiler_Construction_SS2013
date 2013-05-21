@@ -435,6 +435,10 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
+                if(nextChar == -1){
+                    tokenType = TOKEN_EOF;
+                    return;
+                }
             }
         }
 
@@ -508,10 +512,10 @@ void getNextToken()
 //            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
 //        }
 //        while(tokenType!= TOKEN_EOF);
-//        getchar();
+//        //getchar();
 //    }
 //}
-//
+
 //    
 //    printf("\n\nNext Testfile - brackets.c\n\n");
 //    
@@ -580,4 +584,4 @@ void getNextToken()
 //    
 //
 //}
-// ----------------------------------------------------------------------------
+//// ----------------------------------------------------------------------------

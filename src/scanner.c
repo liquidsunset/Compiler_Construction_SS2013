@@ -435,10 +435,10 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
-                if(nextChar == -1){
-                    tokenType = TOKEN_EOF;
-                    return;
-                }
+//                if(nextChar == -1){
+//                    tokenType = TOKEN_EOF;
+//                    return;
+//                }
             }
         }
 
@@ -447,6 +447,10 @@ void getNextToken()
             while (currentChar != '\n' && currentChar != EOF){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
+                if(nextChar == -1){
+                    tokenType = TOKEN_EOF;
+                    return;
+                }
             }
         }
         else

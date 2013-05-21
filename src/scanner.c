@@ -485,14 +485,14 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
-            printf("%d",tokenType);
-            if(tokenType == 100 || tokenType == 300){
-                printf(" (%s)",stringValue);
-            }
-            if(tokenType == 200){
-                printf(" (%d)",intValue);
-            }
-            printf("\n");
+            // printf("%d",tokenType);
+            // if(tokenType == 100 || tokenType == 300){
+            //     printf(" (%s)",stringValue);
+            // }
+            // if(tokenType == 200){
+            //     printf(" (%d)",intValue);
+            // }
+            // printf("\n");
             
             if(nextChar < 0){
                 eofFlag = 1;

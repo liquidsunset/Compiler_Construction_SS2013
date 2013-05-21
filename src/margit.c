@@ -440,8 +440,8 @@ int main() {
 	init();
 	//load("test/gcd.bin");
 	load("a.out");
+    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/a.out");
 	getchar();
-    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
 	while(fetch())
 	{
 		getchar();

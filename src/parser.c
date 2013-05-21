@@ -216,7 +216,7 @@ int addTypeToList(){
 
     if(objectClass == 2 && (isArray == 1 || isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType()){
-            tempTypeObject->offset = lastOffsetPointer;
+            tempTypeObject->offset = lastOffsetPointer - 4;
             lastOffsetPointer = lastOffsetPointer - 4;
             return 0;
         }

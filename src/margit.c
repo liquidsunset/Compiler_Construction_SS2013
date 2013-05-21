@@ -157,7 +157,7 @@ int fetch() {
 
 	if(op == TARGET_NOP)
 	{
-		printf("\nHit NOP %d", TARGET_NOP);
+		printf("\nHit NOP %d\n", TARGET_NOP);
 		return 0;
 	}
 	if(pc >= (GP*4))
@@ -429,7 +429,7 @@ int fetch() {
 		}
 	}
 
-	printf(" (R1: %d, R2: %d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)\n",
+	printf(" (R1: %d, R2: %d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)",
 		reg[1], reg[2], reg[3], reg[4], reg[5], reg[6], reg[7], reg[8], reg[28]);
 	reg[0] = 0; // keep it zero
 	reg[28] = GP*4;
@@ -447,6 +447,8 @@ int main() {
 	{
         getchar();
 	}
+	printf("Values: a=%d, reg->f=%d, reg->g=%d, reg->arr[0]=%d, reg->arr[1]=%d, reg->arr[2]=%d", 
+		mem[GP-1], mem[GP+0], mem[GP+1], mem[mem[GP+2]/4+0], mem[mem[GP+2]/4+1], mem[mem[GP+2]/4+2]);
     //printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
     printf("\nExecution stopped.\n");
 	return 0;

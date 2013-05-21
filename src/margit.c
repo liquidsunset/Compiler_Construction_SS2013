@@ -133,7 +133,7 @@ void load(char * filename) {
 			c3 = fgetc(fp);
 		
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
-			printf("%x\n", mem[i]);
+			// printf("%x\n", mem[i]);
 			i++;
 		}
 		printf("Loaded %d bytes", (i*4));
@@ -357,7 +357,7 @@ int fetch() {
 		// F2 return from subroutine
 		else if(op == TARGET_RET)
 		{
-			printf("%d RET %d, %d, %d", pc, c);
+			printf("%d RET %d", pc, c);
 			pc = reg[c];
 		}
 
@@ -429,7 +429,7 @@ int fetch() {
 		}
 	}
 
-	printf(" (R1: %d, R2: %d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)",
+	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)",
 		reg[1], reg[2], reg[3], reg[4], reg[5], reg[6], reg[7], reg[8], reg[28]);
 	reg[0] = 0; // keep it zero
 	reg[28] = GP*4;

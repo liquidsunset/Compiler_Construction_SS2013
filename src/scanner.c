@@ -435,10 +435,10 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
-//                if(nextChar == -1){
-//                    tokenType = TOKEN_EOF;
-//                    return;
-//                }
+                if(nextChar == -1){
+                    tokenType = TOKEN_EOF;
+                    return;
+                }
             }
         }
 
@@ -463,8 +463,10 @@ void getNextToken()
             checkPeek = peek(currentChar, nextChar);
             len = len +1;
             status[len - 1] = currentChar;
-            currentChar = nextChar;
-            nextChar = readNextCharacter();
+            if(nextChar > 0){
+                currentChar = nextChar;
+                nextChar = readNextCharacter();
+            }
             
             while (checkPeek == 0){
                 checkPeek = peek(currentChar, nextChar);
@@ -495,7 +497,7 @@ void getNextToken()
 
 // ------------------------ Tests ---------------------------------------------
 // These tests should never be of priority for self-compilation.
-
+//
 //int main()
 //{
 //    initTokens();

@@ -25,9 +25,9 @@ unsigned int pc;
 
 unsigned int instruction;
 unsigned int op;
-unsigned int a;
-unsigned int b;
-unsigned int c;
+int a;
+int b;
+int c;
 
 // Globals
 
@@ -157,10 +157,12 @@ int fetch() {
 
 	if(op == TARGET_NOP)
 	{
+		printf("\nHit NOP");
 		return 0;
 	}
 	if(pc >= GP)
 	{
+		printf("PC is higher than GP");
 		return 0;
 	}
 
@@ -171,16 +173,19 @@ int fetch() {
 		// F1 immediate addressing
 		if(op == TARGET_ADDI)
 		{
+			printf("%d ADDI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] + c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_SUBI)
 		{
+			printf("%d SUBI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MULI)
 		{
+			printf("%d MULI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] * c;
 			pc = pc + 4;
 		}
@@ -307,6 +312,7 @@ int fetch() {
 		// F2 register addressing
 		else if(op == TARGET_ADD)
 		{
+			printf("%d ADD %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] + reg[c];
 			pc = pc + 4;
 		}
@@ -318,11 +324,13 @@ int fetch() {
 		}
 		else if(op == TARGET_MUL)
 		{
+			printf("%d MUL %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] * reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_DIV)
 		{
+			printf("%d DIV %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] / reg[c];
 			pc = pc + 4;
 		}
@@ -376,6 +384,7 @@ int fetch() {
 		}
 		else if(op == TARGET_MALLOC)
 		{
+			printf("%d MALLOC %d, %d, %d", pc, a, b, c);
 			// save value of bump pointer
 			int s = bump_ptr;
 
@@ -384,6 +393,8 @@ int fetch() {
 
 			// write saved value to reg[a]
 			reg[a] = s;
+
+			pc = pc + 4;
 		}
 
 	}
@@ -404,9 +415,9 @@ int fetch() {
 		}
 	}
 
-	printf("%d (R1: %d, R2: %d, R3: %d)\n", pc, reg[1], reg[2], reg[3]);
+	printf(" (R1: %d, R2: %d, R3: %d)\n", reg[1], reg[2], reg[3]);
 	reg[0] = 0; // keep it zero
-	reg[28] = GP;
+	reg[28] = GP*4;
 	return 1; // continue
 }
 
@@ -417,7 +428,11 @@ int main() {
 	load("a.out");
 	getchar();
     //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/gcd.bin");
-	while(fetch());
-    printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
+	while(fetch())
+	{
+		getchar();
+	}
+    //printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
+    printf("\nExecution stopped.\n");
 	return 0;
 }

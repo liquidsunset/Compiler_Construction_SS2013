@@ -569,6 +569,27 @@ void put(int op, int a, int b, int c)
     fclose(file);
 }
 
+void writeVarToFile(){
+    
+    struct object_t *tempTypeObject;
+    
+    tempTypeObject = malloc(sizeof(struct object_t));
+    
+    tempTypeObject = objectGlobal;
+    
+    if(tempTypeObject != 0){
+        while(tempTypeObject->next != 0){
+            if(tempTypeObject->class == CLASS_VAR){
+                put(0, 0, 0, 0);
+            }
+            tempTypeObject = tempTypeObject->next;
+        }
+        if(tempTypeObject->class == CLASS_VAR){
+            put(0, 0, 0, 0);
+        }
+    }
+}
+
 void ref2Reg(struct item_t * item)
 {
     item->mode = CODEGEN_MODE_REG;

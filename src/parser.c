@@ -544,7 +544,6 @@ void storeString(struct item_t * item, char string[1024])
 void put(int op, int a, int b, int c)
 {
     int instruction;
-    int file;
 
     // in compiler and linker!
     // assuming: 0 <= op <= 2^6-1 = 63
@@ -552,6 +551,9 @@ void put(int op, int a, int b, int c)
     // assuming: 0 <= b <= 2^5-1 = 31
     // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
     // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
+
+    printf("put %d %d %d %d\n", op, a, b, c);
+
     if (c < 0)
     {
         c = c + 65536; // 0x10000: 2^16
@@ -561,7 +563,7 @@ void put(int op, int a, int b, int c)
     instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
 
     // TODO: write to file
-    file = fopen("a.out", "a");
+    FILE * file = fopen("a.out", "a");
     fputc((instruction >> 24) & 255, file);
     fputc((instruction >> 16) & 255, file);
     fputc((instruction >> 8) & 255, file);

@@ -63,7 +63,9 @@ void initTypes(){
     typeChar = malloc(sizeof(struct type_t));
     
     typeInt->form = FORM_INT;
+    typeInt->size = 4;
     typeChar->form = FORM_CHAR;
+    typeChar->size = 4;
     
 }
 
@@ -219,11 +221,11 @@ int addTypeToList(){
     if(objectClass == 2 && (isArray == 0 && isStruct == 0)){
         if(currentType == FORM_INT){
             tempTypeObject->type = typeInt;
-            tempTypeObject->type->size = 4;
+            //tempTypeObject->type->size = 4;
         }
         if(currentType == FORM_CHAR){
             tempTypeObject->type = typeChar;
-            tempTypeObject->type->size = 4;
+            //tempTypeObject->type->size = 4;
         }
         
         return 0;
@@ -285,12 +287,12 @@ int addTypeToField(){
     if(currentType == FORM_INT ){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeInt;
-            lastFieldElementLocal->type->size = 4;
+            //lastFieldElementLocal->type->size = 4;
             lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeInt;
-            lastFieldElementGlobal->type->size = 4;
+            //lastFieldElementGlobal->type->size = 4;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
     }
@@ -298,12 +300,12 @@ int addTypeToField(){
     if(currentType == FORM_CHAR){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeChar;
-            lastFieldElementLocal->type->size = 4;
+            //lastFieldElementLocal->type->size = 4;
             lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeChar;
-            lastFieldElementGlobal->type->size = 4;
+            //lastFieldElementGlobal->type->size = 4;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
     }
@@ -336,6 +338,8 @@ int addFieldToList(){
     }
     
     //TODO: implementing Struct in Struct and Array in Struct
+    //irgendwos is scho erledigt oder so kp  ho an ueberlick verlorn^^
+    
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {

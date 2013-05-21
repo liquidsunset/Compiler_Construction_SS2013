@@ -7,7 +7,7 @@ static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass;
-static int lastGlobalPointer;
+static int lastOffsetPointer;
 
 // -- Codegen
 static int SIZE_INT;
@@ -35,10 +35,9 @@ typedef char *string_t;
 struct object_t{
     string_t name;
     int class;
-    int globalPointer;
+    int offset;
     struct type_t *type;
     struct object_t *next;
-    int offset;
 };
 
 void getFromList()
@@ -68,7 +67,7 @@ void initTypes(){
     typeInt->size = 4;
     typeChar->form = FORM_CHAR;
     typeChar->size = 4;
-    lastGlobalPointer = 0;
+    lastOffsetPointer = 0;
     
 }
 
@@ -217,8 +216,8 @@ int addTypeToList(){
 
     if(objectClass == 2 && (isArray == 1 || isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType()){
-            tempTypeObject->globalPointer = lastGlobalPointer - 4;
-            lastGlobalPointer = lastGlobalPointer - 4;
+            tempTypeObject->offset = lastOffsetPointer;
+            lastOffsetPointer = lastOffsetPointer - 4;
             return 0;
         }
     }
@@ -233,8 +232,8 @@ int addTypeToList(){
             //tempTypeObject->type->size = 4;
         }
         
-        tempTypeObject->globalPointer = lastGlobalPointer - 4;
-        lastGlobalPointer = lastGlobalPointer - 4;
+        tempTypeObject->offset = lastOffsetPointer - 4;
+        lastOffsetPointer = lastOffsetPointer - 4;
         
         return 0;
     }

@@ -227,11 +227,9 @@ int addTypeToList(){
     if(objectClass == 2 && (isArray == 0 && isStruct == 0)){
         if(currentType == FORM_INT){
             tempTypeObject->type = typeInt;
-            //tempTypeObject->type->size = 4;
         }
         if(currentType == FORM_CHAR){
             tempTypeObject->type = typeChar;
-            //tempTypeObject->type->size = 4;
         }
         
         tempTypeObject->offset = lastOffsetPointer - 4;
@@ -301,14 +299,12 @@ int addTypeToField(){
     if(currentType == FORM_INT ){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeInt;
-            //lastFieldElementLocal->type->size = 4;
             lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeInt;
             lastFieldElementGlobal->offset = lastFieldPointer;
             lastFieldPointer = lastFieldPointer + typeInt->size;
-            //lastFieldElementGlobal->type->size = 4;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
     }
@@ -316,14 +312,12 @@ int addTypeToField(){
     if(currentType == FORM_CHAR){
         if(isGlobal == 0){
             lastFieldElementLocal->type = typeChar;
-            //lastFieldElementLocal->type->size = 4;
             lastObjectLocal->type->size = lastObjectLocal->type->size + 4;
         }
         if(isGlobal == 1){
             lastFieldElementGlobal->type = typeChar;
             lastFieldElementGlobal->offset = lastFieldPointer;
             lastFieldPointer = lastFieldPointer + typeChar->size;
-            //lastFieldElementGlobal->type->size = 4;
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
     }
@@ -354,9 +348,6 @@ int addFieldToList(){
     if(isGlobal == 1){
         newTempObject = lastObjectGlobal->type->fields;
     }
-    
-    //TODO: implementing Struct in Struct and Array in Struct
-    //irgendwos is scho erledigt oder so kp  ho an ueberlick verlorn^^
     
     
     if(newTempObject != 0){
@@ -2222,7 +2213,6 @@ int main(){
     warningCount = 0;
     tokenType = -1;
     openFile("test/m4.c");
-    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
     start();
     writeVarToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);

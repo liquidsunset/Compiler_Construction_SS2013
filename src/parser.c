@@ -19,6 +19,7 @@ static int CODEGEN_MODE_CONST;
 static int CODEGEN_MODE_VAR;
 static int CODEGEN_MODE_REG;
 static int CODEGEN_MODE_REF;
+static int CODEGEN_MODE_COND;
 
 // ------------------------------- Symbol table -------------------------------
 
@@ -499,6 +500,7 @@ void initCodeGen()
     CODEGEN_MODE_VAR = 2;
     CODEGEN_MODE_REG = 3;
     CODEGEN_MODE_REF = 4;
+    CODEGEN_MODE_COND = 5;
 }
 
 struct item_t

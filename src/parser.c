@@ -64,6 +64,7 @@ struct type_t *typeBool;
 void initTypes(){
     typeInt = malloc(sizeof(struct type_t));
     typeChar = malloc(sizeof(struct type_t));
+    typeBool = malloc(sizeof(struct type_t));
     
     typeInt->form = FORM_INT;
     typeInt->size = 4;

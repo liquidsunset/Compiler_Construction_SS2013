@@ -508,6 +508,10 @@ struct item_t
     int reg; // both reg and offset give us the address of the variable
     int offset; // reg[reg] + offset -> address
     int value;
+
+    int operator;
+    int fls;
+    int tru;
 };
 
 int requestRegister()

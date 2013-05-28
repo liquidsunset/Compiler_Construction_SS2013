@@ -92,6 +92,7 @@ static int FORM_ARRAY;
 static int FORM_RECORD;
 static int FORM_INT;
 static int FORM_CHAR;
+static int FORM_BOOL;
 
 static int errorCount;
 static int warningCount;
@@ -251,6 +252,7 @@ void initTokens(){
     FORM_ARRAY = 1;
     FORM_INT = 2;
     FORM_CHAR = 3;
+    FORM_BOOL = 4;
     
     errorCount = 0;
     warningCount = 0;

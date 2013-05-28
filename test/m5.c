@@ -4,8 +4,8 @@ struct rec_t {
     int sum;
     int avg;
 };
-int i;
-int len;
+static int i;
+static int len;
 struct rec_t *rec;
 
 

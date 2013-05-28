@@ -838,7 +838,9 @@ int isIn(int tokenType, int rule) {
     if(rule == FIRST_INSTRUCTION && (
         isIn(tokenType, FIRST_VARIABLE_DECLARATION) ||
         isIn(tokenType, FIRST_TYPE_DECLARATION) ||
-        tokenType == TOKEN_IDENTIFIER))
+        tokenType == TOKEN_IDENTIFIER ||
+        tokenType == TOKEN_WHILE ||
+        tokenType == TOKEN_IF))
     { return 1; }
 
     return 0;
@@ -977,15 +979,15 @@ void malloc_func(struct item_t * item)
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
-                    if(item->mode == CODEGEN_MODE_CONST) // only allow allocation known during compile time
-                    {
+                    //if(item->mode == CODEGEN_MODE_CONST) // only allow allocation known during compile time
+                    //{
                         load(item);
                         put(TARGET_MALLOC, item->reg, 0, item->reg);
-                    }
-                    else
-                    {
-                        error("Invalid allocation");
-                    }
+                    // }
+                    // else
+                    // {
+                    //     error("Invalid allocation");
+                    // }
                 }
                 else
                 {
@@ -2234,7 +2236,7 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m4.c");
+    openFile("test/m5.c");
     start();
     writeVarToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);

@@ -437,6 +437,7 @@ int fetch() {
 }
 
 int main() {
+	printf("\nPhoenix: Margit\n===============\n");
 	initTokens();
 	init();
 	//load("test/gcd.bin");
@@ -446,9 +447,7 @@ int main() {
 	{
         getchar();
 	}
-	printf("Values: a=%d, reg->f=%d, reg->g=%d, reg->arr[0]=%d, reg->arr[1]=%d, reg->arr[2]=%d", 
-		mem[GP-1], mem[GP+0], mem[GP+1], mem[mem[GP+2]/4+0], mem[mem[GP+2]/4+1], mem[mem[GP+2]/4+2]);
-    //printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
+	
     printf("\nExecution stopped.\n");
 	return 0;
 }

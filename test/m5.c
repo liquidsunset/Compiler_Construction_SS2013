@@ -31,7 +31,7 @@ void main(){
         i = i + 1;
     }
 
-    if (len != 0 && (rec->sum / len > 0)) {
+    if ((len != 0) && (rec->sum / len > 0)) {
         rec->avg = rec->sum / len;
     } else {
         rec->avg = 0;

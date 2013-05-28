@@ -6,7 +6,7 @@ struct rec_t {
 };
 static int i;
 static int len;
-struct rec_t *rec;
+static struct rec_t *rec;
 
 
 void main(){

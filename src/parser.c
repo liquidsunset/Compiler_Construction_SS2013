@@ -516,6 +516,18 @@ struct item_t
     int tru;
 };
 
+int negate(int operator)
+{
+    if(operator == TOKEN_LESSEQUAL) { return TARGET_BGT; }
+    if(operator == TOKEN_LESS) { return TARGET_BGE; }
+    if(operator == TOKEN_EQUAL) { return TARGET_BNE; }
+    if(operator == TOKEN_UNEQUAL) { return TARGET_BEQ; }
+    if(operator == TOKEN_GREATER) { return TARGET_BLE; }
+    if(operator == TOKEN_GREATEREQUAL) { return TARGET_BLT; }
+
+    return 0;
+}
+
 int requestRegister()
 {
     int i;

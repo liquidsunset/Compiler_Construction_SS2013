@@ -772,6 +772,11 @@ void cJump(struct item_t * item)
     item->fls = PC-1;
 }
 
+void bJump(int backAddress)
+{
+    put(TARGET_BR, 0, 0, backAddress-PC);
+}
+
 int fJump()
 {
     put(TARGET_BR, 0, 0, 0);

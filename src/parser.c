@@ -1391,6 +1391,8 @@ void simple_expression(struct item_t * item)
 
 void expression(struct item_t * item)
 {
+    struct item_t * rightItem;
+
     if(tokenType == TOKEN_NOT) {
         getNextToken();
     }
@@ -1400,49 +1402,57 @@ void expression(struct item_t * item)
     if(tokenType == TOKEN_EQUAL)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_LESSEQUAL)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_LESS)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_UNEQUAL)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_GREATER)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_GREATEREQUAL)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_AND)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     if(tokenType == TOKEN_OR)
     {
         getNextToken();
-        expression(0);
+        rightItem = malloc(sizeof(struct item_t));
+        expression(item);
         return;
     }
     // if(tokenType == TOKEN_ASSIGNMENT)
@@ -1796,6 +1806,8 @@ void instruction()
 
 void if_else()
 {
+    struct item_t * item;
+
     if(tokenType == TOKEN_IF)
     {
         getNextToken();
@@ -1812,9 +1824,10 @@ void if_else()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
-            expression(0);
+            item = malloc(sizeof(struct item_t));
+            expression(item);
 
-            if(tokenType == TOKEN_LRB)
+            if(tokenType == TOKEN_RRB)
             {
                 getNextToken();
             }
@@ -1851,6 +1864,7 @@ void if_else()
 
             if(tokenType == TOKEN_ELSE)
             {
+                getNextToken();
                 if(tokenType == TOKEN_LCB)
                 {
                     getNextToken();
@@ -1882,6 +1896,8 @@ void if_else()
 
 void while_loop()
 {
+    struct item_t * item;
+
     if(tokenType == TOKEN_WHILE)
     {
         getNextToken();
@@ -1897,9 +1913,10 @@ void while_loop()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
-            expression(0);
+            item = malloc(sizeof(struct item_t));
+            expression(item);
 
-            if(tokenType == TOKEN_LRB)
+            if(tokenType == TOKEN_RRB)
             {
                 getNextToken();
             }

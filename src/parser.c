@@ -59,6 +59,7 @@ struct object_t *lastFieldElementLocal;
 
 struct type_t *typeInt;
 struct type_t *typeChar;
+struct type_t *typeBool;
 
 
 void initTypes(){
@@ -69,6 +70,8 @@ void initTypes(){
     typeInt->size = 4;
     typeChar->form = FORM_CHAR;
     typeChar->size = 4;
+    typeBool->form = FORM_BOOL;
+    typeBool->size = 4;
     lastOffsetPointer = 0;
     lastFieldPointer = 0;
     

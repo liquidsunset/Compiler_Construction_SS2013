@@ -21,6 +21,8 @@ static int CODEGEN_MODE_REG;
 static int CODEGEN_MODE_REF;
 static int CODEGEN_MODE_COND;
 
+static int PC;
+
 // ------------------------------- Symbol table -------------------------------
 
 struct object_t;
@@ -497,6 +499,7 @@ void mark(char message[1024])
 void initCodeGen()
 {
     CODEGEN_GP = 28;
+    PC = 0;
 
     SIZE_INT = 4;
 
@@ -593,6 +596,8 @@ void put(int op, int a, int b, int c)
     fputc((instruction >> 8) & 255, file);
     fputc(instruction & 255, file);
     fclose(file);
+
+    PC = PC + 1;
 }
 
 void writeVarToFile(){
@@ -731,6 +736,73 @@ void termBinaryOperator(
         error("Types dont match");
     }
 
+}
+
+void expressionOperator(
+    struct item_t * leftItem,
+    struct item_t * rightItem,
+    int operatorSymbol)
+{
+    if((leftItem->type == typeInt) && (rightItem->type == typeInt))
+    {
+        load(leftItem);
+        if((rightItem->mode != CODEGEN_MODE_CONST) || (rightItem->value != 0 ))
+        {
+            load(rightItem);
+            
+            put(TARGET_CMP, leftItem->reg, leftItem->reg, rightItem->reg);
+            releaseRegister(rightItem->reg);
+        }
+        leftItem->mode = CODEGEN_MODE_COND;
+        leftItem->type = typeBool;
+        leftItem->operator = operatorSymbol;
+        leftItem->fls = 0;
+        leftItem->tru = 0;
+    }
+    else
+    {
+        error("Integer expressions expected");
+    }
+}
+
+void cJump(struct item_t * item)
+{
+    put(negate(item->operator), item->reg, 0, item->fls);
+    releaseRegister(item->reg);
+    item->fls = PC-1;
+}
+
+int fJump()
+{
+    put(TARGET_BR, 0, 0, 0);
+    return PC-1;
+}
+
+void encodeC(int address, int c)
+{
+    // TODO: replace c of instruction at address
+}
+
+int decodeC(int address)
+{
+    // TODO: return c of instruction at address
+}
+
+void fixUp(int branchAddress)
+{
+    encodeC(branchAddress, PC-branchAddress);
+}
+
+void fixLink(int branchAddress)
+{
+    int nextBranchAddress;
+
+    while(branchAddress != 0)
+    {
+        nextBranchAddress = decodeC(branchAddress);
+        fixUp(branchAddress);
+        branchAddress = nextBranchAddress;
+    }
 }
 
 void simpleExpressionBinaryOperator(

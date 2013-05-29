@@ -23,6 +23,8 @@ static int CODEGEN_MODE_COND;
 
 static int PC;
 
+static int * output;
+
 // ------------------------------- Symbol table -------------------------------
 
 struct object_t;
@@ -508,6 +510,8 @@ void initCodeGen()
     CODEGEN_MODE_REG = 3;
     CODEGEN_MODE_REF = 4;
     CODEGEN_MODE_COND = 5;
+
+    output = malloc(1000 * sizeof(int));
 }
 
 struct item_t
@@ -589,19 +593,15 @@ void put(int op, int a, int b, int c)
     // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
     instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
 
-    // TODO: write to file
-    FILE * file = fopen("a.out", "a");
-    fputc((instruction >> 24) & 255, file);
-    fputc((instruction >> 16) & 255, file);
-    fputc((instruction >> 8) & 255, file);
-    fputc(instruction & 255, file);
-    fclose(file);
+    output[PC] = instruction;
 
     PC = PC + 1;
 }
 
-void writeVarToFile(){
-    
+void writeToFile(){
+    int i;
+    int instruction;
+
     struct object_t *tempTypeObject;
     
     tempTypeObject = malloc(sizeof(struct object_t));
@@ -619,6 +619,22 @@ void writeVarToFile(){
             put(0, 0, 0, 0);
         }
     }
+
+    i = 0;
+
+    FILE * file = fopen("a.out", "w");
+    while(i < PC)
+    {
+        instruction = output[i];
+        
+        fputc((instruction >> 24) & 255, file);
+        fputc((instruction >> 16) & 255, file);
+        fputc((instruction >> 8) & 255, file);
+        fputc(instruction & 255, file);
+
+        i = i + 1;
+    }
+    fclose(file);
 }
 
 void ref2Reg(struct item_t * item)
@@ -2331,8 +2347,9 @@ int main(){
     warningCount = 0;
     tokenType = -1;
     openFile("test/m5.c");
+    //openFile("src/globals.c");
     start();
-    writeVarToFile();
+    writeToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
 
     return 0;

@@ -104,6 +104,15 @@ static int isInChar;
 static int currentChar;
 static int nextChar;
 
+
+//Scanner:
+static char *stringValue;
+
+//Parser:
+static char *typeName; //name from struct or array
+//Parser_Codegen:
+static int *isRegisterUsed;
+
 // ------ Margit -----------
 unsigned int TARGET_NOP;
 unsigned int TARGET_ADD;
@@ -304,6 +313,10 @@ void initTokens(){
     // F3 (43-63)
     TARGET_JSR = 43;
     TARGET_J = 44;
+    
+    stringValue = malloc(sizeof(char) * 1024);
+    typeName = malloc(sizeof(char) * 1024);
+    isRegisterUsed = malloc(sizeof(int) *32);
     
 
 }

@@ -23,7 +23,7 @@ int strCompare(char *a, char *b) // TODO: Support call by reference
 	int i;
     i = 0;
 
-	while( (i < 1024) && (a[i] != 0 || b[i] != 0) ) {
+	while( (i < 1024) && ((a[i] != 0) || (b[i] != 0))) {
 		if( a[i] != b[i] )
 		{
 			return 0;
@@ -43,7 +43,10 @@ int strLength(char *a)
 {
 	int i;
     i = 0;
-	while(a[i]!='\0'&&i<1024) i=i+1;
+	while((a[i]!='\0') && ( i<1024 )){
+        i=i+1;    
+    }
+    
 	return i;
 }
 
@@ -54,7 +57,7 @@ void strCopy(char *from, char *to)
 {
 	int i;
     i = 0;
-	while(from[i] != 0 && i < 1023)
+	while( (from[i] != 0) && (i < 1023))
 	{
 		to[i]=from[i];
 		i = i+1;
@@ -70,7 +73,7 @@ void strTrimQuotes(char *a, char *b)
     b[i] = a[i+1];
     i = i +1;
     
-    while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024){
+    while((a[i] != '\'') && (a[i] != '\"') && (a[i] != 0) && (i < 1024)){
         b[i] = a[i+1];
         i = i +1;
     }
@@ -84,7 +87,7 @@ void strTrimQuotes(char *a, char *b)
 // Returns true if the character is within the range of [a-zA-Z]
 int isLetter(char c)
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
+	return (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_'));
 }
 
 // Checks if the character c is a digit.
@@ -92,7 +95,7 @@ int isLetter(char c)
 // Returns true if the character is within the range of [0-9]
 int isDigit(char c)
 {
-	return (c >= '0' && c <= '9');
+	return ((c >= '0') && (c <= '9'));
 }
 
 // Checks if the character c is a whitespace:
@@ -101,7 +104,7 @@ int isDigit(char c)
 // Returns true if the character is whitespace.
 int isWhitespace(char c)
 {
-	return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
+	return ((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'));
 }
 
 int isTerminalChar(char c)
@@ -143,13 +146,13 @@ int peek(int current, int next)
 {
 
 
-    if(current == '\"' && !isInChar && !isInString) // add the starting "
+    if((current == '\"') && !isInChar && !isInString) // add the starting "
     {
         isInString = 1;
         return 0;
     }
-    if(next == '\"' && isInString) return 0; // add the ending "
-    if(current == '\"' && isInString) // terminate after the ending "
+    if((next == '\"') && isInString) return 0; // add the ending "
+    if((current == '\"') && isInString) // terminate after the ending "
     {
         isInString = 0;
         return 1;
@@ -158,20 +161,20 @@ int peek(int current, int next)
 
     // Char literals (duplicated to support something like "'a'"):
 
-    if(current == '\'' && !isInChar) // add the starting "
+    if((current == '\'') && !isInChar) // add the starting "
     {
         isInChar = 1;
         return 0;
     }
-    if(next == '\'' && isInChar) return 0; // add the ending "
-    if(current == '\'' && isInChar) // terminate after the ending "
+    if((next == '\'') && isInChar) return 0; // add the ending "
+    if((current == '\'') && isInChar) // terminate after the ending "
     {
         isInChar = 0;
         return 1;
     }
     if(isInChar) return 0;
 
-    if(current < 0 || next < 0) return 1; // EOF
+    if((current < 0) || (next < 0)) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
 	if(isTerminalChar(current) || isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
@@ -221,9 +224,9 @@ int strToInt(char *str)
         i = i + 1;
     }
 
-    while(str[i] != 0 && i < 1024)
+    while((str[i] != 0) && (i < 1024))
     {
-        if(str[i] >= '0' && str[i] <= '9')
+        if((str[i] >= '0') && (str[i] <= '9'))
         {
             res = res + (str[i]-'0') * power(10, len-i-1);
         }
@@ -429,7 +432,7 @@ void getNextToken()
             nextChar = readNextCharacter();
         }
 
-        if(currentChar == EOF || nextChar == EOF)
+        if((currentChar == EOF) || (nextChar == EOF))
         {
             // set token type to EOF
             tokenType = TOKEN_EOF;
@@ -441,16 +444,12 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
-//                if(nextChar == -1){
-//                    tokenType = TOKEN_EOF;
-//                    return;
-//                }
             }
         }
 
         // Support for line comments
-        if(currentChar == '/' && nextChar == '/'){
-            while (currentChar != '\n' && currentChar != EOF){
+        if((currentChar == '/') && (nextChar == '/')){
+            while ((currentChar != '\n') && (currentChar != EOF)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
                 if(nextChar == -1){

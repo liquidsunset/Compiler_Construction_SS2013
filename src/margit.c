@@ -296,6 +296,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BNE)
 		{
+			printf("%d BNE %d, %d, %d", pc, a, b, c);
 			if(reg[a] != 0)
 			{
 				pc = pc + c * 4;
@@ -308,6 +309,7 @@ int fetch() {
 		// F1 unconditional branching
 		else if(op == TARGET_BR)
 		{
+			printf("%d BR %d", pc, c);
 			pc = pc + c*4;
 		}
 		else if(op == TARGET_BSR)

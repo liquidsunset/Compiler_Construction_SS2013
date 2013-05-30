@@ -309,6 +309,8 @@ void initTokens(){
     TARGET_FLC = 31;
     TARGET_RDC = 32;
     TARGET_WRC = 33;
+    TARGET_AND = 34;
+    TARGET_OR = 35;
 
     // F3 (43-63)
     TARGET_JSR = 43;

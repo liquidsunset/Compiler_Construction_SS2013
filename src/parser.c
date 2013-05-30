@@ -700,9 +700,14 @@ void load(struct item_t * item)
     }
 }
 
+int concatenate(int a, int b)
+{
+
+}
+
 void cJump(struct item_t * item)
 {
-    put(negate(item->operator), item->reg, 0, item->fls);
+    put(branch(negate(item->operator)), item->reg, 0, item->fls);
     releaseRegister(item->reg);
     item->fls = PC-1;
 }
@@ -720,12 +725,13 @@ int fJump()
 
 void encodeC(int address, int c)
 {
-    // TODO: replace c of instruction at address
+    // assumes c is 0
+    output[address] = output[address] | c;
 }
 
 int decodeC(int address)
 {
-    // TODO: return c of instruction at address
+    return output[address] & 65535;
 }
 
 void fixUp(int branchAddress)
@@ -775,6 +781,26 @@ void loadBool(struct item_t * item)
     }
 }
 
+void factorOperator(struct item_t * item)
+{
+    int tmp;
+
+    if(item->type == typeBool)
+    {
+        loadBool(item);
+
+        tmp = item->fls;
+        item->fls = item->tru;
+        item->tru = tmp;
+
+        item->operator = negate(item->operator);
+    }
+    else
+    {
+        error("Boolean expression expected");
+    }
+}
+
 void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
@@ -782,23 +808,42 @@ void assignmentOperator(
     if(leftItem->type != rightItem->type)
     {
         mark("type mismatch in assignment");
+    }
 
-        if(rightItem->type == typeBool)
-        {
-            unloadBool(rightItem);
-        }
-        load(rightItem);
+    if(rightItem->type == typeBool)
+    {
+        unloadBool(rightItem);
+    }
+    load(rightItem);
 
-        // leftItem must be in VAR_MODE or REF_MODE
-        // rightItem must be in REG_MODE
-        put(TARGET_SW, rightItem->reg, leftItem->reg, leftItem->offset);
+    // leftItem must be in VAR_MODE or REF_MODE
+    // rightItem must be in REG_MODE
+    put(TARGET_SW, rightItem->reg, leftItem->reg, leftItem->offset);
 
-        if(leftItem->mode == CODEGEN_MODE_REF)
-        {
-            releaseRegister(leftItem->reg);
-        }
+    if(leftItem->mode == CODEGEN_MODE_REF)
+    {
+        releaseRegister(leftItem->reg);
+    }
 
-        releaseRegister(rightItem->reg);
+    releaseRegister(rightItem->reg);
+    
+}
+
+void termAND(struct item_t * item)
+{
+    if(item->type == typeBool)
+    {
+        loadBool(item);
+
+        put(branch(item->operator), item->reg, 0, item->fls);
+        releaseRegister(item->reg);
+        item->fls = PC-1;
+        fixLink(item->tru);
+        item->tru = 0;
+    }
+    else
+    {
+        error("Boolean expression expected in &&");
     }
 }
 
@@ -807,6 +852,23 @@ void termBinaryOperator(
     struct item_t * rightItem,
     int operatorSymbol)
 {
+    if(operatorSymbol == TOKEN_AND)
+    {
+        if((leftItem->type == typeBool) && (rightItem->type == typeBool))
+        {
+            loadBool(rightItem);
+
+            leftItem->reg = rightItem->reg;
+            leftItem->fls = concatenate(rightItem->fls, leftItem->fls);
+            leftItem->tru = rightItem->tru;
+            leftItem->operator = rightItem->operator;
+        }
+        else
+        {
+            error("Boolean expressions expected (&&)");
+        }
+    }
+
     if(leftItem->type == rightItem->type)
     {
         if(rightItem->mode == CODEGEN_MODE_CONST)
@@ -1356,6 +1418,15 @@ void fputc_func()
 void factor(struct item_t * item) {
     struct object_t * object;
 
+    if(tokenType == TOKEN_NOT) {
+        getNextToken();
+
+        factor(item);
+        factorOperator(item);
+
+        return;
+    }
+
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
@@ -1536,9 +1607,13 @@ void term(struct item_t * item)
 
     factor(item);
 
-    while((tokenType == TOKEN_MULT) || (tokenType == TOKEN_DIVIDE))
+    while((tokenType == TOKEN_MULT) || (tokenType == TOKEN_DIVIDE) || (tokenType == TOKEN_PERCENT) || (tokenType == TOKEN_AND))
     {
         operatorSymbol = tokenType;
+        if(operatorSymbol == TOKEN_AND)
+        {
+            termAND(item);
+        }
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         factor(rightItem);
@@ -1561,9 +1636,13 @@ void simple_expression(struct item_t * item)
     //term(leftItem);
     term(item);
 
-    while((tokenType == TOKEN_PLUS) || (tokenType == TOKEN_MINUS))
+    while((tokenType == TOKEN_PLUS) || (tokenType == TOKEN_MINUS) || (tokenType == TOKEN_OR))
     {
         operatorSymbol = tokenType;
+        if(operatorSymbol == TOKEN_OR)
+        {
+            simpleExpressionOR(item);
+        }
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         term(rightItem);
@@ -1575,10 +1654,6 @@ void expression(struct item_t * item)
 {
     struct item_t * rightItem;
 
-    if(tokenType == TOKEN_NOT) {
-        getNextToken();
-    }
-
     simple_expression(item);
     
     if(tokenType == TOKEN_EQUAL)
@@ -1586,7 +1661,7 @@ void expression(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
+        expressionOperator(item, rightItem, TOKEN_EQUAL);
         return;
     }
     if(tokenType == TOKEN_LESSEQUAL)
@@ -1594,7 +1669,7 @@ void expression(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
+        expressionOperator(item, rightItem, TOKEN_LESSEQUAL);
         return;
     }
     if(tokenType == TOKEN_LESS)
@@ -1610,7 +1685,7 @@ void expression(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
+        expressionOperator(item, rightItem, TOKEN_UNEQUAL);
         return;
     }
     if(tokenType == TOKEN_GREATER)
@@ -1618,7 +1693,7 @@ void expression(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
+        expressionOperator(item, rightItem, TOKEN_GREATER);
         return;
     }
     if(tokenType == TOKEN_GREATEREQUAL)
@@ -1626,26 +1701,26 @@ void expression(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
+        expressionOperator(item, rightItem, TOKEN_GREATEREQUAL);
         return;
     }
-    if(tokenType == TOKEN_AND)
-    {
-        getNextToken();
-        rightItem = malloc(sizeof(struct item_t));
-        expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
-        return;
-    }
-    if(tokenType == TOKEN_OR)
-    {
-        getNextToken();
-        simpleExpressionOR(item);
-        rightItem = malloc(sizeof(struct item_t));
-        expression(rightItem);
-        expressionOperator(item, rightItem, TOKEN_LESS);
-        return;
-    }
+    // if(tokenType == TOKEN_AND)
+    // {
+    //     getNextToken();
+    //     rightItem = malloc(sizeof(struct item_t));
+    //     expression(rightItem);
+    //     expressionOperator(item, rightItem, TOKEN_LESS);
+    //     return;
+    // }
+    // if(tokenType == TOKEN_OR)
+    // {
+    //     getNextToken();
+    //     simpleExpressionOR(item);
+    //     rightItem = malloc(sizeof(struct item_t));
+    //     expression(rightItem);
+    //     expressionOperator(item, rightItem, TOKEN_LESS);
+    //     return;
+    // }
     // if(tokenType == TOKEN_ASSIGNMENT)
     // {
     //     getNextToken();
@@ -2174,10 +2249,10 @@ void while_loop()
             {
                 mark("} expected (while_loop)");
                 getNextToken();
-
-                bJump(bJumpAddress);
-                fixLink(item->fls);
             }
+
+            bJump(bJumpAddress);
+            fixLink(item->fls);
         }
         else
         {

@@ -879,7 +879,7 @@ void simpleExpressionBinaryOperator(
         // .. later
         return;
     }
-    if(leftItem->type == typeInt && rightItem->type == typeInt) 
+    if((leftItem->type == typeInt) && (rightItem->type == typeInt))
     {
         if(rightItem->mode == CODEGEN_MODE_CONST)
         {
@@ -901,8 +901,9 @@ void simpleExpressionBinaryOperator(
                 {
                     put(TARGET_ADDI, leftItem->reg, leftItem->reg, rightItem->value);
                 }
-                else{if(operatorSymbol == TOKEN_MINUS){
-                    put(TARGET_SUBI, leftItem->reg, leftItem->reg, rightItem->value);
+                else{
+                    if(operatorSymbol == TOKEN_MINUS){
+                        put(TARGET_SUBI, leftItem->reg, leftItem->reg, rightItem->value);
                 }}
             }
         }
@@ -930,53 +931,53 @@ void simpleExpressionBinaryOperator(
 int isIn(int tokenType, int rule) {
 
     if(rule == FIRST_TOP_DECLARATION && (
-        tokenType == TOKEN_TYPEDEF ||
-        tokenType == TOKEN_STRUCT ||
-        tokenType == TOKEN_STATIC ||
+        (tokenType == TOKEN_TYPEDEF) ||
+        (tokenType == TOKEN_STRUCT) ||
+        (tokenType == TOKEN_STATIC) ||
         isIn(tokenType, FIRST_TYPE) ))
     { return 1; }
 
     if(rule == FIRST_TYPE_DECLARATION && (
-        tokenType == TOKEN_STRUCT ||
-        tokenType == TOKEN_TYPEDEF))
+        (tokenType == TOKEN_STRUCT) ||
+        (tokenType == TOKEN_TYPEDEF)))
     { return 1; }
 
     if(rule == FIRST_BASIC_TYPES && (
-        tokenType == TOKEN_INT ||
-        tokenType == TOKEN_CHAR))
+        (tokenType == TOKEN_INT) ||
+        (tokenType == TOKEN_CHAR)))
     { return 1; }
 
     if(rule == FIRST_EXPRESSION && (
-        tokenType == TOKEN_MINUS ||
-        tokenType == TOKEN_IDENTIFIER ||
-        tokenType == TOKEN_CONSTINT ||
-        tokenType == TOKEN_CONSTCHAR ||
-        tokenType == TOKEN_STRING_LITERAL ||
-        tokenType == TOKEN_LRB ||
-        tokenType == TOKEN_FCLOSE ||
-        tokenType == TOKEN_FOPEN ||
-        tokenType == TOKEN_SIZEOF ||
-        tokenType == TOKEN_MALLOC))
+        (tokenType == TOKEN_MINUS) ||
+        (tokenType == TOKEN_IDENTIFIER) ||
+        (tokenType == TOKEN_CONSTINT) ||
+        (tokenType == TOKEN_CONSTCHAR) ||
+        (tokenType == TOKEN_STRING_LITERAL) ||
+        (tokenType == TOKEN_LRB) ||
+        (tokenType == TOKEN_FCLOSE) ||
+        (tokenType == TOKEN_FOPEN) ||
+        (tokenType == TOKEN_SIZEOF) ||
+        (tokenType == TOKEN_MALLOC)))
     { return 1; }
 
     if(rule == FIRST_TYPE && (
-        tokenType == TOKEN_INT ||
-        tokenType == TOKEN_CHAR ||
-        tokenType == TOKEN_VOID ||
-        tokenType == TOKEN_STRUCT ))
+        (tokenType == TOKEN_INT) ||
+        (tokenType == TOKEN_CHAR) ||
+        (tokenType == TOKEN_VOID) ||
+        (tokenType == TOKEN_STRUCT )))
     { return 1; }
 
     if(rule == FIRST_VARIABLE_DECLARATION && (
-        tokenType == TOKEN_STATIC ||
+        (tokenType == TOKEN_STATIC) ||
         isIn(tokenType, FIRST_TYPE) ))
     { return 1; }
 
     if(rule == FIRST_INSTRUCTION && (
         isIn(tokenType, FIRST_VARIABLE_DECLARATION) ||
         isIn(tokenType, FIRST_TYPE_DECLARATION) ||
-        tokenType == TOKEN_IDENTIFIER ||
-        tokenType == TOKEN_WHILE ||
-        tokenType == TOKEN_IF))
+        (tokenType == TOKEN_IDENTIFIER) ||
+        (tokenType == TOKEN_WHILE) ||
+        (tokenType == TOKEN_IF)))
     { return 1; }
 
     return 0;
@@ -1490,7 +1491,7 @@ void term(struct item_t * item)
 
     factor(item);
 
-    while(tokenType == TOKEN_MULT || tokenType == TOKEN_DIVIDE)
+    while((tokenType == TOKEN_MULT) || (tokenType == TOKEN_DIVIDE))
     {
         operatorSymbol = tokenType;
         getNextToken();
@@ -1515,7 +1516,7 @@ void simple_expression(struct item_t * item)
     //term(leftItem);
     term(item);
 
-    while(tokenType == TOKEN_PLUS || tokenType == TOKEN_MINUS)
+    while((tokenType == TOKEN_PLUS) || (tokenType == TOKEN_MINUS))
     {
         operatorSymbol = tokenType;
         getNextToken();

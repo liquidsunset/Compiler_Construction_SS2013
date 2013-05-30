@@ -700,20 +700,6 @@ void load(struct item_t * item)
     }
 }
 
-int concatenate(int branchList, int newItem)
-{
-    int lastItem;
-    printf("\n\nconcatenate(branchList=%d, newItem=%d)\n\n", branchList, newItem);
-    int nextBranchAddress;
-    while(branchList != 0)
-    {
-        lastItem = branchList;
-        branchList = decodeC(branchList);
-    }
-    encodeC(lastItem, newItem);
-    
-}
-
 void cJump(struct item_t * item)
 {
     put(branch(negate(item->operator)), item->reg, 0, item->fls);
@@ -741,6 +727,19 @@ void encodeC(int address, int c)
 int decodeC(int address)
 {
     return output[address] & 65535;
+}
+
+int concatenate(int branchList, int newItem)
+{
+    // int lastItem;
+    // printf("\n\nconcatenate(branchList=%d, newItem=%d)\n\n", branchList, newItem);
+    // while(branchList != 0)
+    // {
+    //     lastItem = branchList;
+    //     branchList = decodeC(branchList);
+    // }
+    // encodeC(lastItem, newItem);
+    
 }
 
 void fixUp(int branchAddress)

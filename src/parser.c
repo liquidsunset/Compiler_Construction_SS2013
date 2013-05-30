@@ -700,18 +700,106 @@ void load(struct item_t * item)
     }
 }
 
+void cJump(struct item_t * item)
+{
+    put(negate(item->operator), item->reg, 0, item->fls);
+    releaseRegister(item->reg);
+    item->fls = PC-1;
+}
+
+void bJump(int backAddress)
+{
+    put(TARGET_BR, 0, 0, backAddress-PC);
+}
+
+int fJump()
+{
+    put(TARGET_BR, 0, 0, 0);
+    return PC-1;
+}
+
+void encodeC(int address, int c)
+{
+    // TODO: replace c of instruction at address
+}
+
+int decodeC(int address)
+{
+    // TODO: return c of instruction at address
+}
+
+void fixUp(int branchAddress)
+{
+    encodeC(branchAddress, PC-branchAddress);
+}
+
+void fixLink(int branchAddress)
+{
+    int nextBranchAddress;
+
+    while(branchAddress != 0)
+    {
+        nextBranchAddress = decodeC(branchAddress);
+        fixUp(branchAddress);
+        branchAddress = nextBranchAddress;
+    }
+}
+
+void unloadBool(struct item_t * item)
+{
+    if(item->mode == CODEGEN_MODE_COND)
+    {
+        cJump(item);
+        fixLink(item->tru);
+        item->mode = CODEGEN_MODE_REG;
+
+        put(TARGET_ADDI, item->reg, 0, 1); // true
+        put(TARGET_BR, 0, 0, 2);
+
+        fixLink(item->fls);
+
+        put(TARGET_ADDI, item->reg, 0, 0); // false
+    }
+}
+
+void loadBool(struct item_t * item)
+{
+    if(item->mode != CODEGEN_MODE_COND)
+    {
+        load(item);
+
+        item->mode = CODEGEN_MODE_COND;
+        item->operator = TOKEN_UNEQUAL;
+        item->fls = 0;
+        item->tru = 0 ;
+    }
+}
+
 void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
 {
-    if((leftItem->type->form == FORM_INT) && (leftItem->type != rightItem->type))
+    if(leftItem->type != rightItem->type)
     {
-        mark("Types of assignment dont match");
+        mark("type mismatch in assignment");
+
+        if(rightItem->type == typeBool)
+        {
+            unloadBool(rightItem);
+        }
+        load(rightItem);
+
+        // leftItem must be in VAR_MODE or REF_MODE
+        // rightItem must be in REG_MODE
+        put(TARGET_SW, rightItem->reg, leftItem->reg, leftItem->offset);
+
+        if(leftItem->mode == CODEGEN_MODE_REF)
+        {
+            releaseRegister(leftItem->reg);
+        }
+
+        releaseRegister(rightItem->reg);
     }
-    // leftItem must be in VAR mode
-    load(rightItem); 
-    put(TARGET_SW, rightItem->reg, leftItem->reg, leftItem->offset);
-    releaseRegister(rightItem->reg); 
 }
 
 void termBinaryOperator(
@@ -794,81 +882,6 @@ void expressionOperator(
     }
 }
 
-void cJump(struct item_t * item)
-{
-    put(negate(item->operator), item->reg, 0, item->fls);
-    releaseRegister(item->reg);
-    item->fls = PC-1;
-}
-
-void bJump(int backAddress)
-{
-    put(TARGET_BR, 0, 0, backAddress-PC);
-}
-
-int fJump()
-{
-    put(TARGET_BR, 0, 0, 0);
-    return PC-1;
-}
-
-void encodeC(int address, int c)
-{
-    // TODO: replace c of instruction at address
-}
-
-int decodeC(int address)
-{
-    // TODO: return c of instruction at address
-}
-
-void fixUp(int branchAddress)
-{
-    encodeC(branchAddress, PC-branchAddress);
-}
-
-void fixLink(int branchAddress)
-{
-    int nextBranchAddress;
-
-    while(branchAddress != 0)
-    {
-        nextBranchAddress = decodeC(branchAddress);
-        fixUp(branchAddress);
-        branchAddress = nextBranchAddress;
-    }
-}
-
-void unloadBool(struct item_t * item)
-{
-    if(item->mode == CODEGEN_MODE_COND)
-    {
-        cJump(item);
-        fixLink(item->tru);
-        item->mode = CODEGEN_MODE_REG;
-
-        put(TARGET_ADDI, item->reg, 0, 1); // true
-        put(TARGET_BR, 0, 0, 2);
-
-        fixLink(item->fls);
-
-        put(TARGET_ADDI, item->reg, 0, 0); // false
-    }
-}
-
-void loadBool(struct item_t * item)
-{
-    if(item->mode != CODEGEN_MODE_COND)
-    {
-        load(item);
-
-        item->mode = CODEGEN_MODE_COND;
-        item->operator = TOKEN_UNEQUAL;
-        item->fls = 0;
-        item->tru = 0 ;
-    }
-}
-
 void simpleExpressionBinaryOperator(
     struct item_t * leftItem,
     struct item_t * rightItem,
@@ -876,9 +889,22 @@ void simpleExpressionBinaryOperator(
 {
     if(operatorSymbol == TOKEN_OR)
     {
-        // .. later
+        if((leftItem->type == typeBool) && (rightItem->type == typeBool))
+        {
+            loadBool(rightItem);
+
+            leftItem->reg = rightItem->reg;
+            leftItem->fls = rightItem->fls;
+            //leftItem->tru = concatenate(rightItem->tru, leftItem->tru);
+            leftItem->operator = rightItem->operator;
+        }
+        else
+        {
+            error("Boolean expressions exptected");
+        }
         return;
     }
+    
     if(leftItem->type == typeInt && rightItem->type == typeInt) 
     {
         if(rightItem->mode == CODEGEN_MODE_CONST)
@@ -925,6 +951,25 @@ void simpleExpressionBinaryOperator(
         error("Integer expression expected");
     }
 }
+
+void simpleExpressionOR(struct item_t * item)
+{
+    if(item->type == typeBool)
+    {
+        loadBool(item);
+
+        put(branch(item->operator), item->reg, 0, item->tru);
+        releaseRegister(item->reg);
+        item->tru = PC-1;
+        fixLink(item->fls);
+        item->fls = 0;
+    }
+    else
+    {
+        error("Boolean expression expected in ||");
+    }
+}
+
 // -----------------------------------------------------------------------------
 
 int isIn(int tokenType, int rule) {
@@ -1554,6 +1599,7 @@ void expression(struct item_t * item)
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
         expression(item);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_UNEQUAL)
@@ -1587,6 +1633,7 @@ void expression(struct item_t * item)
     if(tokenType == TOKEN_OR)
     {
         getNextToken();
+        simpleExpressionOR(item);
         rightItem = malloc(sizeof(struct item_t));
         expression(item);
         return;

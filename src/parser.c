@@ -1585,21 +1585,23 @@ void expression(struct item_t * item)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_LESSEQUAL)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_LESS)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
         expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
@@ -1607,28 +1609,32 @@ void expression(struct item_t * item)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_GREATER)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_GREATEREQUAL)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_AND)
     {
         getNextToken();
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     if(tokenType == TOKEN_OR)
@@ -1636,7 +1642,8 @@ void expression(struct item_t * item)
         getNextToken();
         simpleExpressionOR(item);
         rightItem = malloc(sizeof(struct item_t));
-        expression(item);
+        expression(rightItem);
+        expressionOperator(item, rightItem, TOKEN_LESS);
         return;
     }
     // if(tokenType == TOKEN_ASSIGNMENT)

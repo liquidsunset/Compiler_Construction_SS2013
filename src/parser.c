@@ -527,14 +527,29 @@ struct item_t
     int tru;
 };
 
+// TOKEN -> TARGET
+int branch(int operator)
+{
+    if(operator == TOKEN_GREATER) { return TARGET_BGT; }
+    if(operator == TOKEN_GREATEREQUAL) { return TARGET_BGE; }
+    if(operator == TOKEN_UNEQUAL) { return TARGET_BNE; }
+    if(operator == TOKEN_EQUAL) { return TARGET_BEQ; }
+    if(operator == TOKEN_LESS) { return TARGET_BLE; }
+    if(operator == TOKEN_LESSEQUAL) { return TARGET_BLT; }
+
+    return 0;
+}
+
+
+// TOKEN -> TOKEN
 int negate(int operator)
 {
-    if(operator == TOKEN_LESSEQUAL) { return TARGET_BGT; }
-    if(operator == TOKEN_LESS) { return TARGET_BGE; }
-    if(operator == TOKEN_EQUAL) { return TARGET_BNE; }
-    if(operator == TOKEN_UNEQUAL) { return TARGET_BEQ; }
-    if(operator == TOKEN_GREATER) { return TARGET_BLE; }
-    if(operator == TOKEN_GREATEREQUAL) { return TARGET_BLT; }
+    if(operator == TOKEN_LESSEQUAL) { return TOKEN_GREATER; }
+    if(operator == TOKEN_LESS) { return TOKEN_GREATEREQUAL; }
+    if(operator == TOKEN_EQUAL) { return TOKEN_UNEQUAL; }
+    if(operator == TOKEN_UNEQUAL) { return TOKEN_EQUAL; }
+    if(operator == TOKEN_GREATER) { return TOKEN_LESSEQUAL; }
+    if(operator == TOKEN_GREATEREQUAL) { return TOKEN_LESS; }
 
     return 0;
 }
@@ -823,6 +838,36 @@ void fixLink(int branchAddress)
         nextBranchAddress = decodeC(branchAddress);
         fixUp(branchAddress);
         branchAddress = nextBranchAddress;
+    }
+}
+
+void unloadBool(struct item_t * item)
+{
+    if(item->mode == CODEGEN_MODE_COND)
+    {
+        cJump(item);
+        fixLink(item->tru);
+        item->mode = CODEGEN_MODE_REG;
+
+        put(TARGET_ADDI, item->reg, 0, 1); // true
+        put(TARGET_BR, 0, 0, 2);
+
+        fixLink(item->fls);
+
+        put(TARGET_ADDI, item->reg, 0, 0); // false
+    }
+}
+
+void loadBool(struct item_t * item)
+{
+    if(item->mode != CODEGEN_MODE_COND)
+    {
+        load(item);
+
+        item->mode = CODEGEN_MODE_COND;
+        item->operator = TOKEN_UNEQUAL;
+        item->fls = 0;
+        item->tru = 0 ;
     }
 }
 
@@ -1900,6 +1945,7 @@ void instruction()
 void if_else()
 {
     struct item_t * item;
+    int fJumpAddress;
 
     if(tokenType == TOKEN_IF)
     {
@@ -1919,6 +1965,17 @@ void if_else()
         {
             item = malloc(sizeof(struct item_t));
             expression(item);
+
+            if(item->type == typeBool)
+            {
+                loadBool(item);
+                cJump(item);
+                fixLink(item->tru);
+            }
+            else
+            {
+                error("boolean expression expected (if_else)");
+            }
 
             if(tokenType == TOKEN_RRB)
             {
@@ -1958,6 +2015,9 @@ void if_else()
             if(tokenType == TOKEN_ELSE)
             {
                 getNextToken();
+                fJumpAddress = fJump();
+                fixLink(item->fls);
+
                 if(tokenType == TOKEN_LCB)
                 {
                     getNextToken();
@@ -1981,7 +2041,13 @@ void if_else()
                 {
                     mark("} expected in else branch (if_else)");
                     getNextToken();
+
+                    fixUp(fJumpAddress);
                 }
+            }
+            else
+            {
+                fixLink(item->fls);
             }
         }
     }
@@ -1990,6 +2056,7 @@ void if_else()
 void while_loop()
 {
     struct item_t * item;
+    int bJumpAddress;
 
     if(tokenType == TOKEN_WHILE)
     {
@@ -2006,9 +2073,21 @@ void while_loop()
 
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
+            bJumpAddress = PC;
+
             item = malloc(sizeof(struct item_t));
             expression(item);
 
+            if(item->type == typeBool)
+            {
+                loadBool(item);
+                cJump(item);
+                fixLink(item->tru);
+            }
+            else
+            {
+                error("Boolean expression expected (while_loop)");
+            }
             if(tokenType == TOKEN_RRB)
             {
                 getNextToken();
@@ -2042,6 +2121,9 @@ void while_loop()
             {
                 mark("} expected (while_loop)");
                 getNextToken();
+
+                bJump(bJumpAddress);
+                fixLink(item->fls);
             }
         }
         else

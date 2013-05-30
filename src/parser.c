@@ -700,9 +700,18 @@ void load(struct item_t * item)
     }
 }
 
-int concatenate(int a, int b)
+int concatenate(int branchList, int newItem)
 {
-
+    int lastItem;
+    printf("\n\nconcatenate(branchList=%d, newItem=%d)\n\n", branchList, newItem);
+    int nextBranchAddress;
+    while(branchList != 0)
+    {
+        lastItem = branchList;
+        branchList = decodeC(branchList);
+    }
+    encodeC(lastItem, newItem);
+    
 }
 
 void cJump(struct item_t * item)
@@ -2169,9 +2178,8 @@ void if_else()
                 {
                     mark("} expected in else branch (if_else)");
                     getNextToken();
-
-                    fixUp(fJumpAddress);
                 }
+                fixUp(fJumpAddress);
             }
             else
             {

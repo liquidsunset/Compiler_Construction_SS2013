@@ -541,7 +541,7 @@ int requestRegister()
 {
     int i;
     i = 1;
-    while(isRegisterUsed[i] && i <= 32)
+    while(isRegisterUsed[i] && (i <= 32))
     {
         i = i + 1;
     }

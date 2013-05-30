@@ -2,7 +2,6 @@
 #include "scanner.c"
 
 static int currentType;    //2 = int, 3 = char
-static char typeName[1024]; //name from struct or array
 static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
@@ -13,7 +12,6 @@ static int lastFieldPointer;
 // -- Codegen
 static int SIZE_INT;
 
-static int isRegisterUsed[32];
 static int CODEGEN_GP;
 static int CODEGEN_MODE_CONST;
 static int CODEGEN_MODE_VAR;
@@ -442,7 +440,7 @@ int addObjectToList(){
 
 // --------------------Parser error reporting ----------------------------------
 
-void fail(char message[1024])
+void fail(char *message)
 {
     int niceLine;
     int niceColumn;
@@ -460,7 +458,7 @@ void fail(char message[1024])
     exit(-1);
 }
 
-void error(char message[1024])
+void error(char *message)
 {
     int niceLine;
     int niceColumn;
@@ -477,7 +475,7 @@ void error(char message[1024])
     printf("\nError near Line %d: %s\n", niceLine, message);
 }
 
-void mark(char message[1024])
+void mark(char *message)
 {
     int niceLine;
     int niceColumn;
@@ -571,7 +569,7 @@ void releaseRegister(int i)
     isRegisterUsed[i] = 0;
 }
 
-int address(char identifier[1024])
+int address(char *identifier)
 {
     // TODO: Check if present in global symbol table
 
@@ -582,7 +580,7 @@ int address(char identifier[1024])
     return -1;
 } 
 
-void storeString(struct item_t * item, char string[1024])
+void storeString(struct item_t * item, char *string)
 {
     // TODO
 }

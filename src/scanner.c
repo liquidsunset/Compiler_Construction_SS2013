@@ -6,7 +6,6 @@ static FILE *fp;
 
 static int tokenType;
 static int intValue;
-static char stringValue[1024];
 static int positionLine;
 static int positionColumn;
 static int eofFlag;
@@ -19,18 +18,19 @@ static int col;
 // Compares two character arrays.
 // 
 // Returns true if both arrays hold the same characters.
-int strCompare(char a[1024], char b[1024]) // TODO: Support call by reference
+int strCompare(char *a, char *b) // TODO: Support call by reference
 {
 	int i;
     i = 0;
 
-	while( (i < 1024) && (a[i] != 0 || b[i] != 0) ) {
+	while( (i < 1024) && ((a[i] != 0) || (b[i] != 0))) {
 		if( a[i] != b[i] )
 		{
 			return 0;
 		}
 
 		i = i + 1;
+        
 	}
 
 	return 1;
@@ -39,22 +39,25 @@ int strCompare(char a[1024], char b[1024]) // TODO: Support call by reference
 // Length of string
 //
 // Returns the length of the string or 1024 if the string is unterminated
-int strLength(char a[1024])
+int strLength(char *a)
 {
 	int i;
     i = 0;
-	while(a[i]!='\0'&&i<1024) i=i+1;
+	while((a[i]!='\0') && ( i<1024 )){
+        i=i+1;    
+    }
+    
 	return i;
 }
 
 // String copy
 //
 // Copies the first char array into the second
-void strCopy(char from[1024], char to[1024])
+void strCopy(char *from, char *to)
 {
 	int i;
     i = 0;
-	while(from[i] != 0 && i < 1023)
+	while( (from[i] != 0) && (i < 1023))
 	{
 		to[i]=from[i];
 		i = i+1;
@@ -62,7 +65,7 @@ void strCopy(char from[1024], char to[1024])
 	to[i]='\0';
 }
 
-void strTrimQuotes(char a[1024], char b[1024])
+void strTrimQuotes(char *a, char *b)
 {
     int i;
     i = 0;
@@ -70,7 +73,7 @@ void strTrimQuotes(char a[1024], char b[1024])
     b[i] = a[i+1];
     i = i +1;
     
-    while((a[i] != '\'' && a[i] != '\"') && a[i] != 0 && i < 1024){
+    while((a[i] != '\'') && (a[i] != '\"') && (a[i] != 0) && (i < 1024)){
         b[i] = a[i+1];
         i = i +1;
     }
@@ -84,7 +87,7 @@ void strTrimQuotes(char a[1024], char b[1024])
 // Returns true if the character is within the range of [a-zA-Z]
 int isLetter(char c)
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
+	return (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_'));
 }
 
 // Checks if the character c is a digit.
@@ -92,7 +95,7 @@ int isLetter(char c)
 // Returns true if the character is within the range of [0-9]
 int isDigit(char c)
 {
-	return (c >= '0' && c <= '9');
+	return ((c >= '0') && (c <= '9'));
 }
 
 // Checks if the character c is a whitespace:
@@ -101,7 +104,7 @@ int isDigit(char c)
 // Returns true if the character is whitespace.
 int isWhitespace(char c)
 {
-	return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
+	return ((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'));
 }
 
 int isTerminalChar(char c)
@@ -143,13 +146,13 @@ int peek(int current, int next)
 {
 
 
-    if(current == '\"' && !isInChar && !isInString) // add the starting "
+    if((current == '\"') && !isInChar && !isInString) // add the starting "
     {
         isInString = 1;
         return 0;
     }
-    if(next == '\"' && isInString) return 0; // add the ending "
-    if(current == '\"' && isInString) // terminate after the ending "
+    if((next == '\"') && isInString) return 0; // add the ending "
+    if((current == '\"') && isInString) // terminate after the ending "
     {
         isInString = 0;
         return 1;
@@ -158,20 +161,20 @@ int peek(int current, int next)
 
     // Char literals (duplicated to support something like "'a'"):
 
-    if(current == '\'' && !isInChar) // add the starting "
+    if((current == '\'') && !isInChar) // add the starting "
     {
         isInChar = 1;
         return 0;
     }
-    if(next == '\'' && isInChar) return 0; // add the ending "
-    if(current == '\'' && isInChar) // terminate after the ending "
+    if((next == '\'') && isInChar) return 0; // add the ending "
+    if((current == '\'') && isInChar) // terminate after the ending "
     {
         isInChar = 0;
         return 1;
     }
     if(isInChar) return 0;
 
-    if(current < 0 || next < 0) return 1; // EOF
+    if((current < 0) || (next < 0)) return 1; // EOF
 	if(isWhitespace(next)) return 1; // Whitespace always terminates.
 	if(isTerminalChar(current) || isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
 
@@ -207,7 +210,7 @@ int power(int base, int exp)
     return res;
 }
 
-int strToInt(char str[1024])
+int strToInt(char *str)
 {
     int i;
     int len;
@@ -221,9 +224,9 @@ int strToInt(char str[1024])
         i = i + 1;
     }
 
-    while(str[i] != 0 && i < 1024)
+    while((str[i] != 0) && (i < 1024))
     {
-        if(str[i] >= '0' && str[i] <= '9')
+        if((str[i] >= '0') && (str[i] <= '9'))
         {
             res = res + (str[i]-'0') * power(10, len-i-1);
         }
@@ -240,7 +243,7 @@ int strToInt(char str[1024])
 // ----------------------------------------------------------------------------
 
 // creates the Filepointer
-void openFile(char path[1024]){
+void openFile(char *path){
 
     lin = 1;
     col = 1;
@@ -285,7 +288,7 @@ int readNextCharacter(){
 
 
 
-void findToken(char status[1024],int len){
+void findToken(char *status,int len){
     if(len == 1)
     {
         char tokenChar;
@@ -411,7 +414,8 @@ void getNextToken()
         return;
     }
 
-    char status[1024];
+    char *status;
+    status = malloc(sizeof(char) * 1024);
     int len;
     len = 0;
     tokenType = -1;
@@ -428,7 +432,7 @@ void getNextToken()
             nextChar = readNextCharacter();
         }
 
-        if(currentChar == EOF || nextChar == EOF)
+        if((currentChar == EOF) || (nextChar == EOF))
         {
             // set token type to EOF
             tokenType = TOKEN_EOF;
@@ -440,16 +444,12 @@ void getNextToken()
             while(isWhitespace(currentChar)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
-//                if(nextChar == -1){
-//                    tokenType = TOKEN_EOF;
-//                    return;
-//                }
             }
         }
 
         // Support for line comments
-        if(currentChar == '/' && nextChar == '/'){
-            while (currentChar != '\n' && currentChar != EOF){
+        if((currentChar == '/') && (nextChar == '/')){
+            while ((currentChar != '\n') && (currentChar != EOF)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
                 if(nextChar == -1){
@@ -513,8 +513,7 @@ void getNextToken()
 //    
 //    printf("\n\nNext Testfile- easy.c\n\n");
 //    
-//    //openFile("../test/easy.c");
-//    openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/test/m4.c");
+//    openFile("test/easy.c");
 //    tokenType = -1;
 //    if(tokenType != TOKEN_EOF){
 //        do
@@ -530,73 +529,4 @@ void getNextToken()
 //        //getchar();
 //    }
 //}
-
-//    
-//    printf("\n\nNext Testfile - brackets.c\n\n");
-//    
-//    openFile("../test/brackets.c");
-//    
-//        do
-//        {
-//            getNextToken();
-//            printf("%d\n", tokenType);
-//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-//        }
-//        while(tokenType!= TOKEN_EOF);
-//    
-//    
-//    printf("\n\nNext Testfile - operator.c\n\n");
-//
-//    //openFile("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/src/scanner.c");
-//    openFile("../test/operator.c");
-//
-//        do
-//        {
-//            getNextToken();
-//            printf("%d\n", tokenType);
-//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-//        }
-//        while(tokenType!= TOKEN_EOF);
-//
-//    printf("\n\nNext Testfile - comments.c\n\n");
-//    
-//    openFile("../test/comments.c");
-//        do
-//        {
-//            getNextToken();
-//            printf("%d\n", tokenType);
-//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-//        }
-//        while(tokenType!= TOKEN_EOF);
-//    
-//    
-//    printf("\n\nNext Testfile - Scanner selfscanc\n\n");
-//    
-//    openFile("../src/scanner.c");
-//    do
-//    {
-//        getNextToken();
-//        printf("%d\n", tokenType);
-//        if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-//        if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-//        if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-//        if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-//    }
-//    while(tokenType!= TOKEN_EOF);
-//    
-//    
-//    return 0;
-//    
-//    
-//
-//}
-//// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------

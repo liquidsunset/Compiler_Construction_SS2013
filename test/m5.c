@@ -22,6 +22,16 @@ void main(){
 
     // statically initialize rec->data with 'len' values, e.g.,
     // rec->data[0] = 23; ...; rec->data[len-1] = 42;
+    rec->data[0] = 0;
+    rec->data[1] = 1;
+    rec->data[2] = 2;
+    rec->data[3] = 3;
+    rec->data[4] = 4;
+    rec->data[5] = 5;
+    rec->data[6] = 6;
+    rec->data[7] = 7;
+    rec->data[8] = 8;
+    rec->data[9] = 9;
 
     while (i < len) {
         rec->sum = rec->sum + rec->data[i];

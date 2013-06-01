@@ -729,17 +729,31 @@ int decodeC(int address)
     return output[address] & 65535;
 }
 
-int concatenate(int branchList, int newItem)
+int concatenate(int listA, int listB)
 {
-    // int lastItem;
-    // printf("\n\nconcatenate(branchList=%d, newItem=%d)\n\n", branchList, newItem);
-    // while(branchList != 0)
-    // {
-    //     lastItem = branchList;
-    //     branchList = decodeC(branchList);
-    // }
-    // encodeC(lastItem, newItem);
-    
+    int previous;
+    int current;
+
+    if(listA == 0)
+    {
+        return listB;
+    }
+
+    if(listB == 0)
+    {
+        return listA;
+    }
+
+    current = listA;
+    while(current != 0)
+    {
+        previous = current;
+        current = decodeC(current);
+    }
+
+    encodeC(previous, listB);
+
+    return listA;   
 }
 
 void fixUp(int branchAddress)
@@ -843,7 +857,7 @@ void termAND(struct item_t * item)
     {
         loadBool(item);
 
-        put(branch(item->operator), item->reg, 0, item->fls);
+        put(branch(negate(item->operator)), item->reg, 0, item->fls);
         releaseRegister(item->reg);
         item->fls = PC-1;
         fixLink(item->tru);

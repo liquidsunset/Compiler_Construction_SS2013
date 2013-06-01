@@ -92,6 +92,7 @@ static int FORM_ARRAY;
 static int FORM_RECORD;
 static int FORM_INT;
 static int FORM_CHAR;
+static int FORM_BOOL;
 
 static int errorCount;
 static int warningCount;
@@ -103,67 +104,52 @@ static int isInChar;
 static int currentChar;
 static int nextChar;
 
+
+//Scanner:
+static char *stringValue;
+
+//Parser:
+static char *typeName; //name from struct or array
+//Parser_Codegen:
+static int *isRegisterUsed;
+
 // ------ Margit -----------
-unsigned int TARGET_NOP;
-unsigned int TARGET_ADD;
-unsigned int TARGET_ADDI;
-unsigned int TARGET_AND;
-unsigned int TARGET_ANDI;
-unsigned int TARGET_BEQZ;
-unsigned int TARGET_BNEZ;
-unsigned int TARGET_DIV;
-unsigned int TARGET_DIVI;
-unsigned int TARGET_J;
-unsigned int TARGET_JAL;
-unsigned int TARGET_JALR;
-unsigned int TARGET_JR;
-unsigned int TARGET_LHI;
-unsigned int TARGET_LW;
-unsigned int TARGET_MUL;
-unsigned int TARGET_MULI;
-unsigned int TARGET_OR;
-unsigned int TARGET_ORI;
-unsigned int TARGET_SEQ;
-unsigned int TARGET_SEQI;
-unsigned int TARGET_SLE;
-unsigned int TARGET_SLEI;
-unsigned int TARGET_SLL;
-unsigned int TARGER_SLLI;
-unsigned int TARGET_SLT;
-unsigned int TARGET_SLTI;
-unsigned int TARGET_SNE;
-unsigned int TARGET_SNEI;
-unsigned int TARGET_SRA;
-unsigned int TARGET_SRAI;
-unsigned int TARGET_SRL;
-unsigned int TARGET_SRLI;
-unsigned int TARGET_SUB;
-unsigned int TARGET_SUBI;
-unsigned int TARGET_SW;
-unsigned int TARGET_XOR;
-unsigned int TARGET_XORI;
-unsigned int TARGET_MODI;
-unsigned int TARGET_CMPI;
-unsigned int TARGET_MOD;
-unsigned int TARGET_CMP;
-unsigned int TARGET_POP;
-unsigned int TARGET_PSH;
-unsigned int TARGET_BEQ;
-unsigned int TARGET_BGE;
-unsigned int TARGET_BGT;
-unsigned int TARGET_BLE;
-unsigned int TARGET_BLT;
-unsigned int TARGET_BNE;
-unsigned int TARGET_BR;
-unsigned int TARGET_BSR;
-unsigned int TARGET_RET;
-unsigned int TARGET_JSR;
-unsigned int TARGET_FLO;
-unsigned int TARGET_FLC;
-unsigned int TARGET_RDC;
-unsigned int TARGET_WRC;
-unsigned int TARGET_J;
-unsigned int TARGET_MALLOC;
+static unsigned int TARGET_NOP;
+static unsigned int TARGET_ADD;
+static unsigned int TARGET_ADDI;
+static unsigned int TARGET_AND;
+static unsigned int TARGET_DIV;
+static unsigned int TARGET_DIVI;
+static unsigned int TARGET_J;
+static unsigned int TARGET_LW;
+static unsigned int TARGET_MUL;
+static unsigned int TARGET_MULI;
+static unsigned int TARGET_OR;
+static unsigned int TARGET_SUB;
+static unsigned int TARGET_SUBI;
+static unsigned int TARGET_SW;
+static unsigned int TARGET_MODI;
+static unsigned int TARGET_CMPI;
+static unsigned int TARGET_MOD;
+static unsigned int TARGET_CMP;
+static unsigned int TARGET_POP;
+static unsigned int TARGET_PSH;
+static unsigned int TARGET_BEQ;
+static unsigned int TARGET_BGE;
+static unsigned int TARGET_BGT;
+static unsigned int TARGET_BLE;
+static unsigned int TARGET_BLT;
+static unsigned int TARGET_BNE;
+static unsigned int TARGET_BR;
+static unsigned int TARGET_BSR;
+static unsigned int TARGET_RET;
+static unsigned int TARGET_JSR;
+static unsigned int TARGET_FLO;
+static unsigned int TARGET_FLC;
+static unsigned int TARGET_RDC;
+static unsigned int TARGET_WRC;
+static unsigned int TARGET_J;
+static unsigned int TARGET_MALLOC;
 
 
 void initTokens(){
@@ -251,6 +237,7 @@ void initTokens(){
     FORM_ARRAY = 1;
     FORM_INT = 2;
     FORM_CHAR = 3;
+    FORM_BOOL = 4;
     
     errorCount = 0;
     warningCount = 0;
@@ -298,10 +285,16 @@ void initTokens(){
     TARGET_FLC = 31;
     TARGET_RDC = 32;
     TARGET_WRC = 33;
+    TARGET_AND = 34;
+    TARGET_OR = 35;
 
     // F3 (43-63)
     TARGET_JSR = 43;
     TARGET_J = 44;
+    
+    stringValue = malloc(sizeof(char) * 1024);
+    typeName = malloc(sizeof(char) * 1024);
+    isRegisterUsed = malloc(sizeof(int) *32);
     
 
 }

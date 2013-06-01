@@ -4,15 +4,15 @@ Phoenix is a C compiler written in C.
 
 ## Scanner "Lexi"
 
-Lexical analysis.
+Lexical analysis of ASCII files.
 
 ## Parser
 
-Semantical analysis.
+Semantical analysis LL(1) style.
 
 ## Target Machine "Margit"
 
-Emulates a RISC (DLX) system.
+Emulates a RISC (DLX) system with 32bit words.
 
 
 

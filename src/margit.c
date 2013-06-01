@@ -296,6 +296,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BNE)
 		{
+			printf("%d BNE %d, %d, %d", pc, a, b, c);
 			if(reg[a] != 0)
 			{
 				pc = pc + c * 4;
@@ -308,6 +309,7 @@ int fetch() {
 		// F1 unconditional branching
 		else if(op == TARGET_BR)
 		{
+			printf("%d BR %d", pc, c);
 			pc = pc + c*4;
 		}
 		else if(op == TARGET_BSR)
@@ -437,19 +439,19 @@ int fetch() {
 }
 
 int main() {
+	printf("\nPhoenix: Margit\n===============\n");
 	initTokens();
 	init();
 	//load("test/gcd.bin");
 	load("a.out");
-    //load("/Users/liquidsunset/Documents/Angewandte_Informatik/4. Semester/Compilerbau/Phoenix/a.out");
 	getchar();
 	while(fetch())
 	{
-        getchar();
+        printf("\n"); //getchar();
 	}
-	printf("Values: a=%d, reg->f=%d, reg->g=%d, reg->arr[0]=%d, reg->arr[1]=%d, reg->arr[2]=%d", 
-		mem[GP-1], mem[GP+0], mem[GP+1], mem[mem[GP+2]/4+0], mem[mem[GP+2]/4+1], mem[mem[GP+2]/4+2]);
-    //printf("The GCD of %d and %d is %d\n", mem[1], mem[2], mem[15]);
+	
     printf("\nExecution stopped.\n");
+
+    printf("reg->max=%d\nreg->avg=%d\nrec->sum=%d\n", mem[119+1], mem[119+3], mem[119+2]);
 	return 0;
 }

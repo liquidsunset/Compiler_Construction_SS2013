@@ -150,7 +150,7 @@ struct object_t *createObject(struct object_t *firstElement, char *identifier){
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
             if(strCompare(newTempObject->name, stringValue)){
-                return -1;
+                return 0;
             }
             newTempObject = newTempObject->next;
         }

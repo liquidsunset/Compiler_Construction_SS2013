@@ -2699,12 +2699,11 @@ int variableDeclarationSequence(struct object_t * object)
     x = 0;
     currentObject = object->params;
 
-    while(current != 0)
+    while(currentObject != 0)
     {
         x = x + 1;
         currentObject = currentObject->next;
     }
-
 
     return x;
 }

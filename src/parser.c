@@ -2102,7 +2102,7 @@ void instruction()
         variable_declaration();
 
         isGlobal = 0;
-        objectClass = 2; // TODO: Magic int for VAR
+        objectClass = CLASS_VAR; 
         addObjectToList();
 
         if(tokenType == TOKEN_SEMICOLON)

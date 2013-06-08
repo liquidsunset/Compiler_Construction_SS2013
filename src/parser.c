@@ -2179,23 +2179,6 @@ void instruction()
         return;
     }
 
-    // // Don't support type declarations within functions
-    // if(isIn(tokenType, FIRST_TYPE_DECLARATION))
-    // {
-    //     type_declaration();
-    //     if(tokenType == TOKEN_SEMICOLON)
-    //     {
-    //         getNextToken();
-    //     }
-    //     else
-    //     {
-    //         mark("; expected after type declaration (instruction)");
-    //         getNextToken();
-    //     }
-
-    //     return;
-    // }
-
     if(tokenType == TOKEN_IDENTIFIER) // assignment or call or typedefd declaration
     {
         // TODO: Save identifier
@@ -2252,44 +2235,6 @@ void instruction()
 
             return;
         }
-
-        // while(tokenType == TOKEN_ACCESS)
-        // {
-        //     getNextToken();
-        //     if(tokenType == TOKEN_IDENTIFIER)
-        //     {
-        //         // TODO: store identifier
-        //         getNextToken();
-        //     }
-        //     else
-        //     {
-        //         error("Identifier expected (factor)");
-        //         return;
-        //     }
-        // }
-
-        // if(tokenType == TOKEN_LSB)
-        // {
-        //     getNextToken();
-        //     if(isIn(tokenType, FIRST_EXPRESSION))
-        //     {
-        //         expression(0);
-        //     }
-        //     else
-        //     {
-        //         error("expression expected (factor)");
-        //     }
-
-        //     if(tokenType == TOKEN_RSB)
-        //     {
-        //         getNextToken();
-        //     }
-        //     else
-        //     {
-        //         mark("] expected (factor)");
-        //         getNextToken();
-        //     }
-        // }
 
         leftItem = malloc(sizeof(struct item_t));
 

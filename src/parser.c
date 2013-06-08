@@ -105,6 +105,17 @@ struct object_t *findObject(struct object_t *firstElement){
     return 0;
 }
 
+struct object_t *findProcedureObject(struct object_t *firstElement, char *identifier){
+    
+    return 0;
+}
+
+struct object_t *createObject(struct object_t *firstElement, char *identifier){
+ 
+    return 0;
+}
+
+
 struct type_t *findType(){
     return 0;
 }
@@ -275,6 +286,8 @@ int addTypeToList(){
     
     return 0;
 }
+
+
 
 int addTypeToField(){
     

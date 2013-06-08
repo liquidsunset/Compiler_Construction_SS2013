@@ -2494,7 +2494,28 @@ void while_loop()
 
 struct type_t * basicArrayRecordType()
 {
-    return 0;
+    struct item_t * item;
+
+    if(isIn(tokenType, FIRST_TYPE))
+    {
+        item = malloc(sizeof(struct item_t));
+        type(item);
+
+        if(tokenType == TOKEN_MULT)
+        {
+            isArray = 1;
+            isStruct = 0;
+            getNextToken();
+        }
+
+        return item->type;
+    }
+    else
+    {
+        error("Unknown type");
+        return 0;
+    }
+    
 }
 
 struct  object_t * createFormalParameter(
@@ -2514,7 +2535,8 @@ struct  object_t * createFormalParameter(
         }
 
         newObject->next = malloc(sizeof(struct object_t));
-        strCopy(newObject->next->name, identifier);
+        newObject->next->name = malloc(sizeof(char) * 1024);
+        strCopy(identifier, newObject->next->name);
         newObject->next->type = type;
 
         return newObject->next;
@@ -2522,7 +2544,8 @@ struct  object_t * createFormalParameter(
     else
     {
         object->params = malloc(sizeof(struct object_t));
-        strCopy(object->params->name, identifier);
+        object->params->name = malloc(sizeof(char) * 1024);
+        strCopy(identifier, object->params->name);
         object->params->type = type;
 
         return object->params;
@@ -2953,7 +2976,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/m5.c");
+        openFile("test/m6.c");
     }
     else
     {

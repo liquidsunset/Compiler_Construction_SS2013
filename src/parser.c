@@ -21,6 +21,14 @@ static int CODEGEN_MODE_COND;
 
 static int PC;
 
+static int FP;
+static int SP;
+static int LINK;
+static int RR;
+
+static int returnFJumpAddress;
+static struct object_t * procedureContext;
+
 static int * output;
 
 // ------------------------------- Symbol table -------------------------------
@@ -42,6 +50,8 @@ struct object_t{
     int offset;
     struct type_t *type;
     struct object_t *next;
+    struct object_t * params;
+    int value;
 };
 
 void getFromList()
@@ -515,6 +525,11 @@ void initCodeGen()
     PC = 0;
 
     SIZE_INT = 4;
+
+    RR = 27;
+    FP = 29;
+    SP = 30;
+    LINK = 31;
 
     CODEGEN_MODE_CONST = 1;
     CODEGEN_MODE_VAR = 2;
@@ -1133,6 +1148,7 @@ void while_loop();
 void expression(struct item_t * item);
 void type_declaration();
 void selector(struct item_t * item);
+void procedureCall(struct item_t * item);
 
 void type(struct item_t * item)
 {
@@ -1508,24 +1524,43 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
+
         object = findObject(objectGlobal); // implicitly uses stringValue
         getNextToken();
-        if(object != 0)
+
+        if(tokenType == TOKEN_LRB)
         {
-            item->mode = CODEGEN_MODE_VAR;
-            item->type = object->type;
+            procedureCall(item);
 
-            // TODO: distinction between global and local scope
-            item->reg = CODEGEN_GP;
-
-            item->offset = object->offset;
-
-            selector(item); // array, record access
+            if(tokenType == TOKEN_RRB)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark(") expected (factor)");
+                getNextToken();
+            }
         }
         else
         {
-            error("Undeclared variable");
-            return;
+            if(object != 0)
+            {
+                item->mode = CODEGEN_MODE_VAR;
+                item->type = object->type;
+
+                // TODO: distinction between global and local scope
+                item->reg = CODEGEN_GP;
+
+                item->offset = object->offset;
+
+                selector(item); // array, record access
+            }
+            else
+            {
+                error("Undeclared variable");
+                return;
+            }
         }
 
         // // We do not support procedure calls now
@@ -1764,6 +1799,140 @@ void expression(struct item_t * item)
     // }
 }
 
+void pushParameter(struct item_t * item)
+{
+    if(item->type == typeBool)
+    {
+        unloadBool(item);
+    }
+
+    load(item);
+
+    put(TARGET_PSH, item->reg, SP, 4);
+
+    releaseRegister(item->reg);
+}
+
+struct object_t * actualParameter(
+    struct object_t * object, 
+    struct object_t * formalParameter)
+{
+    struct item_t * item;
+
+    if(isIn(tokenType, FIRST_EXPRESSION))
+    {
+        item = malloc(sizeof(struct item_t));
+        expression(item);
+
+        if(formalParameter != 0)
+        {
+            if(item->type != formalParameter->type)
+            {
+                mark("Type mismatch in procedure call");
+            }
+        }
+        else
+        {
+            formalParameter = createAnonymousParameter(object, item->type);
+        }
+
+        pushParameter(item);
+
+        formalParameter = formalParameter->next;
+    }
+    else
+    {
+        error("Actual parameter expected");
+    }
+
+    return formalParameter;
+}
+
+void actualParameters(struct object_t * object)
+{
+    struct object_t * nextFormalParameter;
+    struct item_t * item;
+
+    if(tokenType == TOKEN_LRB)
+    {
+        nextFormalParameter = object->params;
+        if(isIn(tokenType, FIRST_EXPRESSION))
+        {
+            nextFormalParameter = actualParameter(object, nextFormalParameter);
+            while(tokenType == TOKEN_COMMA)
+            {
+                getNextToken();
+                nextFormalParameter = actualParameter(object, nextFormalParameter);
+            }
+        }
+
+        while(nextFormalParameter != 0)
+        {
+            mark("Actual parameter expected");
+
+            item = malloc(sizeof(struct item_t));
+
+            item->mode = CODEGEN_MODE_CONST;
+            item->type = typeInt;
+            item->value = 0;
+
+            pushParameter(item);
+
+            nextFormalParameter = nextFormalParameter->next;
+        }
+
+        if(tokenType == TOKEN_RRB)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark(") expected (actualParameters)");
+            getNextToken();
+        }
+
+    }
+}
+
+int sJump(int branchAddress)
+{
+    put(TARGET_BSR, 0, 0, branchAddress);
+    return PC - 1;
+}
+
+void procedureCall(struct item_t * item)
+{
+    struct object_t * object;
+
+    object = findObject(objectGlobal);
+    if(object == 0)
+    {
+        mark("undeclared procedure procedureCall");
+        object = createObject(objectGlobal, stringValue);
+
+        object->class = CLASS_PROC;
+        object->type = UNKNOWN_TYPE; // TODO
+        object->offset = 0;
+    }
+
+    item->mode = CODEGEN_MODE_REG;
+    item->type = object->type;
+    pushUsedRegisters();
+    actualParameters(object);
+    if((object->offset != 0) && ! isBR(object->offset))
+    {  
+        sJump(object->offset - PC);
+    }
+    else
+    {
+        object->offset = sJump(object->offset);
+    }
+
+    popUsedRegisters();
+    item->reg = requestRegister();
+    put(TARGET_ADD, item->reg, 0, RR);
+}
+
 void variable_declaration()
 {
     struct item_t * item;
@@ -1801,6 +1970,12 @@ void variable_declaration()
     }
 }
 
+int fJumpChain(int branchAddress)
+{
+    put(TARGET_BR, 0, 0, branchAddress);
+    return PC - 1;
+}
+
 void return_statement(struct item_t * item)
 {
     if(tokenType == TOKEN_RETURN)
@@ -1810,7 +1985,25 @@ void return_statement(struct item_t * item)
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
             expression(item);
+            if(item->type != procedureContext->type)
+            {
+                mark("return type mismatch (return_statement)");
+            }
+
+            if(item->type == typeBool)
+            {
+                unloadBool(item);
+            }
+            load(item);
+            put(TARGET_ADD, RR, 0, item->reg);
+            releaseRegister(item->reg);
         }
+
+        returnFJumpAddress = fJumpChain(returnFJumpAddress);
+    }
+    else
+    {
+        error("Return expected (return_statement)");
     }
 }
 
@@ -2295,52 +2488,162 @@ void while_loop()
     }
 }
 
+struct object_t * formalParameter(
+    struct object_t * object,
+    struct object_t * formalParameter)
+{
+    struct type_t * type;
+
+    type = basicArrayRecordType();
+
+    if(tokenType == TOKEN_IDENTIFIER)
+    {
+        if(formalParameter != 0)
+        {
+            if(type != formalParameter->type)
+            {
+                mark("type mismatch in procedure declaration and call (formalParameter)");
+            }
+
+            if(findObject(object->params) != 0)
+            {
+                error("Parameter name already used (formalParameter)");
+            }
+            formalParameter->name = stringValue;
+
+        }
+        else
+        {
+            formalParameter = createFormalParameter(object, type, stringValue);
+        }
+        getNextToken();
+        formalParameter = formalParameter->next;
+    }
+    else
+    {
+        error("Expected identifier (formalParameter)");
+    }
+    return formalParameter;
+}
+
+void formalParameters(struct object_t * object)
+{
+    int numberOfParameters;
+    struct object_t * nextParameter;
+
+    numberOfParameters = 0;
+
+    if(tokenType == TOKEN_LRB)
+    {
+        getNextToken();
+    }
+    else
+    {
+        mark("( expected (formalParameters)");
+        getNextToken();
+    }
+
+    nextParameter = object->params;
+
+    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+    {
+        nextParameter = formalParameter(object, nextParameter);
+        numberOfParameters = numberOfParameters + 1;
+
+        while(tokenType == TOKEN_COMMA)
+        {
+            getNextToken();
+            nextParameter = formalParameter(object, nextParameter);
+            numberOfParameters = numberOfParameters + 1;
+        }
+    }
+
+    object->value = numberOfParameters;
+    nextParameter = object->params;
+
+    while(nextParameter != 0)
+    {
+        numberOfParameters = numberOfParameters - 1;
+        nextParameter->offset = numberOfParameters * 4 + 8;
+        nextParameter = nextParameter->next;
+    }
+
+    if(tokenType == TOKEN_RRB)
+    {
+        getNextToken();
+    }
+    else
+    {
+        mark(") expected (formalParameters)");
+        getNextToken();
+    }
+}
+
+void prologue(int localSize)
+{
+    put(TARGET_PSH, LINK, SP, 4);
+    put(TARGET_PSH, FP, SP, 4);
+    put(TARGET_ADD, FP, 0, SP);
+    put(TARGET_SUBI, SP, SP, localSize);
+}
+
+void epilogue(int paramSize)
+{
+    put(TARGET_ADD, SP, 0, FP);
+    put(TARGET_POP, FP, SP, 4);
+    put(TARGET_POP, LINK, SP, paramSize + 4);
+    put(TARGET_RET, 0, 0, LINK);
+}
+
+int variableDeclarationSequence(struct object_t * object)
+{
+    return 0;
+}
+
 void function_declaration()
 {
+    struct item_t * item;
+    struct object_t * object;
+
     if(isIn(tokenType, FIRST_TYPE))
     {
+        item = malloc(sizeof(struct item_t));
+        type(item);
+
         getNextToken();
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            // TODO: Handle procedure
-            getNextToken();
-
-            if(tokenType == TOKEN_LRB)
+            object = findProcedureObject(objectGlobal, stringValue);
+            if(object != 0) // the procedure appeared before
             {
-                getNextToken();
-            }
-            else
-            {
-                mark("( expected (function_declaration)");
-                getNextToken();
-            }
-
-            while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
-            {
-                variable_declaration();
-                if(tokenType == TOKEN_COMMA)
+                if(object->type != item->type)
                 {
-                    getNextToken();
+                    mark("return type mismatch in procedure");
                 }
+                fixLink(object->offset);
             }
-
-            if(tokenType == TOKEN_RRB)
+            else // the procedure is newly declared
             {
-                getNextToken();
-            }
-            else
-            {
-                mark(") expected (function_declaration)");
-                getNextToken();
-            }
+                object = createObject(objectGlobal, stringValue);
+                object->class = CLASS_PROC;
 
+                getNextToken();
+
+                object->type = item->type;
+                object->offset = PC;
+
+                formalParameters(object); // TODO: set object->value to # of param
+            }
+            
             if(tokenType == TOKEN_SEMICOLON)
             {
                 // TODO: Handle function prototype
                 getNextToken();
                 return;
             }
+
+            returnFJumpAddress = 0;
 
             if(tokenType == TOKEN_LCB)
             {
@@ -2352,10 +2655,16 @@ void function_declaration()
                 getNextToken();
             }
 
+            prologue(variableDeclarationSequence(object) * 4);
+            procedureContext = object;
+
             while(isIn(tokenType, FIRST_INSTRUCTION))
             {
                 instruction();
             }
+
+            fixLink(returnFJumpAddress);
+            epilogue(object->value * 4);
 
             if(tokenType == TOKEN_RCB)
             {

@@ -135,8 +135,33 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
 }
 
 struct object_t *createObject(struct object_t *firstElement, char *identifier){
- 
-    return 0;
+    struct object_t *newObjectElement;
+    struct object_t *newTempObject;
+    
+    newTempObject = malloc(sizeof(struct object_t));
+    
+    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = malloc(sizeof(char) * 1024);
+    newTempObject = firstElement;
+    
+    strCopy(identifier, newObjectElement->name);
+    newObjectElement->next = 0;
+    
+    if(newTempObject != 0){
+        while (newTempObject->next != 0) {
+            if(strCompare(newTempObject->name, stringValue)){
+                return -1;
+            }
+            newTempObject = newTempObject->next;
+        }
+        newTempObject->next = newObjectElement;
+    }
+    else{
+        firstElement = newObjectElement;
+        newTempObject = newTempObject;
+    }
+
+    return newObjectElement;
 }
 
 

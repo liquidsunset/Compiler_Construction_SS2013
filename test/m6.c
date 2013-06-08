@@ -2,7 +2,7 @@ int even (int num);
 int odd (int num);
 void even_or_odd (int *numbers, int len);
 
-int main (int argc, char **argv) {
+int main () {
     int *numbers;//[3] = { -2, 0, 7 };
     int len = 3;
     

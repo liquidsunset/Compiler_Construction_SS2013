@@ -2179,23 +2179,6 @@ void instruction()
         return;
     }
 
-    // // Don't support type declarations within functions
-    // if(isIn(tokenType, FIRST_TYPE_DECLARATION))
-    // {
-    //     type_declaration();
-    //     if(tokenType == TOKEN_SEMICOLON)
-    //     {
-    //         getNextToken();
-    //     }
-    //     else
-    //     {
-    //         mark("; expected after type declaration (instruction)");
-    //         getNextToken();
-    //     }
-
-    //     return;
-    // }
-
     if(tokenType == TOKEN_IDENTIFIER) // assignment or call or typedefd declaration
     {
         // TODO: Save identifier
@@ -2252,44 +2235,6 @@ void instruction()
 
             return;
         }
-
-        // while(tokenType == TOKEN_ACCESS)
-        // {
-        //     getNextToken();
-        //     if(tokenType == TOKEN_IDENTIFIER)
-        //     {
-        //         // TODO: store identifier
-        //         getNextToken();
-        //     }
-        //     else
-        //     {
-        //         error("Identifier expected (factor)");
-        //         return;
-        //     }
-        // }
-
-        // if(tokenType == TOKEN_LSB)
-        // {
-        //     getNextToken();
-        //     if(isIn(tokenType, FIRST_EXPRESSION))
-        //     {
-        //         expression(0);
-        //     }
-        //     else
-        //     {
-        //         error("expression expected (factor)");
-        //     }
-
-        //     if(tokenType == TOKEN_RSB)
-        //     {
-        //         getNextToken();
-        //     }
-        //     else
-        //     {
-        //         mark("] expected (factor)");
-        //         getNextToken();
-        //     }
-        // }
 
         leftItem = malloc(sizeof(struct item_t));
 
@@ -2557,7 +2502,31 @@ struct  object_t * createFormalParameter(
     struct type_t * type,
     char * identifier)
 {
-    return 0;
+    struct object_t * newObject;
+
+    newObject = object->params;
+
+    if(object->params != 0)
+    {
+        while(newObject->next != 0)
+        {
+            newObject = newObject->next;
+        }
+
+        newObject->next = malloc(sizeof(struct object_t));
+        strCopy(newObject->next->name, identifier);
+        newObject->next->type = type;
+
+        return newObject->next;
+    }
+    else
+    {
+        object->params = malloc(sizeof(struct object_t));
+        strCopy(object->params->name, identifier);
+        object->params->type = type;
+
+        return object->params;
+    }
 }
 
 struct object_t * formalParameter(
@@ -2669,7 +2638,19 @@ void epilogue(int paramSize)
 
 int variableDeclarationSequence(struct object_t * object)
 {
-    return 0;
+    struct object_t * currentObject;
+    int x;
+
+    x = 0;
+    currentObject = object->params;
+
+    while(currentObject != 0)
+    {
+        x = x + 1;
+        currentObject = currentObject->next;
+    }
+
+    return x;
 }
 
 void function_declaration()
@@ -2961,7 +2942,7 @@ void start() {
 }
 // ----------------------------------------------------------------------------
 
-int main(){
+int main(int argc, char ** argv){
     printf("\nPhoenix: Parser\n===============\n");
     initTokens();
 
@@ -2970,7 +2951,14 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m6.c");
+    if(argc == 1)
+    {
+        openFile("test/m6.c");
+    }
+    else
+    {
+        openFile(argv[1]);
+    }
     start();
     writeToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);

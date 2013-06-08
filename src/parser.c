@@ -150,7 +150,7 @@ struct object_t *createObject(struct object_t *firstElement, char *identifier){
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
             if(strCompare(newTempObject->name, stringValue)){
-                return -1;
+                return 0;
             }
             newTempObject = newTempObject->next;
         }
@@ -2970,7 +2970,7 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m5.c");
+    openFile("test/m6.c");
     start();
     writeToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);

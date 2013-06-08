@@ -2557,7 +2557,31 @@ struct  object_t * createFormalParameter(
     struct type_t * type,
     char * identifier)
 {
-    return 0;
+    struct object_t * newObject;
+
+    newObject = object->params;
+
+    if(object->params != 0)
+    {
+        while(newObject->next != 0)
+        {
+            newObject = newObject->next;
+        }
+
+        newObject->next = malloc(sizeof(struct object_t));
+        strCopy(newObject->next->name, identifier);
+        newObject->next->type = type;
+
+        return newObject->next;
+    }
+    else
+    {
+        object->params = malloc(sizeof(struct object_t));
+        strCopy(object->params->name, identifier);
+        object->params->type = type;
+
+        return object->params;
+    }
 }
 
 struct object_t * formalParameter(
@@ -2961,7 +2985,7 @@ void start() {
 }
 // ----------------------------------------------------------------------------
 
-int main(){
+int main(int argc, char ** argv){
     printf("\nPhoenix: Parser\n===============\n");
     initTokens();
 
@@ -2970,7 +2994,14 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m5.c");
+    if(argc == 1)
+    {
+        openFile("test/m5.c");
+    }
+    else
+    {
+        openFile(argv[1]);
+    }
     start();
     writeToFile();
     printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);

@@ -438,12 +438,20 @@ int fetch() {
 	return 1; // continue
 }
 
-int main() {
+int main(int argc,  char ** argv) {
 	printf("\nPhoenix: Margit\n===============\n");
 	initTokens();
 	init();
-	//load("test/gcd.bin");
-	load("a.out");
+	
+	if(argc == 1)
+	{
+		load("a.out");
+	}
+	else
+	{
+		load(argv[1]);
+	}
+
 	getchar();
 	while(fetch())
 	{

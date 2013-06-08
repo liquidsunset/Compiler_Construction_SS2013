@@ -1827,6 +1827,11 @@ void pushParameter(struct item_t * item)
     releaseRegister(item->reg);
 }
 
+struct object_t * createAnonymousParameter(struct object_t * object, struct type_t * type)
+{
+    return 0;
+}
+
 struct object_t * actualParameter(
     struct object_t * object, 
     struct object_t * formalParameter)
@@ -1914,6 +1919,21 @@ int sJump(int branchAddress)
     return PC - 1;
 }
 
+int isBR(int address)
+{
+    return 0;
+}
+
+void pushUsedRegisters()
+{
+
+}
+
+void popUsedRegisters()
+{
+
+}
+
 void procedureCall(struct item_t * item)
 {
     struct object_t * object;
@@ -1925,7 +1945,7 @@ void procedureCall(struct item_t * item)
         object = createObject(objectGlobal, stringValue);
 
         object->class = CLASS_PROC;
-        object->type = UNKNOWN_TYPE; // TODO
+        object->type = 0; // = UNKNOWN_TYPE; // TODO
         object->offset = 0;
     }
 
@@ -2502,6 +2522,19 @@ void while_loop()
     }
 }
 
+struct type_t * basicArrayRecordType()
+{
+    return 0;
+}
+
+struct  object_t * createFormalParameter(
+    struct object_t * object,
+    struct type_t * type,
+    char * identifier)
+{
+    return 0;
+}
+
 struct object_t * formalParameter(
     struct object_t * object,
     struct object_t * formalParameter)
@@ -2623,8 +2656,6 @@ void function_declaration()
     {
         item = malloc(sizeof(struct item_t));
         type(item);
-
-        getNextToken();
 
         if(tokenType == TOKEN_IDENTIFIER)
         {

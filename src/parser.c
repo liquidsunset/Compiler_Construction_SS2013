@@ -107,6 +107,20 @@ struct object_t *findObject(struct object_t *firstElement){
 
 struct object_t *findProcedureObject(struct object_t *firstElement, char *identifier){
     
+    if(firstElement != 0){
+        while (firstElement->next != 0) {
+            if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
+                printf("\nSymbol table: found %s\n", identifier);
+                return firstElement;
+            }
+            firstElement = firstElement->next;
+        }
+        if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
+            printf("\nSymbol table: found %s\n", identifier);
+            return firstElement;
+        }
+    }
+    
     return 0;
 }
 

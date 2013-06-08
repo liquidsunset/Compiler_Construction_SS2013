@@ -2693,7 +2693,20 @@ void epilogue(int paramSize)
 
 int variableDeclarationSequence(struct object_t * object)
 {
-    return 0;
+    struct object_t * currentObject;
+    int x;
+
+    x = 0;
+    currentObject = object->params;
+
+    while(current != 0)
+    {
+        x = x + 1;
+        currentObject = currentObject->next;
+    }
+
+
+    return x;
 }
 
 void function_declaration()

@@ -96,17 +96,17 @@ void addToList()
 }
 
 
-struct object_t *findObject(struct object_t *firstElement){
+struct object_t *findObject(struct object_t *firstElement, char *identifier){
     
     if(firstElement != 0){
         while (firstElement->next != 0) {
-            if(strCompare(firstElement->name, stringValue)){
+            if(strCompare(firstElement->name, identifier)){
                 printf("\nSymbol table: found %s\n", stringValue);
                 return firstElement;
             }
             firstElement = firstElement->next;
         }
-        if(strCompare(firstElement->name, stringValue)){
+        if(strCompare(firstElement->name, identifier)){
             printf("\nSymbol table: found %s\n", stringValue);
             return firstElement;
         }
@@ -1226,7 +1226,7 @@ void type(struct item_t * item)
     
     if(tokenType == TOKEN_IDENTIFIER)
     {
-        object = findObject(objectGlobal);
+        object = findObject(objectGlobal,stringValue);
 
         if(object == 0)
         {
@@ -1248,7 +1248,7 @@ void type(struct item_t * item)
             currentType = TOKEN_STRUCT;
             strCopy(stringValue, typeName);
 
-            object = findObject(objectGlobal);
+            object = findObject(objectGlobal,stringValue);
 
             item->mode = CODEGEN_MODE_CONST;
             item->type = typeInt;
@@ -1564,7 +1564,7 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
 
-        object = findObject(objectGlobal); // implicitly uses stringValue
+        object = findObject(objectGlobal,stringValue); // implicitly uses stringValue
         getNextToken();
 
         if(tokenType == TOKEN_LRB)
@@ -1963,7 +1963,7 @@ void procedureCall(struct item_t * item)
 {
     struct object_t * object;
 
-    object = findObject(objectGlobal);
+    object = findObject(objectGlobal,stringValue);
     if(object == 0)
     {
         mark("undeclared procedure procedureCall");
@@ -2110,7 +2110,7 @@ void selector(struct item_t * item)
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                object = findObject(item->type->fields);
+                object = findObject(item->type->fields,stringValue);
                 if(object != 0)
                 {
                     field(item, object);
@@ -2239,7 +2239,7 @@ void instruction()
         leftItem = malloc(sizeof(struct item_t));
 
         // values still set from identifier before ASSIGNMENT
-        object = findObject(objectGlobal); // implicitly uses stringValue
+        object = findObject(objectGlobal,stringValue); // implicitly uses stringValue
         if(object != 0)
         {
             leftItem->mode = CODEGEN_MODE_VAR;
@@ -2569,7 +2569,7 @@ struct object_t * formalParameter(
                 mark("type mismatch in procedure declaration and call (formalParameter)");
             }
 
-            if(findObject(object->params) != 0)
+            if(findObject(object->params,stringValue) != 0)
             {
                 error("Parameter name already used (formalParameter)");
             }

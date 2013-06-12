@@ -2755,7 +2755,6 @@ void function_declaration()
             
             if(tokenType == TOKEN_SEMICOLON)
             {
-                // TODO: Handle function prototype
                 getNextToken();
                 return;
             }

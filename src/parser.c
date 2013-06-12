@@ -1213,6 +1213,7 @@ void type(struct item_t * item)
     if(tokenType == TOKEN_CHAR)
     {
         currentType = TOKEN_CHAR;
+        item->type = typeChar;
         getNextToken();
         return;
     }
@@ -2495,26 +2496,68 @@ void while_loop()
 struct type_t * basicArrayRecordType()
 {
     struct item_t * item;
+    struct type_t * newType;
+    struct object_t * newObject;
 
     if(isIn(tokenType, FIRST_TYPE))
     {
         item = malloc(sizeof(struct item_t));
+        newType = malloc(sizeof(struct type_t));
+        newObject = malloc(sizeof(struct object_t));
+        
         type(item);
-
-        if(tokenType == TOKEN_MULT)
-        {
-            isArray = 1;
-            isStruct = 0;
+        
+        if(currentType == TOKEN_INT){
             getNextToken();
+            if(tokenType == TOKEN_MULT){
+                newType->form = FORM_ARRAY;
+                newType->base = typeInt;
+                getNextToken();
+                return newType;
+            }
+            
+            return typeInt;
+            
         }
+        
+        if(currentType == TOKEN_CHAR){
+            getNextToken();
+            if(tokenType == TOKEN_MULT){
+                newType->form = FORM_ARRAY;
+                newType->base = typeChar;
+                getNextToken();
+                return newType;
+            }
+            return typeChar;
+            
+        }
+        
+        if(currentType == TOKEN_STRUCT){
+            getNextToken();
 
-        return item->type;
+            if(findObject(objectLocal, stringValue) != 0){
+                newObject = findObject(objectLocal, stringValue);
+                getNextToken();
+                return newObject->type;
+            }
+            
+            if(findObject(objectGlobal, stringValue) != 0){
+                newObject = findObject(objectGlobal, stringValue);
+                getNextToken();
+                return newObject->type;
+            }
+            
+        }
+        
+
     }
     else
     {
         error("Unknown type");
         return 0;
     }
+    
+    return 0;
     
 }
 

@@ -2267,8 +2267,11 @@ void instruction()
             leftItem->mode = CODEGEN_MODE_VAR;
             leftItem->type = object->type;
 
-            // TODO: distinction between global and local scope
             leftItem->reg = CODEGEN_GP;
+            if(isGlobal == 0)
+            {
+                leftItem->reg = SP;
+            }
 
             leftItem->offset = object->offset;
 
@@ -2539,7 +2542,6 @@ struct type_t * basicArrayRecordType()
             }
             
             return typeInt;
-            
         }
         
         if(currentType == TOKEN_CHAR){
@@ -2550,7 +2552,6 @@ struct type_t * basicArrayRecordType()
                 return newType;
             }
             return typeChar;
-            
         }
         
         if(currentType == TOKEN_STRUCT){

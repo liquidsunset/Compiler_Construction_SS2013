@@ -2762,8 +2762,9 @@ void function_declaration()
             }
             else // the procedure is newly declared
             {
-                isGlobal = 1;
+                isGlobal = 1; // add procedure to global symbol table
                 object = createObject();
+                isGlobal = 0; // return to local mode
                 object->class = CLASS_PROC;
 
                 getNextToken();
@@ -2983,6 +2984,7 @@ void top_declaration() {
 
     if(isIn(tokenType, FIRST_TYPE))
     {
+        isGlobal = 0;
         function_declaration();
 
         return;
@@ -3017,6 +3019,7 @@ void start() {
     while(tokenType != TOKEN_EOF) {
         if(isIn(tokenType, FIRST_TOP_DECLARATION))
         {
+            isGlobal = 1;
             top_declaration();
         }
         else

@@ -2235,35 +2235,8 @@ void instruction()
 
         if(tokenType == TOKEN_LRB) // procedure call
         {
-            while(isIn(tokenType, FIRST_EXPRESSION))
-            {
-                expression(0);
-                if(tokenType == TOKEN_COMMA)
-                {
-                    getNextToken();
-                }
-            }
-
-            if(tokenType == TOKEN_RRB)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark(") expected (instruction)");
-                getNextToken();
-            }
-
-            if(tokenType == TOKEN_SEMICOLON)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark("; expected after expression (instruction)");
-                getNextToken();
-            }
-
+            leftItem = malloc(sizeof(struct item_t));
+            procedureCall(leftItem);
             return;
         }
 

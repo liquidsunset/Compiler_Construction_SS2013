@@ -1618,8 +1618,7 @@ void factor(struct item_t * item) {
                 item->mode = CODEGEN_MODE_VAR;
                 item->type = object->type;
 
-                // TODO: distinction between global and local scope
-                item->reg = CODEGEN_GP;
+                item->reg = object->reg;
 
                 item->offset = object->offset;
 
@@ -2252,10 +2251,7 @@ void instruction()
             leftItem->mode = CODEGEN_MODE_VAR;
             leftItem->type = object->type;
 
-            leftItem->reg = CODEGEN_GP;
-            if(isGlobal == 0)
-            {
-                leftItem->reg = SP;
+            leftItem->reg = object->reg;
             }
 
             leftItem->offset = object->offset;

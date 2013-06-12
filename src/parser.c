@@ -2258,7 +2258,6 @@ void instruction()
             leftItem->type = object->type;
 
             leftItem->reg = object->reg;
-            }
 
             leftItem->offset = object->offset;
 

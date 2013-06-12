@@ -52,6 +52,7 @@ struct object_t{
     struct object_t *next;
     struct object_t * params;
     int value;
+    int reg;
 };
 
 void getFromList()
@@ -147,10 +148,12 @@ struct object_t *createObject(){
     
     if(isGlobal == 0){
         newTempObject = objectLocal;
+        newObjectElement->reg = SP;
     }
     
     if(isGlobal == 1){
         newTempObject = objectGlobal;
+        newObjectElement->reg = CODEGEN_GP;
     }
     
     strCopy(stringValue, newObjectElement->name);
@@ -444,6 +447,7 @@ int addFieldToList(){
         newTempObject = lastObjectGlobal->type->fields;
     }
     
+    //TODO: set Reg
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
@@ -481,10 +485,12 @@ int addObjectToList(){
 
     if(isGlobal == 0){
         newTempObject = objectLocal;
+        newObjectElement->reg = SP;
     }
     
     if(isGlobal == 1){
         newTempObject = objectGlobal;
+        newObjectElement->reg = CODEGEN_GP;
     }
     
     if(newTempObject != 0){

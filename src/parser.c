@@ -2949,7 +2949,7 @@ void top_declaration() {
     if(isIn(tokenType, FIRST_TYPE_DECLARATION))
     {
         type_declaration();
-
+        isGlobal = 1;
         if(tokenType == TOKEN_SEMICOLON)
         {
             getNextToken();
@@ -2987,7 +2987,6 @@ void top_declaration() {
     {
         isGlobal = 0;
         function_declaration();
-
         return;
     }
 }

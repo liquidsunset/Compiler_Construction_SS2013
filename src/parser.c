@@ -2035,6 +2035,7 @@ void variable_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
+            addObjectToList();
             getNextToken();        
         }
         else

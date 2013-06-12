@@ -134,6 +134,8 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
     return 0;
 }
 
+int addTypeToList();
+
 struct object_t *createObject(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
@@ -174,7 +176,17 @@ struct object_t *createObject(){
             newTempObject = newObjectElement;
         }
     }
+    
+    if(isGlobal == 0){
+        lastObjectLocal = newObjectElement;
+    }
+    
+    if(isGlobal == 1){
+        lastObjectGlobal = newObjectElement;
+    }
 
+
+    addTypeToList();
     return newObjectElement;
 }
 
@@ -297,7 +309,7 @@ int addTypeToList(){
     
     
 
-    if(objectClass == 2 && (isArray == 1 || isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+    if((objectClass == 2) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
             tempTypeObject->offset = lastOffsetPointer - 4;
             lastOffsetPointer = lastOffsetPointer - 4;
@@ -320,7 +332,7 @@ int addTypeToList(){
     }
     
         
-    if(objectClass == 1 && (isArray == 1 && isStruct == 0)){
+    if(objectClass == 2 && (isArray == 1 && isStruct == 0)){
         newElement->form = FORM_ARRAY;
         if(currentType == FORM_INT){
             newElement->base = typeInt;

@@ -1934,6 +1934,7 @@ void actualParameters(struct object_t * object)
 
     if(tokenType == TOKEN_LRB)
     {
+        getNextToken();
         nextFormalParameter = object->params;
         if(isIn(tokenType, FIRST_EXPRESSION))
         {
@@ -2242,6 +2243,15 @@ void instruction()
         {
             leftItem = malloc(sizeof(struct item_t));
             procedureCall(leftItem);
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+            }
+            else
+            {
+                mark("; expected after procedure call");
+                getNextToken();
+            }
             return;
         }
 
@@ -2738,6 +2748,7 @@ void function_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
+            
             object = findProcedureObject(objectGlobal, stringValue);
             if(object != 0) // the procedure appeared before
             {
@@ -2753,15 +2764,13 @@ void function_declaration()
                 object = createObject();
                 isGlobal = 0; // return to local mode
                 object->class = CLASS_PROC;
-
-                getNextToken();
-
-                object->type = item->type;
-                object->offset = PC;
-
-                formalParameters(object); // TODO: set object->value to # of param
             }
-            
+            getNextToken();
+            object->type = item->type;
+            object->offset = PC;
+
+            formalParameters(object);
+
             if(tokenType == TOKEN_SEMICOLON)
             {
                 getNextToken();

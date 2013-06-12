@@ -2035,7 +2035,6 @@ void variable_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            addObjectToList();
             getNextToken();        
         }
         else
@@ -2307,7 +2306,7 @@ void instruction()
     {
         variable_declaration();
 
-        isGlobal = 0;
+        
         objectClass = CLASS_VAR; 
         addObjectToList();
 

@@ -134,7 +134,7 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
     return 0;
 }
 
-struct object_t *createObject(struct object_t *firstElement, char *identifier){
+struct object_t *createObject(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
@@ -142,9 +142,16 @@ struct object_t *createObject(struct object_t *firstElement, char *identifier){
     
     newObjectElement = malloc(sizeof(struct object_t));
     newObjectElement->name = malloc(sizeof(char) * 1024);
-    newTempObject = firstElement;
     
-    strCopy(identifier, newObjectElement->name);
+    if(isGlobal == 0){
+        newTempObject = objectLocal;
+    }
+    
+    if(isGlobal == 1){
+        newTempObject = objectGlobal;
+    }
+    
+    strCopy(stringValue, newObjectElement->name);
     newObjectElement->next = 0;
     
     if(newTempObject != 0){
@@ -157,8 +164,15 @@ struct object_t *createObject(struct object_t *firstElement, char *identifier){
         newTempObject->next = newObjectElement;
     }
     else{
-        firstElement = newObjectElement;
-        newTempObject = newTempObject;
+        if(isGlobal == 0){
+            objectLocal = newObjectElement;
+            
+            newTempObject = newObjectElement;
+        }
+        if(isGlobal == 1){
+            objectGlobal = newObjectElement;
+            newTempObject = newObjectElement;
+        }
     }
 
     return newObjectElement;
@@ -1565,7 +1579,10 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_IDENTIFIER) // not sure if call or variable
     {
 
-        object = findObject(objectGlobal,stringValue); // implicitly uses stringValue
+        object = findObject(objectLocal,stringValue); // implicitly uses stringValue
+        if(object == 0){
+            findObject(objectGlobal, stringValue);
+        }
         getNextToken();
 
         if(tokenType == TOKEN_LRB)
@@ -1968,7 +1985,8 @@ void procedureCall(struct item_t * item)
     if(object == 0)
     {
         mark("undeclared procedure procedureCall");
-        object = createObject(objectGlobal, stringValue);
+        isGlobal = 1;
+        object = createObject();
 
         object->class = CLASS_PROC;
         object->type = 0; // = UNKNOWN_TYPE; // TODO
@@ -2240,7 +2258,10 @@ void instruction()
         leftItem = malloc(sizeof(struct item_t));
 
         // values still set from identifier before ASSIGNMENT
-        object = findObject(objectGlobal,stringValue); // implicitly uses stringValue
+        object = findObject(objectLocal,stringValue); // implicitly uses stringValue
+        if(object == 0){
+            object = findObject(objectGlobal, stringValue);
+        }
         if(object != 0)
         {
             leftItem->mode = CODEGEN_MODE_VAR;
@@ -2741,7 +2762,8 @@ void function_declaration()
             }
             else // the procedure is newly declared
             {
-                object = createObject(objectGlobal, stringValue);
+                isGlobal = 1;
+                object = createObject();
                 object->class = CLASS_PROC;
 
                 getNextToken();

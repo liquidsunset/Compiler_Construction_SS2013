@@ -8,7 +8,7 @@ int main () {
     len = 3;
     
     numbers = malloc(sizeof(int)*len);
-    numbers[0] = -2;
+    numbers[0] = 0-2;
     numbers[1] = 0;
     numbers[2] = 7;
     

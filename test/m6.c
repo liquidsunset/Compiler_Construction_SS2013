@@ -19,12 +19,12 @@ void even_or_odd (int *numbers, int len) {
     int i;
     i = 0;
     while (i < len) {
-        if ((numbers[i] >= 0) && even(numbers[i] > 0)) {
+        if ( (numbers[i] >= 0) && (even(numbers[i]) > 0) ) {
             printf("%d is even\n", numbers[i]);
         }
         else 
         {
-            if ((numbers[i] >= 0) && odd(numbers[i] > 0)) {
+            if ((numbers[i] >= 0) && (odd(numbers[i]) > 0)) {
             printf("%d is odd\n", numbers[i]);
             } else {
             printf("number is < 0, sorry...\n");

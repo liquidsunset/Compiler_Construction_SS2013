@@ -2495,20 +2495,21 @@ void while_loop()
 
 struct type_t * basicArrayRecordType()
 {
-    struct item_t * item;
+
     struct type_t * newType;
     struct object_t * newObject;
+    struct item_t *item;
+    
 
     if(isIn(tokenType, FIRST_TYPE))
     {
-        item = malloc(sizeof(struct item_t));
         newType = malloc(sizeof(struct type_t));
         newObject = malloc(sizeof(struct object_t));
+        item = malloc(sizeof(struct item_t));
         
         type(item);
         
         if(currentType == TOKEN_INT){
-            getNextToken();
             if(tokenType == TOKEN_MULT){
                 newType->form = FORM_ARRAY;
                 newType->base = typeInt;
@@ -2521,7 +2522,6 @@ struct type_t * basicArrayRecordType()
         }
         
         if(currentType == TOKEN_CHAR){
-            getNextToken();
             if(tokenType == TOKEN_MULT){
                 newType->form = FORM_ARRAY;
                 newType->base = typeChar;
@@ -2533,7 +2533,6 @@ struct type_t * basicArrayRecordType()
         }
         
         if(currentType == TOKEN_STRUCT){
-            getNextToken();
 
             if(findObject(objectLocal, stringValue) != 0){
                 newObject = findObject(objectLocal, stringValue);

@@ -2629,12 +2629,12 @@ struct object_t * formalParameter(
                 mark("type mismatch in procedure declaration and call (formalParameter)");
             }
 
-            if(findObject(object->params,stringValue) != 0)
-            {
-                error("Parameter name already used (formalParameter)");
-            }
+            // if(findObject(object->params, stringValue) != 0)
+            // {
+            //     error("Parameter name already used (formalParameter)");
+            // }
+            
             formalParameter->name = stringValue;
-
         }
         else
         {

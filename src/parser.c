@@ -1599,7 +1599,10 @@ void factor(struct item_t * item) {
 
         object = findObject(objectLocal,stringValue); // implicitly uses stringValue
         if(object == 0){
-            findObject(objectGlobal, stringValue);
+            object = findObject(objectGlobal, stringValue);
+        }
+        if(object == 0){
+            object = findObject(procedureContext->params, stringValue);
         }
         getNextToken();
 
@@ -2261,6 +2264,9 @@ void instruction()
         object = findObject(objectLocal,stringValue); // implicitly uses stringValue
         if(object == 0){
             object = findObject(objectGlobal, stringValue);
+        }
+        if(object == 0){
+            object = findObject(procedureContext->params, stringValue);
         }
         if(object != 0)
         {

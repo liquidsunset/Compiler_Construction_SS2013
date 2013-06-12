@@ -1205,7 +1205,8 @@ int isIn(int tokenType, int rule) {
         isIn(tokenType, FIRST_TYPE_DECLARATION) ||
         (tokenType == TOKEN_IDENTIFIER) ||
         (tokenType == TOKEN_WHILE) ||
-        (tokenType == TOKEN_IF)))
+        (tokenType == TOKEN_IF) ||
+        (tokenType == TOKEN_RETURN)))
     { return 1; }
 
     return 0;

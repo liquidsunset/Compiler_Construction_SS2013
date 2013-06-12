@@ -1609,16 +1609,6 @@ void factor(struct item_t * item) {
         if(tokenType == TOKEN_LRB)
         {
             procedureCall(item);
-
-            if(tokenType == TOKEN_RRB)
-            {
-                getNextToken();
-            }
-            else
-            {
-                mark(") expected (factor)");
-                getNextToken();
-            }
         }
         else
         {

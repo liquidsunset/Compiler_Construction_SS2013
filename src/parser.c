@@ -2640,7 +2640,7 @@ struct object_t * formalParameter(
             //     error("Parameter name already used (formalParameter)");
             // }
             
-            formalParameter->name = stringValue;
+            strCopy(stringValue, formalParameter->name);
         }
         else
         {

@@ -2982,6 +2982,9 @@ void top_declaration() {
     {
         isGlobal = 0;
         function_declaration();
+        objectLocal = 0;
+        lastObjectLocal = 0;
+        lastFieldElementLocal = 0;
         return;
     }
 }

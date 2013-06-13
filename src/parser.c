@@ -1976,7 +1976,7 @@ int sJump(int branchAddress)
 
 int isBR(int address)
 {
-    return 0;
+    return ((output[address/4] >> 26) & 63) == TARGET_BR;
 }
 
 void pushUsedRegisters()

@@ -470,65 +470,6 @@ int addFieldToList(){
     return 0;
 }
 
-int addObjectToList(){
-    struct object_t *newObjectElement;
-    struct object_t *newTempObject;
-    
-    newTempObject = malloc(sizeof(struct object_t));
-    
-    newObjectElement = malloc(sizeof(struct object_t));
-    newObjectElement->name = malloc(sizeof(char) * 1024);
-
-    strCopy(stringValue, newObjectElement->name);
-    newObjectElement->class = objectClass;
-    newObjectElement->next = 0;
-
-    if(isGlobal == 0){
-        newTempObject = objectLocal;
-        newObjectElement->reg = SP;
-    }
-    
-    if(isGlobal == 1){
-        newTempObject = objectGlobal;
-        newObjectElement->reg = CODEGEN_GP;
-    }
-    
-    if(newTempObject != 0){
-        while (newTempObject->next != 0) {
-            if(strCompare(newTempObject->name, stringValue)){
-                return -1;
-            }
-            newTempObject = newTempObject->next;
-        }
-        newTempObject->next = newObjectElement;
-    }
-    else{
-        if(isGlobal == 0){
-            objectLocal = newObjectElement;
-            
-            newTempObject = newObjectElement;
-        }
-        if(isGlobal == 1){
-            objectGlobal = newObjectElement;
-            newTempObject = newObjectElement;
-        }
-    }
-    
-
-    
-    if(isGlobal == 0){
-        lastObjectLocal = newObjectElement;
-    }
-    
-    if(isGlobal == 1){
-        lastObjectGlobal = newObjectElement;
-    }
-    
-    addTypeToList();
-    
-    return 0;
-}
-
 
 // -----------------------------------------------------------------------------
 
@@ -2303,9 +2244,12 @@ void instruction()
         variable_declaration();
 
         
-        objectClass = CLASS_VAR; 
-        addObjectToList();
-
+        objectClass = CLASS_VAR;
+        if(createObject() == 0){
+            error("Symbol-Table: Could not create Object");
+        }
+        
+        
         if(tokenType == TOKEN_SEMICOLON)
         {
             getNextToken();
@@ -2871,7 +2815,9 @@ void struct_declaration()
             objectClass = CLASS_TYPE; 
             isArray = 0;
             isGlobal = 1;
-            addObjectToList();
+            if(createObject() == 0){
+                error("Symbol-Table: Could not create Object");
+            }
             
             getNextToken();
 
@@ -2961,7 +2907,9 @@ void top_declaration() {
 
         isGlobal = 1;
         objectClass = CLASS_VAR;
-        addObjectToList();
+        if(createObject() == 0){
+            error("Symbol-Table: Could not create Object");;
+        }
 
         if(tokenType == TOKEN_SEMICOLON)
         {

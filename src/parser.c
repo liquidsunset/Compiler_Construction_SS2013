@@ -2547,6 +2547,7 @@ struct  object_t * createFormalParameter(
         }
 
         newObject->next = malloc(sizeof(struct object_t));
+        newObject->next->reg = FP;
         newObject->next->name = malloc(sizeof(char) * 1024);
         strCopy(identifier, newObject->next->name);
         newObject->next->type = type;
@@ -2556,6 +2557,7 @@ struct  object_t * createFormalParameter(
     else
     {
         object->params = malloc(sizeof(struct object_t));
+        object->params->reg = FP;
         object->params->name = malloc(sizeof(char) * 1024);
         strCopy(identifier, object->params->name);
         object->params->type = type;

@@ -1920,14 +1920,30 @@ int isBR(int address)
     return ((output[address/4] >> 26) & 63) == TARGET_BR;
 }
 
-void pushUsedRegisters()
+void pushUsedRegisters() // pushed reg[1] to reg[27] onto the stack
 {
+    int i;
 
+    i = 1;
+
+    while(i < 28)
+    {
+        put(TARGET_PSH, i, SP, 4); // push reg[i] (size 4 bytes) on to the stack
+        i = i + 1;
+    }
 }
 
 void popUsedRegisters()
 {
+    int i;
 
+    i = 1;
+
+    while(i < 28)
+    {
+        put(TARGET_POP, i, SP, 4); // pop data (size 4 bytes) on stack to reg[i]
+        i = i + 1;
+    }
 }
 
 void procedureCall(struct item_t * item)
@@ -2691,7 +2707,7 @@ void function_declaration()
         {
             
             object = findProcedureObject(objectGlobal, stringValue);
-            if(object != 0) // the procedure appeared before
+            if(object != 0) // the procedure appeared before, either as declaration or invokation
             {
                 if(object->type != item->type)
                 {
@@ -2712,7 +2728,7 @@ void function_declaration()
 
             formalParameters(object);
 
-            if(tokenType == TOKEN_SEMICOLON)
+            if(tokenType == TOKEN_SEMICOLON) // function prototype
             {
                 getNextToken();
                 return;
@@ -2738,7 +2754,7 @@ void function_declaration()
                 instruction();
             }
 
-            fixLink(returnFJumpAddress);
+            fixLink(returnFJumpAddress); // if returnFJumpAddress is still 0, there there was no return call
             epilogue(object->value * 4);
 
             if(tokenType == TOKEN_RCB)

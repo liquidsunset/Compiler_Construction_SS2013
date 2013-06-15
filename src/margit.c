@@ -422,6 +422,16 @@ int fetch() {
 
 			pc = pc + 4;
 		}
+		else if(op == TARGET_PRINTF)
+		{
+
+			pc = pc + 4;
+		}
+		else if(op == TARGET_PRINTFI)
+		{
+			printf("%d", reg[c]);
+			pc = pc + 4;
+		}
 
 	}
 	else if(isF3(op))

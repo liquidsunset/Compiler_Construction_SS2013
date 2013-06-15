@@ -152,7 +152,8 @@ static unsigned int TARGET_WRC;
 static unsigned int TARGET_J;
 static unsigned int TARGET_MALLOC;
 static unsigned int TARGET_TRAP;
-
+static unsigned int TARGET_PRINTF;
+static unsigned int TARGET_PRINTFI;
 
 void initTokens(){
     TOKEN_NULL = 0;
@@ -291,6 +292,8 @@ void initTokens(){
     TARGET_WRC = 33;
     TARGET_AND = 34;
     TARGET_OR = 35;
+    TARGET_PRINTF = 36;
+    TARGET_PRINTFI = 37;
 
     // F3 (43-63)
     TARGET_JSR = 43;

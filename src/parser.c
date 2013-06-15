@@ -1504,6 +1504,58 @@ void fputc_func()
     }
 }
 
+void printf_func() {
+    struct item_t * item;
+    int offset;
+
+    if(tokenType == TOKEN_PRINTF)
+    {
+        getNextToken();
+        if(tokenType == TOKEN_LRB)
+        {
+            getNextToken();            
+            if(tokenType == TOKEN_STRING_LITERAL)
+            {
+                // TODO: store string and get offset to GP
+
+                put(TARGET_PRINTF, 0, 0, offset);
+                getNextToken();
+                if(tokenType != TOKEN_RRB)
+                {
+                    mark(") expected (printf)");
+                    return;
+                }
+
+                getNextToken();
+                return;
+            }
+
+            if(isIn(tokenType, FIRST_EXPRESSION))
+            {
+                item = malloc(sizeof(struct item_t));
+                expression(item);
+                if(item->type != typeInt)
+                {
+                    error("integer expected (printf)");
+                    return;
+                }
+
+                load(item);
+                put(TARGET_PRINTFI, 0, 0, item->reg);
+                releaseRegister(item->reg);
+            }
+            else
+            {
+                error("string or integer expression expected (printf)");
+            }
+        }
+        else
+        {
+            error("( expected (printf)");
+        }
+    }
+}
+
 void factor(struct item_t * item) {
     struct object_t * object;
 
@@ -1666,6 +1718,12 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_FPUTC)
     {
         fputc_func();
+        return;
+    }
+
+    if(tokenType == TOKEN_PRINTF)
+    {
+        printf_func();
         return;
     }
 

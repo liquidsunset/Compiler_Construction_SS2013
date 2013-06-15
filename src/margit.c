@@ -151,8 +151,9 @@ void load(char * filename) {
 // gets next instruction
 int fetch() {
 
-	if(pc >= MEMSIZE)
+	if((pc/4) >= MEMSIZE)
 	{
+		printf("\nERROR: PC exceeded memory size\n");
 		return 0;
 	}
 
@@ -162,12 +163,12 @@ int fetch() {
 
 	if(op == TARGET_NOP)
 	{
-		printf("\nHit NOP %d\n", TARGET_NOP);
+		printf("\nERROR: Hit NOP %d\n", TARGET_NOP);
 		return 0;
 	}
 	if(pc >= (GP*4))
 	{
-		printf("PC is higher than GP");
+		printf("\nERROR: PC exceeded code segment\n");
 		return 0;
 	}
 
@@ -280,6 +281,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BLE)
 		{
+			printf("%d BLE %d, %d, %d", pc, a, b, c);
 			if(reg[a] <= 0)
 			{
 				pc = pc + c * 4;
@@ -429,6 +431,7 @@ int fetch() {
 		// F3 unconditional jump
 		if(op == TARGET_JSR)
 		{
+			printf("%d JSR %d", pc, c);
 			reg[31] = pc + 4;
 			pc = c;
 		}

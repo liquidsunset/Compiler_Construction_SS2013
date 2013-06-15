@@ -151,6 +151,7 @@ static unsigned int TARGET_RDC;
 static unsigned int TARGET_WRC;
 static unsigned int TARGET_J;
 static unsigned int TARGET_MALLOC;
+static unsigned int TARGET_TRAP;
 
 
 void initTokens(){
@@ -294,6 +295,7 @@ void initTokens(){
     // F3 (43-63)
     TARGET_JSR = 43;
     TARGET_J = 44;
+    TARGET_TRAP = 45;
     
     stringValue = malloc(sizeof(char) * 1024);
     typeName = malloc(sizeof(char) * 1024);

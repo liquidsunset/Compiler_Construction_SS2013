@@ -666,6 +666,9 @@ void writeToFile(){
 
     struct object_t *tempTypeObject;
 
+    // Add trap to terminate execution
+    put(TARGET_TRAP, 0, 0, 0);
+
     // Add global variables    
     tempTypeObject = objectGlobal;
     

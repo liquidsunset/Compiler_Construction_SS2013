@@ -438,6 +438,11 @@ int fetch() {
 			printf("%d J %d", pc, c);
 			pc = c;
 		}
+		if(op == TARGET_TRAP)
+		{
+			printf("Trapped");
+			return 0;
+		}
 	}
 
 	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d)",

@@ -31,6 +31,7 @@ static int TOKEN_FPUTC;
 static int TOKEN_MALLOC;
 static int TOKEN_SIZEOF;
 static int TOKEN_TYPEDEF;
+static int TOKEN_PRINTF;
 
 //Identififier
 static int TOKEN_IDENTIFIER;
@@ -173,6 +174,7 @@ void initTokens(){
     TOKEN_MALLOC = 15;
     TOKEN_SIZEOF = 16;
     TOKEN_TYPEDEF = 17;
+    TOKEN_PRINTF = 18;
     
     TOKEN_IDENTIFIER = 100;
     

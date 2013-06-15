@@ -14,6 +14,12 @@ unsigned int mem[MEMSIZE];
 // Global pointer
 unsigned int GP;
 
+// Stack pointer
+unsigned int SP;
+
+// Frame pointer
+unsigned int FP;
+
 // Bump pointer for continous allocation
 unsigned int bump_ptr;
 
@@ -124,6 +130,7 @@ void load(char * filename) {
 			{
 				bump_ptr = i;
 				GP = bump_ptr;
+				SP = MEMSIZE-1;
 				break;
 			}
 
@@ -142,6 +149,12 @@ void load(char * filename) {
 	}
 }
 
+void setSpecialRegisters()
+{
+	reg[0] = 0; // keep it zero
+	reg[28] = GP * 4;
+	reg[30] = SP * 4;
+}
 
 // gets next instruction
 int fetch() {
@@ -223,6 +236,7 @@ int fetch() {
 		else if(op == TARGET_POP)
 		{
 			printf("%d POP %d, %d, %d", pc, a, b, c);
+			SP = SP + 1;
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
@@ -230,6 +244,7 @@ int fetch() {
 		else if(op == TARGET_PSH)
 		{
 			printf("%d PSH %d, %d, %d", pc, a, b, c);
+			SP = SP - 1;
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;
@@ -433,8 +448,9 @@ int fetch() {
 
 	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)",
 		reg[1], reg[2], reg[3], reg[4], reg[5], reg[6], reg[7], reg[8], reg[28]);
-	reg[0] = 0; // keep it zero
-	reg[28] = GP*4;
+
+	setSpecialRegisters();
+
 	return 1; // continue
 }
 

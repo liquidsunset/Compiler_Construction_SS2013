@@ -537,7 +537,7 @@ void mark(char *message)
 void initCodeGen()
 {
     CODEGEN_GP = 28;
-    PC = 1; // the first words is saved for the J to main
+    PC = 2; // the first word is saved for the TRAP, the second words is saved for the J to main
 
     SIZE_INT = 4;
 
@@ -666,8 +666,7 @@ void writeToFile(){
 
     struct object_t *tempTypeObject;
 
-    // Add trap to terminate execution
-    put(TARGET_TRAP, 0, 0, 0);
+    
 
     // Add global variables    
     tempTypeObject = objectGlobal;
@@ -684,11 +683,14 @@ void writeToFile(){
         }
     }
 
+    // Add trap to terminate execution
+    putAt(TARGET_TRAP, 0, 0, 0, 0);
+
     // Set first instruction to J to main
     tempTypeObject = findProcedureObject(objectGlobal, "main");
     if(tempTypeObject != 0)
     {
-        putAt(TARGET_J, 0, 0, tempTypeObject->offset * 4, 0);
+        putAt(TARGET_J, 0, 0, tempTypeObject->offset * 4, 1);
     }
     else
     {

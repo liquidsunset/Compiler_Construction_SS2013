@@ -144,7 +144,7 @@ void load(char * filename) {
 		}
 		printf("Loaded %d bytes", (i*4));
 		
-		pc = 0;
+		pc = 4;
 	}
 }
 

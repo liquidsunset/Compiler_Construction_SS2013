@@ -329,6 +329,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BSR)
 		{
+			printf("%d BSR %d", pc, c);
 			reg[31] = pc + 4;
 			pc = pc + c*4;
 		}
@@ -446,8 +447,8 @@ int fetch() {
 		}
 	}
 
-	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R5: %d, R6: %d, R7: %d, R8: %d, R28 (GP): %d)",
-		reg[1], reg[2], reg[3], reg[4], reg[5], reg[6], reg[7], reg[8], reg[28]);
+	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d)",
+		reg[1], reg[2], reg[3], reg[4], reg[27], reg[28], reg[29], reg[30], reg[31]);
 
 	setSpecialRegisters();
 

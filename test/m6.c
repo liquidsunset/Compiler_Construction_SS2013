@@ -1,6 +1,6 @@
-//int even (int num);
-//int odd (int num);
-//void even_or_odd (int *numbers, int len);
+int even (int num);
+int odd (int num);
+void even_or_odd (int *numbers, int len);
 
 static int status;
 

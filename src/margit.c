@@ -236,7 +236,7 @@ int fetch() {
 		else if(op == TARGET_POP)
 		{
 			printf("%d POP %d, %d, %d", pc, a, b, c);
-			SP = SP + 1;
+			//SP = SP + 1;
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
@@ -244,7 +244,7 @@ int fetch() {
 		else if(op == TARGET_PSH)
 		{
 			printf("%d PSH %d, %d, %d", pc, a, b, c);
-			SP = SP - 1;
+			//SP = SP - 1;
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;

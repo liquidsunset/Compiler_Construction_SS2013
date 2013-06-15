@@ -148,7 +148,7 @@ struct object_t *createObject(){
     
     if(isGlobal == 0){
         newTempObject = objectLocal;
-        newObjectElement->reg = SP;
+        newObjectElement->reg = FP;
     }
     
     if(isGlobal == 1){

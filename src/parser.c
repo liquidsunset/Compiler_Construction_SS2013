@@ -2254,30 +2254,6 @@ void instruction()
             return;
         }
     }
-
-    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
-    {
-        variable_declaration();
-
-        
-        objectClass = CLASS_VAR;
-        if(createObject() == 0){
-            error("Symbol-Table: Could not create Object");
-        }
-        
-        
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; expected after variable declaration (instruction)");
-            getNextToken();
-        }
-
-        return;
-    }
 }
 
 void if_else()
@@ -2676,18 +2652,31 @@ void epilogue(int paramSize)
     put(TARGET_RET, 0, 0, LINK);
 }
 
-int variableDeclarationSequence(struct object_t * object)
+int variableDeclarationSequence(struct object_t * object) // returns the number of _local_ variables. these have to be at the top of a function
 {
-    struct object_t * currentObject;
     int x;
 
     x = 0;
-    currentObject = object->params;
-
-    while(currentObject != 0)
+    while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
     {
+        variable_declaration();
         x = x + 1;
-        currentObject = currentObject->next;
+        
+        objectClass = CLASS_VAR;
+        if(createObject() == 0){
+            error("Symbol-Table: Could not create Object (variableDeclarationSequence)");
+        }
+        
+        
+        if(tokenType == TOKEN_SEMICOLON)
+        {
+            getNextToken();
+        }
+        else
+        {
+            mark("; expected after variable declaration (variableDeclarationSequence)");
+            getNextToken();
+        }
     }
 
     return x;

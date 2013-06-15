@@ -372,6 +372,7 @@ void findToken(char *status,int len){
         if(strCompare(status, "fputc")) {tokenType = TOKEN_FPUTC; return;}
         if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
         if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
+        if(strCompare(status, "printf")) {tokenType = TOKEN_PRINTF; return;}
         if(isLetter(status[0]))
         {
             tokenType = TOKEN_IDENTIFIER;

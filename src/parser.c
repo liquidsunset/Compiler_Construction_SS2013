@@ -6,7 +6,8 @@ static int isArray;
 static int isStruct;
 static int isGlobal; // 0 for local, 1 for global
 static int objectClass;
-static int lastOffsetPointer;
+static int lastOffsetPointerGlobal;
+static int lastOffsetPointerLocal;
 static int lastFieldPointer;
 
 // -- Codegen
@@ -86,7 +87,8 @@ void initTypes(){
     typeChar->size = 4;
     typeBool->form = FORM_BOOL;
     typeBool->size = 4;
-    lastOffsetPointer = 0;
+    lastOffsetPointerGlobal = 0;
+    lastOffsetPointerLocal = 0;
     lastFieldPointer = 0;
     
 }
@@ -305,8 +307,14 @@ int addTypeToList(){
 
     if((objectClass == CLASS_VAR) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
-            tempTypeObject->offset = lastOffsetPointer - 4;
-            lastOffsetPointer = lastOffsetPointer - 4;
+            if(isGlobal == 1){
+                tempTypeObject->offset = lastOffsetPointerGlobal - 4;
+                lastOffsetPointerGlobal = lastOffsetPointerGlobal - 4;
+            }
+            if(isGlobal == 0){
+                tempTypeObject->offset = lastOffsetPointerLocal - 4;
+                lastOffsetPointerLocal = lastOffsetPointerLocal - 4;
+            }
             return 0;
         }
     }
@@ -319,8 +327,14 @@ int addTypeToList(){
             tempTypeObject->type = typeChar;
         }
         
-        tempTypeObject->offset = lastOffsetPointer - 4;
-        lastOffsetPointer = lastOffsetPointer - 4;
+        if(isGlobal == 1){
+            tempTypeObject->offset = lastOffsetPointerGlobal - 4;
+            lastOffsetPointerGlobal = lastOffsetPointerGlobal - 4;
+        }
+        if(isGlobal == 0){
+            tempTypeObject->offset = lastOffsetPointerLocal - 4;
+            lastOffsetPointerLocal = lastOffsetPointerLocal - 4;
+        }
         
         return 0;
     }
@@ -2940,6 +2954,7 @@ void top_declaration() {
         objectLocal = 0;
         lastObjectLocal = 0;
         lastFieldElementLocal = 0;
+        lastOffsetPointerLocal = 0;
         return;
     }
 }

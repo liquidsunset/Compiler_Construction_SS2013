@@ -1150,7 +1150,8 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_FCLOSE) ||
         (tokenType == TOKEN_FOPEN) ||
         (tokenType == TOKEN_SIZEOF) ||
-        (tokenType == TOKEN_MALLOC)))
+        (tokenType == TOKEN_MALLOC) ||
+        (tokenType == TOKEN_PRINTF)))
     { return 1; }
 
     if(rule == FIRST_TYPE && (
@@ -1166,7 +1167,6 @@ int isIn(int tokenType, int rule) {
     { return 1; }
 
     if(rule == FIRST_INSTRUCTION && (
-        isIn(tokenType, FIRST_VARIABLE_DECLARATION) ||
         isIn(tokenType, FIRST_TYPE_DECLARATION) ||
         (tokenType == TOKEN_IDENTIFIER) ||
         (tokenType == TOKEN_WHILE) ||
@@ -1523,7 +1523,6 @@ void printf_func() {
                 if(tokenType != TOKEN_RRB)
                 {
                     mark(") expected (printf)");
-                    return;
                 }
 
                 getNextToken();
@@ -1534,6 +1533,11 @@ void printf_func() {
             {
                 item = malloc(sizeof(struct item_t));
                 expression(item);
+                if(tokenType != TOKEN_RRB)
+                {
+                    mark(") expected (printf)");
+                }
+                getNextToken();
                 if(item->type != typeInt)
                 {
                     error("integer expected (printf)");

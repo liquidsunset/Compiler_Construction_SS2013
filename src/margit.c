@@ -14,9 +14,6 @@ unsigned int mem[MEMSIZE];
 // Global pointer
 unsigned int GP;
 
-// Stack pointer
-unsigned int SP;
-
 // Frame pointer
 unsigned int FP;
 
@@ -130,7 +127,9 @@ void load(char * filename) {
 			{
 				bump_ptr = i;
 				GP = bump_ptr;
-				SP = MEMSIZE-1;
+				reg[27] = 0;
+				reg[28] = GP * 4;
+				reg[30] = (MEMSIZE-1) * 4;
 				break;
 			}
 
@@ -449,6 +448,7 @@ int fetch() {
 		reg[1], reg[2], reg[3], reg[4], reg[27], reg[28], reg[29], reg[30], reg[31]);
 
 	reg[0] = 0; // keep it zero
+	reg[28] = GP * 4; // global pointer is constant too
 
 	return 1; // continue
 }
@@ -470,7 +470,7 @@ int main(int argc,  char ** argv) {
 	getchar();
 	while(fetch())
 	{
-        printf("\n"); //getchar();
+        printf("\n"); getchar();
 	}
 	
     printf("\nExecution stopped.\n");

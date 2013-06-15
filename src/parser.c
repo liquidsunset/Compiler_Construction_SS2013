@@ -2683,7 +2683,7 @@ int variableDeclarationSequence(struct object_t * object) // returns the number 
             getNextToken();
         }
     }
-
+    printf("# of local variables=%d\n", x);
     return x;
 }
 

@@ -2752,12 +2752,15 @@ void function_declaration()
             }
             getNextToken();
             object->type = item->type;
+
             object->offset = PC;
 
             formalParameters(object);
 
             if(tokenType == TOKEN_SEMICOLON) // function prototype
             {
+                printf("Sensed prototype\n");
+                object->offset = 0;
                 getNextToken();
                 return;
             }

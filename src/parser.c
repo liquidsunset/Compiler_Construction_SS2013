@@ -1150,8 +1150,7 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_FCLOSE) ||
         (tokenType == TOKEN_FOPEN) ||
         (tokenType == TOKEN_SIZEOF) ||
-        (tokenType == TOKEN_MALLOC) ||
-        (tokenType == TOKEN_PRINTF)))
+        (tokenType == TOKEN_MALLOC)))
     { return 1; }
 
     if(rule == FIRST_TYPE && (
@@ -1171,7 +1170,8 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_IDENTIFIER) ||
         (tokenType == TOKEN_WHILE) ||
         (tokenType == TOKEN_IF) ||
-        (tokenType == TOKEN_RETURN)))
+        (tokenType == TOKEN_RETURN) ||
+        (tokenType == TOKEN_PRINTF)))
     { return 1; }
 
     return 0;
@@ -1725,12 +1725,6 @@ void factor(struct item_t * item) {
         return;
     }
 
-    if(tokenType == TOKEN_PRINTF)
-    {
-        printf_func();
-        return;
-    }
-
     if(tokenType == TOKEN_LRB)
     {
         getNextToken();
@@ -2266,6 +2260,17 @@ void instruction()
             getNextToken();
         }
 
+        return;
+    }
+
+    if(tokenType == TOKEN_PRINTF)
+    {
+        printf_func();
+        if(tokenType != TOKEN_SEMICOLON)
+        {
+            mark("; expected after printf");
+        }
+        getNextToken();
         return;
     }
 

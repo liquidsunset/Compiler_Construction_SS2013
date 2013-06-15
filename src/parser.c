@@ -1506,6 +1506,7 @@ void fputc_func()
 
 void printf_func() {
     struct item_t * item;
+    struct object_t * object;
     int offset;
 
     if(tokenType == TOKEN_PRINTF)
@@ -1516,9 +1517,14 @@ void printf_func() {
             getNextToken();            
             if(tokenType == TOKEN_STRING_LITERAL)
             {
-                // TODO: store string and get offset to GP
+                object = createObject(objectGlobal, stringValue);
+                offset = strLen(stringValue);
 
-                put(TARGET_PRINTF, 0, 0, offset);
+                // TODO: convert char array to int array
+
+
+                lastOffsetPointerGlobal = object->offset;
+                put(TARGET_PRINTF, 0, 0, object->offset);
                 getNextToken();
                 if(tokenType != TOKEN_RRB)
                 {

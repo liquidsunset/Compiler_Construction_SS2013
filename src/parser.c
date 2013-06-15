@@ -891,7 +891,7 @@ void assignmentOperator(
     struct item_t * leftItem,
     struct item_t * rightItem)
 {
-    if(leftItem->type != rightItem->type)
+    if((leftItem->type->form != FORM_ARRAY) && (leftItem->type->form != FORM_RECORD) && (leftItem->type != rightItem->type))
     {
         mark("type mismatch in assignment");
     }

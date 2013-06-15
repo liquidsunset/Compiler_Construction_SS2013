@@ -141,8 +141,6 @@ struct object_t *createObject(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
-    newTempObject = malloc(sizeof(struct object_t));
-    
     newObjectElement = malloc(sizeof(struct object_t));
     newObjectElement->name = malloc(sizeof(char) * 1024);
     
@@ -202,9 +200,6 @@ struct type_t *findType(){
 int findTypeClassType(){
     struct object_t *tempTypeObject;
     
-    tempTypeObject = malloc(sizeof(struct object_t));
-    
-    
     if(isGlobal == 0){
         tempTypeObject = objectLocal;
     }
@@ -249,9 +244,6 @@ int findTypeClassVar(){
     struct type_t *newElement;
     
     newElement = malloc(sizeof(struct type_t));
-    
-    tempTypeObject = malloc(sizeof(struct object_t));
-    
     
     if(isGlobal == 0){
         tempTypeObject = objectLocal;
@@ -298,7 +290,6 @@ int addTypeToList(){
     struct type_t *newElement;
     struct object_t *tempTypeObject;
     
-    tempTypeObject = malloc(sizeof(struct object_t));
     newElement = malloc(sizeof(struct type_t));
     
 
@@ -429,8 +420,6 @@ int addFieldToList(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
-    
-    newTempObject = malloc(sizeof(struct object_t));
     newObjectElement = malloc(sizeof(struct object_t));
     newObjectElement->name = malloc(sizeof(char) * 1024);
     

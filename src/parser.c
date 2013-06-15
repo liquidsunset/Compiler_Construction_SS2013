@@ -685,7 +685,7 @@ void writeToFile(){
     tempTypeObject = findProcedureObject(objectGlobal, "main");
     if(tempTypeObject != 0)
     {
-        putAt(TARGET_J, 0, 0, tempTypeObject->offset, 0);
+        putAt(TARGET_J, 0, 0, tempTypeObject->offset * 4, 0);
     }
     else
     {

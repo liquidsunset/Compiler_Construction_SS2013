@@ -1843,6 +1843,18 @@ void pushParameter(struct item_t * item)
 
 struct object_t * createAnonymousParameter(struct object_t * object, struct type_t * type)
 {
+    struct object_t * paramObject;
+
+    paramObject = object->params;
+    while(paramObject->next != 0)
+    {
+        paramObject = paramObject->next;
+    }
+
+    paramObject->next = malloc(sizeof(struct object_t));
+    paramObject->class = CLASS_VAR;
+    paramObject->type = type;
+    
     return 0;
 }
 
@@ -1985,7 +1997,7 @@ void procedureCall(struct item_t * item)
     item->type = object->type;
     pushUsedRegisters();
     actualParameters(object);
-    if((object->offset != 0) && ! isBR(object->offset))
+    if((object->offset != 0) && !(isBR(object->offset)))
     {  
         sJump(object->offset - PC);
     }

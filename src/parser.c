@@ -534,7 +534,7 @@ void mark(char *message)
 void initCodeGen()
 {
     CODEGEN_GP = 28;
-    PC = 0;
+    PC = 1; // the first words is saved for the J to main
 
     SIZE_INT = 4;
 
@@ -625,7 +625,7 @@ void storeString(struct item_t * item, char *string)
     // TODO
 }
 
-void put(int op, int a, int b, int c)
+void putAt(int op, int a, int b, int c,  int pos)
 {
     int instruction;
 
@@ -636,7 +636,7 @@ void put(int op, int a, int b, int c)
     // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
     // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
 
-    printf("put %d %d %d %d\n", op, a, b, c);
+    printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
 
     if (c < 0)
     {
@@ -646,8 +646,14 @@ void put(int op, int a, int b, int c)
     // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
     instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
 
-    output[PC] = instruction;
+    output[pos] = instruction;
 
+    
+}
+
+void put(int op, int a, int b, int c)
+{
+    putAt(op, a, b, c, PC);
     PC = PC + 1;
 }
 
@@ -656,9 +662,8 @@ void writeToFile(){
     int instruction;
 
     struct object_t *tempTypeObject;
-    
-    tempTypeObject = malloc(sizeof(struct object_t));
-    
+
+    // Add global variables    
     tempTypeObject = objectGlobal;
     
     if(tempTypeObject != 0){
@@ -671,6 +676,17 @@ void writeToFile(){
         if(tempTypeObject->class == CLASS_VAR){
             put(0, 0, 0, 0);
         }
+    }
+
+    // Set first instruction to J to main
+    tempTypeObject = findProcedureObject(objectGlobal, "main");
+    if(tempTypeObject != 0)
+    {
+        putAt(TARGET_J, 0, 0, tempTypeObject->offset, 0);
+    }
+    else
+    {
+        error("No main function found");
     }
 
     i = 0;

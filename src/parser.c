@@ -1962,7 +1962,7 @@ void pushUsedRegisters() // pushed reg[1] to reg[27] onto the stack
 
     i = 1;
 
-    while(i < 28)
+    while(i < 27)
     {
         put(TARGET_PSH, i, SP, 4); // push reg[i] (size 4 bytes) on to the stack
         i = i + 1;
@@ -1975,7 +1975,7 @@ void popUsedRegisters()
 
     i = 1;
 
-    while(i < 28)
+    while(i < 27)
     {
         put(TARGET_POP, i, SP, 4); // pop data (size 4 bytes) on stack to reg[i]
         i = i + 1;

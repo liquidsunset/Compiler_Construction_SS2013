@@ -149,13 +149,6 @@ void load(char * filename) {
 	}
 }
 
-void setSpecialRegisters()
-{
-	reg[0] = 0; // keep it zero
-	reg[28] = GP * 4;
-	reg[30] = SP * 4;
-}
-
 // gets next instruction
 int fetch() {
 
@@ -450,7 +443,7 @@ int fetch() {
 	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d)",
 		reg[1], reg[2], reg[3], reg[4], reg[27], reg[28], reg[29], reg[30], reg[31]);
 
-	setSpecialRegisters();
+	reg[0] = 0; // keep it zero
 
 	return 1; // continue
 }

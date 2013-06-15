@@ -1560,10 +1560,10 @@ void factor(struct item_t * item) {
 
         object = findObject(objectLocal,stringValue); // implicitly uses stringValue
         if(object == 0){
-            object = findObject(objectGlobal, stringValue);
+            object = findObject(procedureContext->params, stringValue);
         }
         if(object == 0){
-            object = findObject(procedureContext->params, stringValue);
+            object = findObject(objectGlobal, stringValue);
         }
         getNextToken();
 
@@ -2229,12 +2229,13 @@ void instruction()
 
         // values still set from identifier before ASSIGNMENT
         object = findObject(objectLocal,stringValue); // implicitly uses stringValue
+                if(object == 0){
+            object = findObject(procedureContext->params, stringValue);
+        }
         if(object == 0){
             object = findObject(objectGlobal, stringValue);
         }
-        if(object == 0){
-            object = findObject(procedureContext->params, stringValue);
-        }
+
         if(object != 0)
         {
             leftItem->mode = CODEGEN_MODE_VAR;

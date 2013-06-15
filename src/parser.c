@@ -2985,7 +2985,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/m6.c");
+        openFile("test/m6a.c");
     }
     else
     {

@@ -1,4 +1,4 @@
 .DS_Store
-src/a.out
+a.out
 *.o
-bin/parser
+bin/

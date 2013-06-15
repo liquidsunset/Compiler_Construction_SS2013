@@ -1909,16 +1909,20 @@ struct object_t * createAnonymousParameter(struct object_t * object, struct type
     struct object_t * paramObject;
 
     paramObject = object->params;
-    while(paramObject->next != 0)
-    {
-        paramObject = paramObject->next;
+    if(paramObject != 0){
+        while(paramObject->next != 0)
+        {
+            paramObject = paramObject->next;
+        }
+    }else{
+        paramObject = malloc(sizeof(struct object_t));
     }
-
+    
     paramObject->next = malloc(sizeof(struct object_t));
     paramObject->class = CLASS_VAR;
     paramObject->type = type;
     
-    return 0;
+    return paramObject;
 }
 
 struct object_t * actualParameter(
@@ -3091,7 +3095,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/m6a.c");
+        openFile("test/m6.c");
     }
     else
     {

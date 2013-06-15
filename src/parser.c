@@ -312,7 +312,7 @@ int addTypeToList(){
     
     
 
-    if((objectClass == 2) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+    if((objectClass == CLASS_VAR) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
             tempTypeObject->offset = lastOffsetPointer - 4;
             lastOffsetPointer = lastOffsetPointer - 4;
@@ -320,7 +320,7 @@ int addTypeToList(){
         }
     }
     
-    if(objectClass == 2 && (isArray == 0 && isStruct == 0)){
+    if(objectClass == CLASS_VAR && (isArray == 0 && isStruct == 0)){
         if(currentType == FORM_INT){
             tempTypeObject->type = typeInt;
         }
@@ -335,7 +335,7 @@ int addTypeToList(){
     }
     
         
-    if(objectClass == 2 && (isArray == 1 && isStruct == 0)){
+    if(objectClass == CLASS_VAR && (isArray == 1 && isStruct == 0)){
         newElement->form = FORM_ARRAY;
         if(currentType == FORM_INT){
             newElement->base = typeInt;

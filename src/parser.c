@@ -1517,8 +1517,9 @@ void printf_func() {
             getNextToken();            
             if(tokenType == TOKEN_STRING_LITERAL)
             {
-                object = createObject(objectGlobal, stringValue);
-                offset = strLen(stringValue);
+                isGlobal = 1;
+                object = createObject();
+                offset = strLength(stringValue);
 
                 // TODO: convert char array to int array
 

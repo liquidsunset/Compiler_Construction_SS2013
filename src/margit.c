@@ -148,6 +148,42 @@ void load(char * filename) {
 	}
 }
 
+char * getString(int startAddress)
+{
+	int byte;
+	char * string;
+	int i;
+
+	i = 0;
+	string = malloc(sizeof(char) * 1000);
+	byte = (mem[startAddress] >> 24) & 255;
+	while(byte != 0)
+	{
+		string[i] = byte;
+		i++;
+
+		if(i%4 == 0)
+		{
+			byte = (mem[startAddress + (i/4)] >> 24) & 255;
+		}
+		if(i%4 == 1)
+		{
+			byte = (mem[startAddress + (i/4)] >> 16) & 255;
+		}
+		if(i%4 == 2)
+		{
+			byte = (mem[startAddress + (i/4)] >> 8) & 255;
+		}
+		if(i%4 == 3)
+		{
+			byte = mem[startAddress + (i/4)] & 255;
+		}
+	}
+	string[i] = 0;
+
+	return string;
+}
+
 // gets next instruction
 int fetch() {
 
@@ -424,12 +460,12 @@ int fetch() {
 		}
 		else if(op == TARGET_PRINTF)
 		{
-
+			printf("> %s", getString((reg[b] + c) / 4));
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
 		{
-			printf("%d", reg[c]);
+			printf("> %d", reg[c]);
 			pc = pc + 4;
 		}
 

@@ -1521,11 +1521,8 @@ void printf_func() {
                 object = createObject();
                 offset = strLength(stringValue);
 
-                // TODO: convert char array to int array
-
-
                 lastOffsetPointerGlobal = object->offset;
-                put(TARGET_PRINTF, 0, 0, object->offset);
+                put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
                 getNextToken();
                 if(tokenType != TOKEN_RRB)
                 {

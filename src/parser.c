@@ -1520,7 +1520,8 @@ void printf_func() {
                 isGlobal = 1;
                 object = createObject();
                 offset = strLength(stringValue);
-
+                object->offset = offset;
+                object->class = CLASS_STRING;
                 lastOffsetPointerGlobal = object->offset;
                 put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
                 getNextToken();

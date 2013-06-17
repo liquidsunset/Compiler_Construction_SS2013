@@ -1572,10 +1572,10 @@ void printf_func() {
             {
                 isGlobal = 1;
                 object = createObject();
-                offset = strLength(stringValue);
-                object->offset = offset;
+                offset = strLength(stringValue) + 1;
+                object->offset = lastOffsetPointerGlobal - offset;
                 object->class = CLASS_STRING;
-                lastOffsetPointerGlobal = object->offset;
+                lastOffsetPointerGlobal = lastOffsetPointerGlobal - object->offset;
                 put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
                 getNextToken();
                 if(tokenType != TOKEN_RRB)

@@ -6,7 +6,6 @@ margit: margit.o
 	./bin/margit
 
 parser: parser.o
-	rm a.out
 	mkdir -p bin/
 	gcc -o bin/parser bin/parser.o
 	./bin/parser test/m6.c

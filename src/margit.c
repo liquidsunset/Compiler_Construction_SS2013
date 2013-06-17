@@ -460,13 +460,16 @@ int fetch() {
 		}
 		else if(op == TARGET_PRINTF)
 		{
-			printf("> '%s'", getString((reg[b] + c) / 4));
+			printf("%d PRINTF %d, %d, %d", pc, a, b, c);
+			printf("\n> '%s'", getString((reg[b] + c) / 4));
 			getchar();
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
 		{
-			printf("> %d", reg[c]);
+			printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
+			printf("\n> %d", reg[c]);
+			getchar();
 			pc = pc + 4;
 		}
 

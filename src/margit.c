@@ -528,7 +528,5 @@ int main(int argc,  char ** argv) {
 	}
 	
     printf("\nExecution stopped.\n");
-
-    printf("reg->max=%d\nreg->avg=%d\nrec->sum=%d\n", mem[119+1], mem[119+3], mem[119+2]);
 	return 0;
 }

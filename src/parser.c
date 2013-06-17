@@ -693,12 +693,7 @@ void putString(char * string)
 
         i = i + 1;
     }
-
-    if(word == 0)
-    {
-        putRaw(0); // manually add null terminator
-    }
-
+    putRaw(word); // finish the current word
 }
 
 void writeToFile(){

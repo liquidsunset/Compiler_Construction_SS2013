@@ -89,6 +89,7 @@ static int CLASS_VAR;
 static int CLASS_TYPE;
 static int CLASS_FIELD;
 static int CLASS_PROC;
+static int CLASS_STRING;
 
 static int FORM_ARRAY;
 static int FORM_RECORD;
@@ -238,6 +239,7 @@ void initTokens(){
     CLASS_TYPE = 1;
     CLASS_VAR = 2;
     CLASS_PROC = 3;
+    CLASS_STRING = 4;
 
     FORM_RECORD = 0;
     FORM_ARRAY = 1;

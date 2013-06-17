@@ -460,7 +460,7 @@ int fetch() {
 		}
 		else if(op == TARGET_PRINTF)
 		{
-			printf("> %s", getString((reg[b] + c) / 4));
+			printf("> '%s'", getString((reg[b] + c) / 4));
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)

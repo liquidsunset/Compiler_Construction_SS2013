@@ -623,11 +623,6 @@ int address(char *identifier)
     return -1;
 } 
 
-void storeString(struct item_t * item, char *string)
-{
-    // TODO
-}
-
 void putAt(int op, int a, int b, int c,  int pos)
 {
     int instruction;
@@ -650,7 +645,6 @@ void putAt(int op, int a, int b, int c,  int pos)
     instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
 
     output[pos] = instruction;
-
     
 }
 
@@ -660,6 +654,53 @@ void put(int op, int a, int b, int c)
     PC = PC + 1;
 }
 
+void putRaw(int word)
+{
+    output[PC] = word;
+    PC = PC + 1;
+}
+
+void putString(char * string)
+{
+    int i;
+    int word;
+    int c;
+
+    i = 0;
+    word = 0;
+
+    while(string[i] != 0)
+    {
+        c = string[i];
+        if(i%4 == 0)
+        {
+            word = word | (c << 24);
+        }
+        if(i%4 == 1)
+        {
+            word = word | (c << 16);
+        }
+        if(i%4 == 2)
+        {
+            word = word | (c << 8);
+        }
+        if(i%4 == 0)
+        {
+            word = word | c;
+            putRaw(word);
+            word = 0;
+        }
+
+        i = i + 1;
+    }
+
+    if(word == 0)
+    {
+        putRaw(0); // manually add null terminator
+    }
+
+}
+
 void writeToFile(){
     int i;
     int instruction;
@@ -667,6 +708,21 @@ void writeToFile(){
     struct object_t *tempTypeObject;
 
     
+    // Add strings
+    tempTypeObject = objectGlobal;
+    
+    if(tempTypeObject != 0){
+        while(tempTypeObject->next != 0){
+            if(tempTypeObject->class == CLASS_STRING){
+                putString(tempTypeObject->name);
+            }
+            tempTypeObject = tempTypeObject->next;
+        }
+        if(tempTypeObject->class == CLASS_STRING){
+            putString(tempTypeObject->name);
+        }
+    }
+
 
     // Add global variables    
     tempTypeObject = objectGlobal;
@@ -682,6 +738,8 @@ void writeToFile(){
             put(0, 0, 0, 0);
         }
     }
+
+
 
     // Add trap to terminate execution
     putAt(TARGET_TRAP, 0, 0, 0, 0);
@@ -1609,7 +1667,7 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_STRING_LITERAL)
     {
-        storeString(item, stringValue);
+        mark("String not expected here");
         getNextToken();
         return;
     }

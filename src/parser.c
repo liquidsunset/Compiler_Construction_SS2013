@@ -1622,14 +1622,15 @@ void printf_func() {
             {
                 object = addStringToList();
                 printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
+                //printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
                 offset = strLength(stringValue) + 1;
-                printf("object->name=%s\n", object->name);
-                printf("stringLength('%s')+1=%d\n", object->name, offset);
+                //printf("object->name=%s\n", object->name);
+                //printf("stringLength('%s')+1=%d\n", object->name, offset);
                 object->offset = lastOffsetPointerGlobal - wordalignOffset(offset) + 4;
-                printf("object->offset=%d\n", object->offset);
+                //printf("object->offset=%d\n", object->offset);
                 object->class = CLASS_STRING;
                 lastOffsetPointerGlobal = object->offset;
-                printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
+                //printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
                 put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
                 getNextToken();
                 if(tokenType != TOKEN_RRB)

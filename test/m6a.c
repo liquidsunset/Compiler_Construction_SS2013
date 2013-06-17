@@ -3,7 +3,10 @@ static int x;
 int test(int x, int y)
 {
 	int z;
+	printf(x);
+	printf(y);
 	z = x+y;
+	printf(z);
 	return z;
 }
 

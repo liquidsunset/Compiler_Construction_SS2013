@@ -684,7 +684,7 @@ void putString(char * string)
         {
             word = word | (c << 8);
         }
-        if(i%4 == 0)
+        if(i%4 == 3)
         {
             word = word | c;
             putRaw(word);

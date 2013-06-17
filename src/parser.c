@@ -51,6 +51,7 @@ struct object_t{
     int offset;
     struct type_t *type;
     struct object_t *next;
+    struct object_t *previous;
     struct object_t * params;
     int value;
     int reg;
@@ -64,6 +65,7 @@ void getFromList()
 
 struct object_t *objectGlobal;
 struct object_t *objectLocal;
+struct object_t *strings;
 
 struct object_t *lastObjectGlobal;
 struct object_t *lastObjectLocal;
@@ -138,6 +140,33 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
 }
 
 int addTypeToList();
+
+struct object_t *addStringToList(){
+    struct object_t *newObjectElement;
+    struct object_t *newTempObject;
+    
+    newObjectElement = malloc(sizeof(struct object_t));
+    newObjectElement->name = malloc(sizeof(char) * 1024);
+    
+    newTempObject = strings;
+    
+    strCopy(stringValue, newObjectElement->name);
+    newObjectElement->next = 0;
+    
+    if(newTempObject != 0){
+        while (newTempObject->next != 0) {
+            newTempObject = newTempObject->next;
+        }
+        newTempObject->next = newObjectElement;
+        newObjectElement->previous = newTempObject;
+    }
+    else{
+            strings = newObjectElement;
+            newTempObject = newObjectElement;
+        }
+    return newObjectElement;
+    
+}
 
 struct object_t *createObject(){
     struct object_t *newObjectElement;
@@ -704,15 +733,26 @@ void writeToFile(){
 
     
     // Add strings
-    tempTypeObject = objectGlobal;
+    tempTypeObject = strings;
     
     if(tempTypeObject != 0){
         while(tempTypeObject->next != 0){
+//            if(tempTypeObject->class == CLASS_STRING){
+//                putString(tempTypeObject->name);
+//            }
+            tempTypeObject = tempTypeObject->next;
+        }
+//        if(tempTypeObject->class == CLASS_STRING){
+//            putString(tempTypeObject->name);
+//        }
+        
+        while (tempTypeObject->previous != 0) {
             if(tempTypeObject->class == CLASS_STRING){
                 putString(tempTypeObject->name);
             }
-            tempTypeObject = tempTypeObject->next;
+            tempTypeObject = tempTypeObject->previous;
         }
+        
         if(tempTypeObject->class == CLASS_STRING){
             putString(tempTypeObject->name);
         }
@@ -1580,8 +1620,7 @@ void printf_func() {
             getNextToken();            
             if(tokenType == TOKEN_STRING_LITERAL)
             {
-                isGlobal = 1;
-                object = createObject();
+                object = addStringToList();
                 printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
                 offset = strLength(stringValue) + 1;
                 printf("object->name=%s\n", object->name);

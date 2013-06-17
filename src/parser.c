@@ -1626,7 +1626,7 @@ void printf_func() {
                 offset = strLength(stringValue) + 1;
                 //printf("object->name=%s\n", object->name);
                 //printf("stringLength('%s')+1=%d\n", object->name, offset);
-                object->offset = lastOffsetPointerGlobal - wordalignOffset(offset) + 4;
+                object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
                 //printf("object->offset=%d\n", object->offset);
                 object->class = CLASS_STRING;
                 lastOffsetPointerGlobal = object->offset;

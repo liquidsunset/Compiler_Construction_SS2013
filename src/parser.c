@@ -604,8 +604,8 @@ int branch(int operator)
     if(operator == TOKEN_GREATEREQUAL) { return TARGET_BGE; }
     if(operator == TOKEN_UNEQUAL) { return TARGET_BNE; }
     if(operator == TOKEN_EQUAL) { return TARGET_BEQ; }
-    if(operator == TOKEN_LESS) { return TARGET_BLE; }
-    if(operator == TOKEN_LESSEQUAL) { return TARGET_BLT; }
+    if(operator == TOKEN_LESS) { return TARGET_BLT; }
+    if(operator == TOKEN_LESSEQUAL) { return TARGET_BLE; }
 
     return 0;
 }
@@ -3217,7 +3217,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/m6.c");
+        openFile("test/boolean_expressions.c");
     }
     else
     {

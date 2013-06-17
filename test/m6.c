@@ -1,6 +1,7 @@
 int even (int num);
 int odd (int num);
 void even_or_odd (int *numbers, int len);
+void even_or_odd2 (int *numbers, int len);
 
 int main () {
     int *numbers;//[3] = { -2, 0, 7 };

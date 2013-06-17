@@ -1941,7 +1941,7 @@ struct object_t * actualParameter(
 
         if(formalParameter != 0)
         {
-            if(item->type != formalParameter->type)
+            if(item->type->form != formalParameter->type->form)
             {
                 mark("Type mismatch in procedure call");
             }

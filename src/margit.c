@@ -461,6 +461,7 @@ int fetch() {
 		else if(op == TARGET_PRINTF)
 		{
 			printf("> '%s'", getString((reg[b] + c) / 4));
+			getchar();
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
@@ -519,7 +520,8 @@ int main(int argc,  char ** argv) {
 	getchar();
 	while(fetch())
 	{
-        printf("\n"); getchar();
+        printf("\n");
+        // getchar();
 	}
 	
     printf("\nExecution stopped.\n");

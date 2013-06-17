@@ -1564,7 +1564,7 @@ int wordalignOffset(int offset)
         return offset;
     }
 
-    return (offset-4)/4;
+    return (offset+4)/4;
 }
 
 void printf_func() {
@@ -1583,9 +1583,9 @@ void printf_func() {
                 isGlobal = 1;
                 object = createObject();
                 offset = strLength(stringValue) + 1;
-                object->offset = wordalignOffset(lastOffsetPointerGlobal - offset);
+                object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
                 object->class = CLASS_STRING;
-                lastOffsetPointerGlobal = lastOffsetPointerGlobal - object->offset;
+                lastOffsetPointerGlobal = object->offset;
                 put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
                 getNextToken();
                 if(tokenType != TOKEN_RRB)

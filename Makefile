@@ -1,14 +1,25 @@
-default: parser
+default: all
+
+all: run-parser run-margit
+
+test: ctest run-margit
+
+ctest: parser margit
+	./bin/parser test/boolean_expressions.c
+
+run-margit: margit
+	./bin/margit
+
+run-parser: parser
+	./bin/parser test/m6test.c
 
 margit: margit.o
 	mkdir -p bin/
 	gcc -o bin/margit bin/margit.o
-	./bin/margit
 
 parser: parser.o
 	mkdir -p bin/
 	gcc -o bin/parser bin/parser.o
-	./bin/parser test/m6.c
 	
 debug: parser.o margit.o
 	gcc -g src/parser.c -o bin/parser 

@@ -3217,7 +3217,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/boolean_expressions.c");
+        openFile("test/m6test.c");
     }
     else
     {

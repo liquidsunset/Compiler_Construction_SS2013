@@ -877,7 +877,9 @@ int fJump()
 
 void encodeC(int address, int c)
 {
-    // assumes c is 0
+
+    output[address] = output[address] / 65536;
+    output[address] = output[address] * 65536;
     output[address] = output[address] | c;
 }
 

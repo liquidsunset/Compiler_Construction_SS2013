@@ -189,7 +189,7 @@ int fetch() {
 
 	if((pc/4) >= MEMSIZE)
 	{
-		printf("\nERROR: PC exceeded memory size\n");
+		printf("\n%d ERROR: PC exceeded memory size\n", pc);
 		return 0;
 	}
 
@@ -197,16 +197,18 @@ int fetch() {
 
 	op = (instruction >> 26) & 63;
 
-	if(op == TARGET_NOP)
-	{
-		printf("\nERROR: Hit NOP %d\n", TARGET_NOP);
-		return 0;
-	}
 	if(pc >= (GP*4))
 	{
-		printf("\nERROR: PC exceeded code segment\n");
+		printf("\n%d ERROR: PC exceeded code segment\n", pc);
 		return 0;
 	}
+
+	if(op == TARGET_NOP)
+	{
+		printf("\n%d ERROR: Hit NOP %d\n", pc, TARGET_NOP);
+		return 0;
+	}
+	
 
 	if(isF1(op) || isF2(op))
 	{

@@ -1,16 +1,15 @@
 int minus(int a)
 {
-    int z;
     if(a <= 0)
     {
+        printf("Hit first return");
         return 0;
     }
     else
     {
-        z = minus(a-1);
+        printf("Hit second return");
         return 1;
     }
-
 }
 
 void main()

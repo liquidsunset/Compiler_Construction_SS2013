@@ -526,7 +526,7 @@ int main(int argc,  char ** argv) {
 	while(fetch())
 	{
         printf("\n");
-        getchar();
+        //getchar();
 	}
 	
     printf("\nExecution stopped.\n");

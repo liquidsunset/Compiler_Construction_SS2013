@@ -2128,7 +2128,7 @@ int sJump(int branchAddress)
 
 int isBR(int address)
 {
-    return ((output[address/4] >> 26) & 63) == TARGET_BR;
+    return ((output[address] >> 26) & 63) == TARGET_BSR;
 }
 
 void pushUsedRegisters() // pushed reg[1] to reg[27] onto the stack

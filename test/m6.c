@@ -45,8 +45,6 @@ int even (int num) {
     if (num == 0) {
         return 1;
     } else {
-        printf("even() says:");
-        printf(num);
         return odd(num-1);
     }
 }
@@ -55,8 +53,6 @@ int odd (int num) {
     if (num == 0) {
         return 0;
     } else {
-        printf("odd() says:");
-        printf(num);
         return even(num-1);
     }
 }

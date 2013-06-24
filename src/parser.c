@@ -3219,7 +3219,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/m6test.c");
+        openFile("test/m6.c");
     }
     else
     {

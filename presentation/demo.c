@@ -16,7 +16,7 @@ void main()
     int offset;
 	int i;
     
-	offset = 4;
+	offset = 1;
 
 	array = malloc(sizeof(struct array_t));
 	array->len = 5;

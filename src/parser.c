@@ -3140,7 +3140,11 @@ void top_declaration() {
 
         isGlobal = 1;
         objectClass = CLASS_VAR;
-        isStruct = 1;
+        if(currentType == TOKEN_STRUCT){
+            isStruct = 1;
+        }else{
+            isStruct = 0;
+        }
         if(createObject() == 0){
             error("Symbol-Table: Could not create Object");;
         }

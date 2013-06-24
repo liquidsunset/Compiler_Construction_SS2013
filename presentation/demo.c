@@ -15,7 +15,6 @@ void main()
 {
     int offset;
 	int i;
-    
 
 	array = malloc(sizeof(struct array_t));
 	array->len = 5;

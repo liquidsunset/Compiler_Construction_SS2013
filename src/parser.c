@@ -2149,12 +2149,12 @@ void popUsedRegisters()
 {
     int i;
 
-    i = 1;
+    i = 26;
 
-    while(i < 27)
+    while(i >= 0)
     {
         put(TARGET_POP, i, SP, 4); // pop data (size 4 bytes) on stack to reg[i]
-        i = i + 1;
+        i = i - 1;
     }
 }
 

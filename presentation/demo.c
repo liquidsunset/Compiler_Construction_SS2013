@@ -16,22 +16,21 @@ void main()
     int offset;
 	int i;
     
-	offset = 4;
 
 	array = malloc(sizeof(struct array_t));
 	array->len = 5;
 	array->numbers = malloc(array->len * sizeof(int));
     
-	array->numbers[0] = fib(offset+0);
-	array->numbers[1] = fib(offset+1);
-	array->numbers[2] = fib(offset+2);
-	array->numbers[3] = fib(offset+3);
-	array->numbers[4] = fib(offset+4);
+	array->numbers[0] = fib(0);
+	array->numbers[1] = fib(1);
+	array->numbers[2] = fib(2);
+	array->numbers[3] = fib(3);
+	array->numbers[4] = fib(4);
     
 	i = 0;
 	while(i < array->len)
 	{
-		printf(i+offset);
+		printf(i);
 		printf(". Fibonacci-Zahl: ");
         
 		if(even(array->numbers[i]) > 0)

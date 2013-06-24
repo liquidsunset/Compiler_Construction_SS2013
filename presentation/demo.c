@@ -20,16 +20,19 @@ void main()
 	array->len = 5;
 	array->numbers = malloc(array->len * sizeof(int));
     
-	array->numbers[0] = fib(4);
-	array->numbers[1] = fib(5);
-	array->numbers[2] = fib(6);
-	array->numbers[3] = fib(7);
-	array->numbers[4] = fib(8);
+	offset = 4;
+
+	i = 0;
+	while(i < array->len)
+	{
+		array->numbers[i] = fib(i+offset);
+		i = i + 1;
+	}
     
 	i = 0;
 	while(i < array->len)
 	{
-		printf(i);
+		printf(i+offset);
 		printf(". Fibonacci-Zahl: ");
         
 		if(even(array->numbers[i]) > 0)

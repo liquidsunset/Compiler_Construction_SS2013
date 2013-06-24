@@ -168,12 +168,14 @@ struct object_t *addStringToList(){
     
 }
 
-struct object_t *createObject(){
+struct object_t *createObject(int classType){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
     newObjectElement = malloc(sizeof(struct object_t));
     newObjectElement->name = malloc(sizeof(char) * 1024);
+    newObjectElement->class = classType;
+    
     
     if(isGlobal == 0){
         newTempObject = objectLocal;
@@ -217,8 +219,9 @@ struct object_t *createObject(){
         lastObjectGlobal = newObjectElement;
     }
 
-
-    addTypeToList();
+    if(classType != CLASS_PROC){
+        addTypeToList();        
+    }
     return newObjectElement;
 }
 
@@ -334,7 +337,7 @@ int addTypeToList(){
     
     
 
-    if((objectClass == CLASS_VAR) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+    if((objectClass == CLASS_VAR) && (isArray == 1 || isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
@@ -2164,7 +2167,7 @@ void procedureCall(struct item_t * item)
     {
         mark("undeclared procedure procedureCall");
         isGlobal = 1;
-        object = createObject();
+        object = createObject(CLASS_PROC);
 
         object->class = CLASS_PROC;
         object->type = 0; // = UNKNOWN_TYPE; // TODO
@@ -2886,7 +2889,7 @@ int variableDeclarationSequence(struct object_t * object) // returns the number 
         x = x + 1;
         
         objectClass = CLASS_VAR;
-        if(createObject() == 0){
+        if(createObject(CLASS_VAR) == 0){
             error("Symbol-Table: Could not create Object (variableDeclarationSequence)");
         }
         
@@ -2930,7 +2933,7 @@ void function_declaration()
             else // the procedure is newly declared
             {
                 isGlobal = 1; // add procedure to global symbol table
-                object = createObject();
+                object = createObject(CLASS_PROC);
                 isGlobal = 0; // return to local mode
                 object->class = CLASS_PROC;
             }
@@ -3046,7 +3049,7 @@ void struct_declaration()
             objectClass = CLASS_TYPE; 
             isArray = 0;
             isGlobal = 1;
-            if(createObject() == 0){
+            if(createObject(CLASS_TYPE) == 0){
                 error("Symbol-Table: Could not create Object");
             }
             
@@ -3143,7 +3146,7 @@ void top_declaration() {
         }else{
             isStruct = 0;
         }
-        if(createObject() == 0){
+        if(createObject(CLASS_VAR) == 0){
             error("Symbol-Table: Could not create Object");;
         }
 

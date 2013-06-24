@@ -774,8 +774,6 @@ void writeToFile(){
         }
     }
 
-
-
     // Add trap to terminate execution
     putAt(TARGET_TRAP, 0, 0, 0, 0);
 

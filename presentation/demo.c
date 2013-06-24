@@ -20,11 +20,11 @@ void main()
 	array->len = 5;
 	array->numbers = malloc(array->len * sizeof(int));
     
-	array->numbers[0] = fib(0);
-	array->numbers[1] = fib(1);
-	array->numbers[2] = fib(2);
-	array->numbers[3] = fib(3);
-	array->numbers[4] = fib(4);
+	array->numbers[0] = fib(4);
+	array->numbers[1] = fib(5);
+	array->numbers[2] = fib(6);
+	array->numbers[3] = fib(7);
+	array->numbers[4] = fib(8);
     
 	i = 0;
 	while(i < array->len)

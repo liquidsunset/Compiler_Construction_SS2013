@@ -3140,6 +3140,7 @@ void top_declaration() {
 
         isGlobal = 1;
         objectClass = CLASS_VAR;
+        isStruct = 1;
         if(createObject() == 0){
             error("Symbol-Table: Could not create Object");;
         }
@@ -3219,7 +3220,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/m6.c");
+        openFile("presentation/demo.c");
     }
     else
     {

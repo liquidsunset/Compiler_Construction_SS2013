@@ -5,6 +5,8 @@ void even_or_odd (int *numbers, int len);
 int main () {
     int *numbers;//[3] = { -2, 0, 7 };
     int len;
+    int b;
+
     len = 3;
     
     numbers = malloc(sizeof(int)*len);

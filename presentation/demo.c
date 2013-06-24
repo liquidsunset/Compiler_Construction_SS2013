@@ -7,11 +7,13 @@ struct array_t
 {
 	int * numbers;
 	int len;
-}
+};
+
+static struct array_t * array;
 
 void main()
 {
-	struct array_t * array;
+
 	int i;
 
 	array = malloc(sizeof(struct array_t));

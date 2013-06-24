@@ -11,7 +11,7 @@ run-margit: margit
 	./bin/margit
 
 run-parser: parser
-	./bin/parser test/m6.c
+	./bin/parser presentation/demo.c
 
 margit: margit.o
 	mkdir -p bin/

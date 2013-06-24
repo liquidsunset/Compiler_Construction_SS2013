@@ -13,25 +13,25 @@ static struct array_t * array;
 
 void main()
 {
-
+    
 	int i;
-
+    
 	array = malloc(sizeof(struct array_t));
 	array->len = 5;
 	array->numbers = malloc(array->len * sizeof(int));
-
+    
 	array->numbers[0] = fib(0);
 	array->numbers[1] = fib(1);
 	array->numbers[2] = fib(2);
 	array->numbers[3] = fib(3);
 	array->numbers[4] = fib(4);
-
+    
 	i = 0;
 	while(i < array->len)
 	{
 		printf(i);
 		printf(". Fibonacci-Zahl: ");
-
+        
 		if(even(array->numbers[i]) > 0)
 		{
 			printf(array->numbers[i]);
@@ -52,7 +52,7 @@ int fib(int n)
 	{
 		return 1;
 	}
-
+    
 	return fib(n-2) + fib(n-1);
 }
 

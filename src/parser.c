@@ -1261,7 +1261,8 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_FCLOSE) ||
         (tokenType == TOKEN_FOPEN) ||
         (tokenType == TOKEN_SIZEOF) ||
-        (tokenType == TOKEN_MALLOC)))
+        (tokenType == TOKEN_MALLOC) ||
+        (tokenType == TOKEN_NOT)))
     { return 1; }
 
     if(rule == FIRST_TYPE && (

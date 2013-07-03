@@ -3264,7 +3264,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/scanner.c");
+        openFile("src/scanner.c");
     }
     else
     {

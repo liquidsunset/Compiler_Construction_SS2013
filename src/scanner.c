@@ -2,7 +2,7 @@
 #include <stdio.h> // used for tests
 #include "globals.c"
 
-static FILE *fp;
+static FILE * fp;
 
 static int tokenType;
 static int intValue;

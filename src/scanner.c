@@ -181,8 +181,14 @@ int characterClass(char c)
 // Returns:
 // 	0 if current token continues
 // 	1 if it is terminated
-int peek(char current, char next)
+int peek(int current, int next)
 {
+    char ccurrent;
+    char cnext;
+
+    ccurrent = current;
+    cnext = next;
+
     if((current == 34) && !(isInChar > 0) && !(isInString > 0)) // add the starting "
     {
         isInString = 1;
@@ -197,12 +203,12 @@ int peek(char current, char next)
     if(isInString > 0) {return 0;}
 
     // Char literals (duplicated to support something like "'a'"):
-
     if((current == 39) && !(isInChar > 0)) // add the starting "
     {
         isInChar = 1;
         return 0;
     }
+
     if((next == 39) && (isInChar > 0)) {return 0;} // add the ending "
     if((current == 39) && (isInChar > 0)) // terminate after the ending "
     {
@@ -211,9 +217,11 @@ int peek(char current, char next)
     }
     if(isInChar > 0) {return 0;}
 
+    
+
     if((current < 0) || (next < 0)) {return 1;} // EOF
-	if(isWhitespace(next) > 0) {return 1;} // Whitespace always terminates.
-	if((isTerminalChar(current) > 0) || (isTerminalChar(next) > 0)) {return 1;} // Brackets always terminate (as they are single char tokens)
+	if(isWhitespace(cnext) > 0) {return 1;} // Whitespace always terminates.
+	if((isTerminalChar(ccurrent) > 0) || (isTerminalChar(cnext) > 0)) {return 1;} // Brackets always terminate (as they are single char tokens)
 
     //if(current == '\'' || next == '\'') return 0; // char literals
 
@@ -224,11 +232,11 @@ int peek(char current, char next)
     //}
     if(current == 35) {return 0;}
 
-    if((isLetter(current)>0) && (isLetter(next)>0)) {return 0;} //Letter letter: avg
-    if((isDigit(current)>0) && (isDigit(next)>0)) {return 0;} // Digit digit: 42
-    if((isLetter(current)>0) && (isDigit(next)>0)) {return 0;} // Letter digit: List1
+    if((isLetter(ccurrent)>0) && (isLetter(cnext)>0)) {return 0;} //Letter letter: avg
+    if((isDigit(ccurrent)>0) && (isDigit(cnext)>0)) {return 0;} // Digit digit: 42
+    if((isLetter(ccurrent)>0) && (isDigit(cnext)>0)) {return 0;} // Letter digit: List1
 
-    if ((isOperator(current)>0) && (isOperator(next)>0)) {return 0;}
+    if ((isOperator(ccurrent)>0) && (isOperator(cnext)>0)) {return 0;}
 
 	return 1;
 }

@@ -1,7 +1,7 @@
 #include <stdio.h> // used for tests
 #include "globals.c"
 
-static FILE * fp;
+static int * fp;
 
 static int tokenType;
 static int intValue;
@@ -156,7 +156,7 @@ int peek(int current, int next)
         return 0;
     }
     if((next == 34) && isInString) {return 0;} // add the ending "
-    if((current == 34) && isInString) // terminate after the ending "
+    if((current == '\"') && isInString) // terminate after the ending "
     {
         isInString = 0;
         return 1;
@@ -191,7 +191,7 @@ int peek(int current, int next)
     //}
     if(current == 35) {return 0;}
 
-    if(isLetter(current) && isLetter(next)) { return 0; } //Letter letter: avg
+    if(isLetter(current) && isLetter(next)) {return 0;} //Letter letter: avg
     if(isDigit(current) && isDigit(next)) {return 0;} // Digit digit: 42
     if(isLetter(current) && isDigit(next)) {return 0;} // Letter digit: List1
 

@@ -1,4 +1,4 @@
-sudefault: all
+default: parser
 
 all: run-parser run-margit
 
@@ -14,11 +14,9 @@ run-parser: parser
 	./bin/parser src/scanner.c
 
 margit: margit.o
-	mkdir -p bin/
 	gcc -o bin/margit bin/margit.o
 
 parser: parser.o
-	mkdir -p bin/
 	gcc -o bin/parser bin/parser.o
 	
 debug: parser.o margit.o
@@ -26,4 +24,9 @@ debug: parser.o margit.o
 	gcc -g src/margit.c -o bin/margit
 
 %.o: src/%.c
+	mkdir -p bin/
 	gcc -c -Wall $< -o bin/$@
+
+clean:
+	rm -r bin/
+	rm a.out

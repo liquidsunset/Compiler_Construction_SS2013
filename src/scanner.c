@@ -13,8 +13,8 @@ static int lin;
 static int col;
 
 // String literals:
-static int isInString;
-static int isInChar;
+//static int isInString;
+//static int isInChar;
 
 static int currentChar;
 static int nextChar;

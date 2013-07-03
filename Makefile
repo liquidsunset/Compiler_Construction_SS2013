@@ -1,4 +1,4 @@
-default: all
+sudefault: all
 
 all: run-parser run-margit
 
@@ -11,7 +11,7 @@ run-margit: margit
 	./bin/margit
 
 run-parser: parser
-	./bin/parser presentation/demo.c
+	./bin/parser src/scanner.c
 
 margit: margit.o
 	mkdir -p bin/

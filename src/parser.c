@@ -2445,7 +2445,7 @@ void instruction()
 
         // values still set from identifier before ASSIGNMENT
         object = findObject(objectLocal,stringValue); // implicitly uses stringValue
-                if(object == 0){
+        if(object == 0){
             object = findObject(procedureContext->params, stringValue);
         }
         if(object == 0){
@@ -3249,7 +3249,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("presentation/demo.c");
+        openFile("src/scanner.c");
     }
     else
     {

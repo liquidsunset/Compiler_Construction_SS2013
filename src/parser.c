@@ -107,13 +107,13 @@ struct object_t *findObject(struct object_t *firstElement, char *identifier){
     if(firstElement != 0){
         while (firstElement->next != 0) {
             if(strCompare(firstElement->name, identifier)){
-                printf("\nSymbol table: found %s\n", stringValue);
+                //printf("\nSymbol table: found %s\n", stringValue);
                 return firstElement;
             }
             firstElement = firstElement->next;
         }
         if(strCompare(firstElement->name, identifier)){
-            printf("\nSymbol table: found %s\n", stringValue);
+            //printf("\nSymbol table: found %s\n", stringValue);
             return firstElement;
         }
     }
@@ -1116,7 +1116,7 @@ void expressionOperator(
     struct item_t * rightItem,
     int operatorSymbol)
 {
-    if((leftItem->type == typeInt) && (rightItem->type == typeInt))
+    if(((leftItem->type == typeInt) || (leftItem->type == typeChar)) && ((rightItem->type == typeInt) || (rightItem->type == typeChar)))
     {
         load(leftItem);
         if((rightItem->mode != CODEGEN_MODE_CONST) || (rightItem->value != 0 ))
@@ -2942,7 +2942,7 @@ void function_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            
+            printf("%s", stringValue);
             object = findProcedureObject(objectGlobal, stringValue);
             if(object != 0) // the procedure appeared before, either as declaration or invokation
             {

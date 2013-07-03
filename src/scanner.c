@@ -1,4 +1,3 @@
-
 #include <stdio.h> // used for tests
 #include "globals.c"
 

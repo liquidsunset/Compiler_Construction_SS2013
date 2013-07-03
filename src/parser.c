@@ -12,6 +12,7 @@ static int lastFieldPointer;
 
 // -- Codegen
 static int SIZE_INT;
+static int SIZE_CHAR;
 
 static int CODEGEN_GP;
 static int CODEGEN_MODE_CONST;
@@ -572,6 +573,7 @@ void initCodeGen()
     PC = 2; // the first word is saved for the TRAP, the second words is saved for the J to main
 
     SIZE_INT = 4;
+    SIZE_CHAR = 4;
 
     RR = 27;
     FP = 29;
@@ -666,7 +668,7 @@ void putAt(int op, int a, int b, int c,  int pos)
     // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
     // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
 
-    printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
+    // printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
 
     if (c < 0)
     {
@@ -1306,9 +1308,18 @@ void type(struct item_t * item)
 
     if(tokenType == TOKEN_CHAR)
     {
-        currentType = TOKEN_CHAR;
-        item->type = typeChar;
         getNextToken();
+
+        isArray = 0;
+        isStruct = 0;
+
+        currentType = TOKEN_CHAR;
+        item->mode = CODEGEN_MODE_CONST;
+        item->type = typeChar;
+        item->reg = 0;
+        item->offset = 0;
+        item->value = SIZE_CHAR;
+        
         return;
     }
 
@@ -1379,6 +1390,7 @@ void sizeof_func(struct item_t * item)
                 {
                     getNextToken();
                 }
+                item->type = typeInt;
             }
             else
             {

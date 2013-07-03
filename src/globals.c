@@ -149,7 +149,6 @@ static int TARGET_FLO;
 static int TARGET_FLC;
 static int TARGET_RDC;
 static int TARGET_WRC;
-static int TARGET_J;
 static int TARGET_MALLOC;
 static int TARGET_TRAP;
 static int TARGET_PRINTF;
@@ -305,6 +304,4 @@ void initTokens(){
     stringValue = malloc(sizeof(char) * 1024);
     typeName = malloc(sizeof(char) * 1024);
     isRegisterUsed = malloc(sizeof(int) *32);
-    
-
 }

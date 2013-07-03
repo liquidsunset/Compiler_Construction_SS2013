@@ -1390,6 +1390,7 @@ void sizeof_func(struct item_t * item)
                 {
                     getNextToken();
                 }
+                item->type = typeInt;
             }
             else
             {

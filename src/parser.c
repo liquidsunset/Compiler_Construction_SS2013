@@ -288,10 +288,11 @@ int findTypeClassVar(){
         tempTypeObject = objectGlobal;
     }
     
-    while (tempTypeObject->next != 0) {
-        if(tempTypeObject->type == 0){
+    while (tempTypeObject->next != 0 ) {
+        if(tempTypeObject->type == 0 && tempTypeObject->class != CLASS_PROC){
             return -1;
         }
+        if(tempTypeObject->class == CLASS_VAR){
         if (tempTypeObject->type->base->form == currentType) {              //Type schon in einem Object????
             if(isGlobal == 0){
                 lastObjectLocal->type = tempTypeObject->type;
@@ -302,12 +303,13 @@ int findTypeClassVar(){
                 return 0;
             }
         }
+        }
         tempTypeObject = tempTypeObject->next;
     }
-    if(tempTypeObject->type == 0){
+    if(tempTypeObject->type == 0 && tempTypeObject->class != CLASS_PROC){
         return -1;
     }
-    
+    if(tempTypeObject->class == CLASS_VAR){
     if (tempTypeObject->type->base->form == currentType) {              //Type schon in einem Object????
         if(isGlobal == 0){
             lastObjectLocal->type = tempTypeObject->type;
@@ -317,6 +319,7 @@ int findTypeClassVar(){
             lastObjectGlobal->type = tempTypeObject->type;
             return 0;
         }
+    }
     }
 //    newElement->form = currentType;
 //    
@@ -345,7 +348,7 @@ int addTypeToList(){
     
     
 
-    if((objectClass == CLASS_VAR) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+    if((objectClass == CLASS_VAR) && (isArray == 0 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
@@ -382,7 +385,7 @@ int addTypeToList(){
         
     if(objectClass == CLASS_VAR && (isArray == 1 && isStruct == 0)){
     
-        //if(findTypeClassVar() == -1){
+        if(findTypeClassVar() == -1){
         newElement->form = FORM_ARRAY;
         if(currentType == FORM_INT){
             newElement->base = typeInt;
@@ -393,7 +396,7 @@ int addTypeToList(){
         
         newElement->base->form = currentType;
         tempTypeObject->type = newElement;
-        //}
+        }
         
         return 0;
     }
@@ -3165,6 +3168,7 @@ void top_declaration() {
         objectClass = CLASS_VAR;
         if(currentType == TOKEN_STRUCT){
             isStruct = 1;
+            isArray = 0;
         }else{
             isStruct = 0;
         }

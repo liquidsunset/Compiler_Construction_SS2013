@@ -289,7 +289,10 @@ int findTypeClassVar(){
     }
     
     while (tempTypeObject->next != 0) {
-        if (tempTypeObject->type->form == currentType) {              //Type schon in einem Object????
+        if(tempTypeObject->type == 0){
+            return -1;
+        }
+        if (tempTypeObject->type->base->form == currentType) {              //Type schon in einem Object????
             if(isGlobal == 0){
                 lastObjectLocal->type = tempTypeObject->type;
                 return 0;
@@ -301,7 +304,11 @@ int findTypeClassVar(){
         }
         tempTypeObject = tempTypeObject->next;
     }
-    if (tempTypeObject->type->form == currentType) {              //Type schon in einem Object????
+    if(tempTypeObject->type == 0){
+        return -1;
+    }
+    
+    if (tempTypeObject->type->base->form == currentType) {              //Type schon in einem Object????
         if(isGlobal == 0){
             lastObjectLocal->type = tempTypeObject->type;
             return 0;
@@ -311,12 +318,12 @@ int findTypeClassVar(){
             return 0;
         }
     }
-    newElement->form = currentType;
-    
-    tempTypeObject->type = newElement;
-
-    
-    return 0;
+//    newElement->form = currentType;
+//    
+//    tempTypeObject->type = newElement;
+//
+//    
+   return -1;
 }
 
 
@@ -338,7 +345,7 @@ int addTypeToList(){
     
     
 
-    if((objectClass == CLASS_VAR) && (isArray == 1 || isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+    if((objectClass == CLASS_VAR) && (isArray == 1 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
@@ -374,6 +381,8 @@ int addTypeToList(){
     
         
     if(objectClass == CLASS_VAR && (isArray == 1 && isStruct == 0)){
+    
+        //if(findTypeClassVar() == -1){
         newElement->form = FORM_ARRAY;
         if(currentType == FORM_INT){
             newElement->base = typeInt;
@@ -384,6 +393,7 @@ int addTypeToList(){
         
         newElement->base->form = currentType;
         tempTypeObject->type = newElement;
+        //}
         
         return 0;
     }
@@ -3250,7 +3260,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("src/scanner.c");
+        openFile("test/scanner.c");
     }
     else
     {

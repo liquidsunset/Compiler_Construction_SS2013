@@ -3199,7 +3199,19 @@ void include_def()
         }
         else
         {
-            error("Expected string literal (start)");
+            if(tokenType == TOKEN_LESS)
+            {
+                getNextToken();
+                while(tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_POINT)
+                {
+                    getNextToken();
+                }
+                if(tokenType == TOKEN_GREATER)
+                {
+                    getNextToken();
+                    mark("Lib includes (#inlcude <lib.h>) are not supported");
+                }
+            }
         }
     }
 }

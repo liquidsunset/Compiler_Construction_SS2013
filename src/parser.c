@@ -1289,7 +1289,8 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_WHILE) ||
         (tokenType == TOKEN_IF) ||
         (tokenType == TOKEN_RETURN) ||
-        (tokenType == TOKEN_PRINTF)))
+        (tokenType == TOKEN_PRINTF) ||
+        (tokenType == TOKEN_FCLOSE)))
     { return 1; }
 
     return 0;
@@ -2312,7 +2313,7 @@ void field(
     item->type = object->type;
 }
 
-void index(
+void arrayindex(
     struct item_t * item,
     struct item_t * indexItem)
 {
@@ -2367,7 +2368,7 @@ void selector(struct item_t * item)
             getNextToken();
             indexItem = malloc(sizeof(struct item_t));
             expression(indexItem);
-            index(item, indexItem);
+            arrayindex(item, indexItem);
             if(tokenType == TOKEN_RSB)
             {
                 getNextToken();

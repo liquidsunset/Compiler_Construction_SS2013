@@ -210,7 +210,7 @@ int peek(int current, int next)
 
     if((current < 0) || (next < 0)) {return 1;} // EOF
 	if(isWhitespace(cnext) > 0) {return 1;} // Whitespace always terminates.
-	if((isTerminalChar(ccurrent)>0) || (isTerminalChar(cnext)>0)) return 1; // Brackets always terminate (as they are single char tokens)
+	if((isTerminalChar(ccurrent)>0) || (isTerminalChar(cnext)>0)){ return 1;} // Brackets always terminate (as they are single char tokens)
 
     //if(current == 39 || next == 39) return 0; // char literals
 
@@ -219,13 +219,13 @@ int peek(int current, int next)
     //    isInString = 1;
     //    return 0;
     //}
-    if(current == 35) return 0;
+    if(current == 35) {return 0;}
 
-    if((isLetter(ccurrent)>0) && (isLetter(cnext)>0)) return 0; //Letter letter: avg
-    if((isDigit(ccurrent)>0) && (isDigit(cnext)>0)) return 0; // Digit digit: 42
-    if((isLetter(ccurrent)>0) && (isDigit(cnext)>0)) return 0; // Letter digit: List1
+    if((isLetter(ccurrent)>0) && (isLetter(cnext)>0)) {return 0;} //Letter letter: avg
+    if((isDigit(ccurrent)>0) && (isDigit(cnext)>0)) {return 0;} // Digit digit: 42
+    if((isLetter(ccurrent)>0) && (isDigit(cnext)>0)) {return 0;} // Letter digit: List1
 
-    if ((isOperator(current)>0) && (isOperator(cnext)>0)) {return 0;}
+    if ((isOperator(ccurrent)>0) && (isOperator(cnext)>0)) {return 0;}
 
 	return 1;
 }
@@ -250,12 +250,13 @@ int strToInt(char *str)
     int i;
     int len;
     int res;
+    int temp;
 
     i = 0;
     len = strLength(str);
     res = 0;
 
-    if(str[0] == '-')
+    if(str[0] == 45)
     {
         i = i + 1;
     }
@@ -264,7 +265,8 @@ int strToInt(char *str)
     {
         if((str[i] >= 48) && (str[i] <= 57))
         {
-            res = res + (str[i]-48) * power(10, len-i-1);
+            temp = str[i];
+            res = res + (temp-48) * power(10, len-i-1);
         }
         i = i + 1;
     }
@@ -291,7 +293,7 @@ int readNextCharacter(){
     int temp;
 
     if(fp == 0){
-        return EOF;
+        return -1;
     }
 
     
@@ -300,10 +302,10 @@ int readNextCharacter(){
     if(temp < 0)
     {
         fclose(fp);
-        return EOF;
+        return -1;
     }
     col = col + 1;
-    if(temp == '\n')
+    if(temp == 10)
     {
         col = 1;
         lin = lin + 1;

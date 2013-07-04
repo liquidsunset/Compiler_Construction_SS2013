@@ -1758,6 +1758,11 @@ void factor(struct item_t * item) {
     if(tokenType == TOKEN_STRING_LITERAL)
     {
         mark("String not expected here");
+        // Until we support strings as arguments, parse as a constant 0.
+        item->mode = CODEGEN_MODE_CONST;
+        item->type = typeInt;
+        item->reg = 0;
+        item->value = 0;
         getNextToken();
         return;
     }

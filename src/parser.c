@@ -1860,11 +1860,11 @@ void factor(struct item_t * item) {
         return;
     }
 
-    if(tokenType == TOKEN_FCLOSE)
-    {
-        fclose_func();
-        return;
-    }
+//    if(tokenType == TOKEN_FCLOSE)
+//    {
+//        fclose_func();
+//        return;
+//    }
 
     if(tokenType == TOKEN_FGETC)
     {
@@ -2391,6 +2391,10 @@ void instruction()
     {
         if_else();
         return;
+    }
+    
+    if(tokenType == TOKEN_FCLOSE){
+        fclose_func();
     }
 
     if(tokenType == TOKEN_WHILE)
@@ -3275,7 +3279,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("src/scanner.c");
+        openFile("test/scanner.c");
     }
     else
     {

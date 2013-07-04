@@ -332,7 +332,7 @@ void initTokens(){
 // Compares two character arrays.
 // 
 // Returns true if both arrays hold the same characters.
-int strCompare(char *a, char *b) // TODO: Support call by reference
+int strCompare(char *a, char *b)
 {
 	int i;
     i = 0;
@@ -655,88 +655,92 @@ void findToken(char *status,int len){
         if(tokenChar == 44){tokenType = TOKEN_COMMA; return;}
         if(tokenChar == 58){tokenType = TOKEN_COLON; return;}
         //if(tokenChar == '#'){tokenType = 510; return;}
-        if(isLetter(tokenChar))
+        if(isLetter(tokenChar)>0)
         {
             tokenType = TOKEN_IDENTIFIER;
             stringValue[0] = tokenChar;
             stringValue[1] = 0;
             return;
         }
-        if(isDigit(tokenChar))
+        if(isDigit(tokenChar)>0)
         {
             tokenType = TOKEN_CONSTINT;
             intValue = strToInt(status);
             return;
         }
     } // if(len == 1)
-    else if(len == 2)
+    else
     {
-        if(strCompare(status, "==")){tokenType = TOKEN_EQUAL; return;}
-        if(strCompare(status, "<=")){tokenType = TOKEN_LESSEQUAL; return;}
-        if(strCompare(status, ">=")){tokenType = TOKEN_GREATEREQUAL; return;}
-        if(strCompare(status, "<<")){tokenType = TOKEN_SHIFTLEFT; return;}
-        if(strCompare(status, ">>")){tokenType = TOKEN_SHIFTRIGHT; return;}
-        if(strCompare(status, "&&")){tokenType = TOKEN_AND; return;}
-        if(strCompare(status, "||")){tokenType = TOKEN_OR; return;}
-        if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
-        if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
-        if(strCompare(status, "->")){tokenType = TOKEN_ACCESS; return;}
-        if(isLetter(status[0]))
+        if(len == 2)
         {
-            tokenType = TOKEN_IDENTIFIER;
-            strCopy(status, stringValue);
-            return;
-        }
-        if(isDigit(status[0]))
+            if(strCompare(status, "==")){tokenType = TOKEN_EQUAL; return;}
+            if(strCompare(status, "<=")){tokenType = TOKEN_LESSEQUAL; return;}
+            if(strCompare(status, ">=")){tokenType = TOKEN_GREATEREQUAL; return;}
+            if(strCompare(status, "<<")){tokenType = TOKEN_SHIFTLEFT; return;}
+            if(strCompare(status, ">>")){tokenType = TOKEN_SHIFTRIGHT; return;}
+            if(strCompare(status, "&&")){tokenType = TOKEN_AND; return;}
+            if(strCompare(status, "||")){tokenType = TOKEN_OR; return;}
+            if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
+            if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
+            if(strCompare(status, "->")){tokenType = TOKEN_ACCESS; return;}
+            if(isLetter(status[0]))
+            {
+                tokenType = TOKEN_IDENTIFIER;
+                strCopy(status, stringValue);
+                return;
+            }
+            if(isDigit(status[0]))
+            {
+                tokenType = TOKEN_CONSTINT;
+                intValue = strToInt(status);
+                return;
+            }
+        } // if(len == 2)
+        else
         {
-            tokenType = TOKEN_CONSTINT;
-            intValue = strToInt(status);
-            return;
-        }
-    } // if(len == 2)
-    else{
-        if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
-        if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
-        if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
-        if(strCompare(status, "double")){tokenType = TOKEN_DOUBLE; return;}
-        if(strCompare(status, "while")){tokenType = TOKEN_WHILE; return;}
-        if(strCompare(status, "else")){tokenType = TOKEN_ELSE; return;}
-        if(strCompare(status, "return")){tokenType = TOKEN_RETURN; return;}
-        if(strCompare(status, "struct")){tokenType = TOKEN_STRUCT; return;}
-        if(strCompare(status, "static")){tokenType = TOKEN_STATIC; return;}
-        if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
-        if(strCompare(status, "fopen")) {tokenType = TOKEN_FOPEN; return;}
-        if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
-        if(strCompare(status, "fgetc")) {tokenType = TOKEN_FGETC; return;}
-        if(strCompare(status, "fputc")) {tokenType = TOKEN_FPUTC; return;}
-        if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
-        if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
-        if(strCompare(status, "printf")) {tokenType = TOKEN_PRINTF; return;}
-        if(isLetter(status[0]))
-        {
-            tokenType = TOKEN_IDENTIFIER;
-            strCopy(status, stringValue);
-            return;
-        }
-        if(isDigit(status[0])){
-            tokenType = TOKEN_CONSTINT;
-            intValue = strToInt(status);
-            return;
-        }
-        if(status[0] == 39) // Char literal
-        {
-            tokenType = TOKEN_CONSTCHAR;
-            strTrimQuotes(status, stringValue);
-            return;
-        }
-        if(status[0] == 34) // String literal
-        {
-            tokenType = TOKEN_STRING_LITERAL;
-            strTrimQuotes(status, stringValue);
-            return;
-        }
-      
-    } // if(len >= 3)
+            if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
+            if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
+            if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
+            if(strCompare(status, "double")){tokenType = TOKEN_DOUBLE; return;}
+            if(strCompare(status, "while")){tokenType = TOKEN_WHILE; return;}
+            if(strCompare(status, "else")){tokenType = TOKEN_ELSE; return;}
+            if(strCompare(status, "return")){tokenType = TOKEN_RETURN; return;}
+            if(strCompare(status, "struct")){tokenType = TOKEN_STRUCT; return;}
+            if(strCompare(status, "static")){tokenType = TOKEN_STATIC; return;}
+            if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
+            if(strCompare(status, "fopen")) {tokenType = TOKEN_FOPEN; return;}
+            if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
+            if(strCompare(status, "fgetc")) {tokenType = TOKEN_FGETC; return;}
+            if(strCompare(status, "fputc")) {tokenType = TOKEN_FPUTC; return;}
+            if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
+            if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
+            if(strCompare(status, "printf")) {tokenType = TOKEN_PRINTF; return;}
+            if(isLetter(status[0])>0)
+            {
+                tokenType = TOKEN_IDENTIFIER;
+                strCopy(status, stringValue);
+                return;
+            }
+            if(isDigit(status[0])>0){
+                tokenType = TOKEN_CONSTINT;
+                intValue = strToInt(status);
+                return;
+            }
+            if(status[0] == 39) // Char literal
+            {
+                tokenType = TOKEN_CONSTCHAR;
+                strTrimQuotes(status, stringValue);
+                return;
+            }
+            if(status[0] == 34) // String literal
+            {
+                tokenType = TOKEN_STRING_LITERAL;
+                strTrimQuotes(status, stringValue);
+                return;
+            }
+          
+        } // if(len >= 3)
+    }
     
     tokenType = -1;
     

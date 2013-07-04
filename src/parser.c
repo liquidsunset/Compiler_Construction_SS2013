@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "scanner.c"
 
+static int CODESIZE;
+
 static int currentType;    //2 = int, 3 = char
 static int isArray;
 static int isStruct;
@@ -582,6 +584,8 @@ void mark(char *message)
 
 void initCodeGen()
 {
+    CODESIZE = 10000;
+
     CODEGEN_GP = 28;
     PC = 2; // the first word is saved for the TRAP, the second words is saved for the J to main
 
@@ -599,7 +603,7 @@ void initCodeGen()
     CODEGEN_MODE_REF = 4;
     CODEGEN_MODE_COND = 5;
 
-    output = malloc(1000 * sizeof(int));
+    output = malloc(CODESIZE * sizeof(int));
 }
 
 struct item_t
@@ -681,18 +685,23 @@ void putAt(int op, int a, int b, int c,  int pos)
     // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
     // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
 
-    // printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
-
-    if (c < 0)
+    printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
+    if(pos >= CODESIZE)
     {
-        c = c + 65536; // 0x10000: 2^16
+        error("Exceeded codesize");
     }
-    // if << is not available
-    // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
-    instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
+    else
+    {
+        if (c < 0)
+        {
+            c = c + 65536; // 0x10000: 2^16
+        }
+        // if << is not available
+        // replace (x << 5) by (x * 32) and (x << 16) by (x * 65536)
+        instruction = (((((op * 32) + a) * 32) + b) * 65536) + c;
 
-    output[pos] = instruction;
-    
+        output[pos] = instruction;
+    }
 }
 
 void put(int op, int a, int b, int c)

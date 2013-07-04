@@ -319,9 +319,11 @@ int readNextCharacter(){
 
 
 void findToken(char *status,int len){
+    
+    char tokenChar;
+    
     if(len == 1)
     {
-        char tokenChar;
         tokenChar = status[0];
         if(tokenChar == 43){tokenType = TOKEN_PLUS; return;}
         if(tokenChar == 45){tokenType = TOKEN_MINUS; return;}

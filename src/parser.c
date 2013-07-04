@@ -2395,6 +2395,11 @@ void instruction()
     
     if(tokenType == TOKEN_FCLOSE){
         fclose_func();
+        if(tokenType == TOKEN_SEMICOLON){
+            getNextToken();
+        }else{
+            mark("; expected after fclose()");
+        }
     }
 
     if(tokenType == TOKEN_WHILE)

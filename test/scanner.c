@@ -673,23 +673,23 @@ void findToken(char *status,int len){
     {
         if(len == 2)
         {
-            if(strCompare(status, "==")){tokenType = TOKEN_EQUAL; return;}
-            if(strCompare(status, "<=")){tokenType = TOKEN_LESSEQUAL; return;}
-            if(strCompare(status, ">=")){tokenType = TOKEN_GREATEREQUAL; return;}
-            if(strCompare(status, "<<")){tokenType = TOKEN_SHIFTLEFT; return;}
-            if(strCompare(status, ">>")){tokenType = TOKEN_SHIFTRIGHT; return;}
-            if(strCompare(status, "&&")){tokenType = TOKEN_AND; return;}
-            if(strCompare(status, "||")){tokenType = TOKEN_OR; return;}
-            if(strCompare(status, "!=")){tokenType = TOKEN_UNEQUAL; return;}
-            if(strCompare(status, "if")){tokenType = TOKEN_IF; return;}
-            if(strCompare(status, "->")){tokenType = TOKEN_ACCESS; return;}
-            if(isLetter(status[0]))
+            if(strCompare(status, "==")>0){tokenType = TOKEN_EQUAL; return;}
+            if(strCompare(status, "<=")>0){tokenType = TOKEN_LESSEQUAL; return;}
+            if(strCompare(status, ">=")>0){tokenType = TOKEN_GREATEREQUAL; return;}
+            if(strCompare(status, "<<")>0){tokenType = TOKEN_SHIFTLEFT; return;}
+            if(strCompare(status, ">>")>0){tokenType = TOKEN_SHIFTRIGHT; return;}
+            if(strCompare(status, "&&")>0){tokenType = TOKEN_AND; return;}
+            if(strCompare(status, "||")>0){tokenType = TOKEN_OR; return;}
+            if(strCompare(status, "!=")>0){tokenType = TOKEN_UNEQUAL; return;}
+            if(strCompare(status, "if")>0){tokenType = TOKEN_IF; return;}
+            if(strCompare(status, "->")>0){tokenType = TOKEN_ACCESS; return;}
+            if(isLetter(status[0])>0)
             {
                 tokenType = TOKEN_IDENTIFIER;
                 strCopy(status, stringValue);
                 return;
             }
-            if(isDigit(status[0]))
+            if(isDigit(status[0])>0)
             {
                 tokenType = TOKEN_CONSTINT;
                 intValue = strToInt(status);
@@ -698,23 +698,23 @@ void findToken(char *status,int len){
         } // if(len == 2)
         else
         {
-            if(strCompare(status, "void")){tokenType = TOKEN_VOID; return;}
-            if(strCompare(status, "int")){tokenType = TOKEN_INT; return;}
-            if(strCompare(status, "char")){tokenType = TOKEN_CHAR; return;}
-            if(strCompare(status, "double")){tokenType = TOKEN_DOUBLE; return;}
-            if(strCompare(status, "while")){tokenType = TOKEN_WHILE; return;}
-            if(strCompare(status, "else")){tokenType = TOKEN_ELSE; return;}
-            if(strCompare(status, "return")){tokenType = TOKEN_RETURN; return;}
-            if(strCompare(status, "struct")){tokenType = TOKEN_STRUCT; return;}
-            if(strCompare(status, "static")){tokenType = TOKEN_STATIC; return;}
-            if(strCompare(status, "#include")){tokenType = TOKEN_INCLUDE; return;}
-            if(strCompare(status, "fopen")) {tokenType = TOKEN_FOPEN; return;}
-            if(strCompare(status, "fclose")) {tokenType = TOKEN_FCLOSE; return;}
-            if(strCompare(status, "fgetc")) {tokenType = TOKEN_FGETC; return;}
-            if(strCompare(status, "fputc")) {tokenType = TOKEN_FPUTC; return;}
-            if(strCompare(status, "malloc")) {tokenType = TOKEN_MALLOC; return;}
-            if(strCompare(status, "sizeof")) {tokenType = TOKEN_SIZEOF; return;}
-            if(strCompare(status, "printf")) {tokenType = TOKEN_PRINTF; return;}
+            if(strCompare(status, "void")>0){tokenType = TOKEN_VOID; return;}
+            if(strCompare(status, "int")>0){tokenType = TOKEN_INT; return;}
+            if(strCompare(status, "char")>0){tokenType = TOKEN_CHAR; return;}
+            if(strCompare(status, "double")>0){tokenType = TOKEN_DOUBLE; return;}
+            if(strCompare(status, "while")>0){tokenType = TOKEN_WHILE; return;}
+            if(strCompare(status, "else")>0){tokenType = TOKEN_ELSE; return;}
+            if(strCompare(status, "return")>0){tokenType = TOKEN_RETURN; return;}
+            if(strCompare(status, "struct")>0){tokenType = TOKEN_STRUCT; return;}
+            if(strCompare(status, "static")>0){tokenType = TOKEN_STATIC; return;}
+            if(strCompare(status, "#include")>0){tokenType = TOKEN_INCLUDE; return;}
+            if(strCompare(status, "fopen")>0) {tokenType = TOKEN_FOPEN; return;}
+            if(strCompare(status, "fclose")>0) {tokenType = TOKEN_FCLOSE; return;}
+            if(strCompare(status, "fgetc")>0) {tokenType = TOKEN_FGETC; return;}
+            if(strCompare(status, "fputc")>0) {tokenType = TOKEN_FPUTC; return;}
+            if(strCompare(status, "malloc")>0) {tokenType = TOKEN_MALLOC; return;}
+            if(strCompare(status, "sizeof")>0) {tokenType = TOKEN_SIZEOF; return;}
+            if(strCompare(status, "printf")>0) {tokenType = TOKEN_PRINTF; return;}
             if(isLetter(status[0])>0)
             {
                 tokenType = TOKEN_IDENTIFIER;
@@ -750,6 +750,10 @@ void findToken(char *status,int len){
 
 void getNextToken()
 {
+    char * status;
+    int len;
+    int checkPeek;
+
     if(tokenType == TOKEN_EOF){
         return;
     }
@@ -758,9 +762,9 @@ void getNextToken()
         return;
     }
 
-    char *status;
+    
     status = malloc(sizeof(char) * 1024);
-    int len;
+    
     len = 0;
     tokenType = -1;
     
@@ -776,7 +780,7 @@ void getNextToken()
             nextChar = readNextCharacter();
         }
 
-        if((currentChar == EOF) || (nextChar == EOF))
+        if((currentChar == -1) || (nextChar == -1))
         {
             // set token type to EOF
             tokenType = TOKEN_EOF;
@@ -784,8 +788,8 @@ void getNextToken()
         }
 
         // Trim whitespace
-        if(isWhitespace(currentChar)){
-            while(isWhitespace(currentChar)){
+        if(isWhitespace(currentChar)>0){
+            while(isWhitespace(currentChar)>0){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
             }
@@ -793,7 +797,7 @@ void getNextToken()
 
         // Support for line comments
         if((currentChar == 47) && (nextChar == 47)){
-            while ((currentChar != '\n') && (currentChar != EOF)){
+            while ((currentChar != 10) && (currentChar != -1)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
                 if(nextChar == -1){
@@ -804,7 +808,6 @@ void getNextToken()
         }
         else
         {
-            int checkPeek;
             positionColumn = col-2; // as two characters are read already
             positionLine = lin;
             

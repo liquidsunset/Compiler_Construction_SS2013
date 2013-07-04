@@ -1469,7 +1469,7 @@ void malloc_func(struct item_t * item)
     }
 }
 
-void fopen_func()
+void fopen_func(struct item_t * item)
 {
     if(tokenType == TOKEN_FOPEN)
     {
@@ -1490,6 +1490,7 @@ void fopen_func()
                         if(tokenType == TOKEN_RRB)
                         {
                             getNextToken();
+                            item->type = typeInt;
                         }
                         else
                         {
@@ -1559,7 +1560,7 @@ void fclose_func()
     }
 }
 
-void fgetc_func()
+void fgetc_func(struct item_t * item)
 {
     if(tokenType == TOKEN_FGETC)
     {
@@ -1574,6 +1575,9 @@ void fgetc_func()
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
+
+                    item->type = typeInt;
+
                     return;
                 }
                 else
@@ -1851,7 +1855,7 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_FOPEN)
     {
-        fopen_func();
+        fopen_func(item);
         return;
     }
 
@@ -1863,7 +1867,7 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_FGETC)
     {
-        fgetc_func();
+        fgetc_func(item);
         return;
     }
 

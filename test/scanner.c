@@ -50,7 +50,7 @@ int strLength(char *a)
 {
 	int i;
     i = 0;
-	while((a[i]!='\0') && ( i<1024 )){
+	while((a[i]!=0) && ( i<1024 )){
         i=i+1;    
     }
     
@@ -69,7 +69,7 @@ void strCopy(char *from, char *to)
 		to[i]=from[i];
 		i = i+1;
 	}
-	to[i]='\0';
+	to[i]=0;
 }
 
 void strTrimQuotes(char *a, char *b)
@@ -80,7 +80,7 @@ void strTrimQuotes(char *a, char *b)
     b[i] = a[i+1];
     i = i +1;
     
-    while((a[i] != '\'') && (a[i] != '\"') && (a[i] != 0) && (i < 1024)){
+    while((a[i] != 39) && (a[i] != 34) && (a[i] != 0) && (i < 1024)){
         b[i] = a[i+1];
         i = i +1;
     }
@@ -94,7 +94,7 @@ void strTrimQuotes(char *a, char *b)
 // Returns true if the character is within the range of [a-zA-Z]
 int isLetter(char c)
 {
-	return (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_'));
+	return (((c >= 97) && (c <= 122)) || ((c >= 65) && (c <= 90)) || (c == 95));
 }
 
 // Checks if the character c is a digit.
@@ -102,7 +102,7 @@ int isLetter(char c)
 // Returns true if the character is within the range of [0-9]
 int isDigit(char c)
 {
-	return ((c >= '0') && (c <= '9'));
+	return ((c >= 48) && (c <= 57));
 }
 
 // Checks if the character c is a whitespace:
@@ -111,34 +111,34 @@ int isDigit(char c)
 // Returns true if the character is whitespace.
 int isWhitespace(char c)
 {
-	return ((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'));
+	return ((c == 32) || (c == 10) || (c == 13) || (c == 9));
 }
 
 int isTerminalChar(char c)
 {
 	return (
-        (c == '(' ) ||
-        (c == ')' ) ||
-        (c == '[' ) ||
-        (c == ']' ) ||
-        (c == '{' ) ||
-        (c == '}' ) ||
-        (c == ';' ) ||
-        (c == ',' ) ||
-        (c == '\'') ||
-        (c == '\"')
+        (c == 40 ) ||
+        (c == 41 ) ||
+        (c == 91 ) ||
+        (c == 93 ) ||
+        (c == 123 ) ||
+        (c == 125 ) ||
+        (c == 59 ) ||
+        (c == 44 ) ||
+        (c == 39) ||
+        (c == 34)
         );
 }
 
 int isOperator(char c)
 {
-	return (!isWhitespace(c) && !isLetter(c) && !isDigit(c));
+	return (!(isWhitespace(c)>0) && !(isLetter(c)>0) && !(isDigit(c)>0));
 }
 
 int characterClass(char c)
 {
-	if(isDigit(c)) return 1;
-	if(isLetter(c)) return 2;
+	if(isDigit(c) > 0) {return 1;}
+	if(isLetter(c) > 0) {return 2;}
 
 	return 3; // Terminal character
 }
@@ -151,54 +151,58 @@ int characterClass(char c)
 // 	1 if it is terminated
 int peek(int current, int next)
 {
+    char ccurrent;
+    char cnext;
 
+    ccurrent = current;
+    cnext = next;
 
-    if((current == '\"') && !isInChar && !isInString) // add the starting "
+    if((current == 34) && !isInChar && !isInString) // add the starting "
     {
         isInString = 1;
         return 0;
     }
-    if((next == '\"') && isInString) return 0; // add the ending "
-    if((current == '\"') && isInString) // terminate after the ending "
+    if((next == 34) && isInString) {return 0;} // add the ending "
+    if((current == 34) && isInString) // terminate after the ending "
     {
         isInString = 0;
         return 1;
     }
-    if(isInString) return 0;
+    if(isInString) {return 0;}
 
     // Char literals (duplicated to support something like "'a'"):
 
-    if((current == '\'') && !isInChar) // add the starting "
+    if((current == 39) && !isInChar) // add the starting "
     {
         isInChar = 1;
         return 0;
     }
-    if((next == '\'') && isInChar) return 0; // add the ending "
-    if((current == '\'') && isInChar) // terminate after the ending "
+    if((next == 39) && isInChar) {return 0;} // add the ending "
+    if((current == 39) && isInChar) // terminate after the ending "
     {
         isInChar = 0;
         return 1;
     }
-    if(isInChar) return 0;
+    if(isInChar) {return 0;}
 
-    if((current < 0) || (next < 0)) return 1; // EOF
-	if(isWhitespace(next)) return 1; // Whitespace always terminates.
-	if(isTerminalChar(current) || isTerminalChar(next)) return 1; // Brackets always terminate (as they are single char tokens)
+    if((current < 0) || (next < 0)) {return 1;} // EOF
+	if(isWhitespace(cnext) > 0) {return 1;} // Whitespace always terminates.
+	if((isTerminalChar(ccurrent)>0) || (isTerminalChar(cnext)>0)) return 1; // Brackets always terminate (as they are single char tokens)
 
-    //if(current == '\'' || next == '\'') return 0; // char literals
+    //if(current == 39 || next == 39) return 0; // char literals
 
-    //if(current == '\"' && isInString)
+    //if(current == 34 && isInString)
     //{
     //    isInString = 1;
     //    return 0;
     //}
     if(current == '#') return 0;
 
-    if(isLetter(current) && isLetter(next)) return 0; //Letter letter: avg
-    if(isDigit(current) && isDigit(next)) return 0; // Digit digit: 42
-    if(isLetter(current) && isDigit(next)) return 0; // Letter digit: List1
+    if((isLetter(ccurrent)>0) && (isLetter(cnext)>0)) return 0; //Letter letter: avg
+    if((isDigit(ccurrent)>0) && (isDigit(cnext)>0)) return 0; // Digit digit: 42
+    if((isLetter(ccurrent)>0) && (isDigit(cnext)>0)) return 0; // Letter digit: List1
 
-    if (isOperator(current) && isOperator(next)) {return 0;}
+    if ((isOperator(current)>0) && (isOperator(cnext)>0)) {return 0;}
 
 	return 1;
 }
@@ -207,6 +211,7 @@ int power(int base, int exp)
 {
     int i;
     int res;
+
     i = 0;
     res = 1;
     while(i < exp)
@@ -222,6 +227,7 @@ int strToInt(char *str)
     int i;
     int len;
     int res;
+
     i = 0;
     len = strLength(str);
     res = 0;
@@ -233,14 +239,14 @@ int strToInt(char *str)
 
     while((str[i] != 0) && (i < 1024))
     {
-        if((str[i] >= '0') && (str[i] <= '9'))
+        if((str[i] >= 48) && (str[i] <= 57))
         {
-            res = res + (str[i]-'0') * power(10, len-i-1);
+            res = res + (str[i]-48) * power(10, len-i-1);
         }
         i = i + 1;
     }
 
-    if(str[0] == '-')
+    if(str[0] == 45)
     {
         res = -res;
     }
@@ -259,38 +265,30 @@ void openFile(char *path){
 
 //Returns the next Character from the file
 int readNextCharacter(){
-    
-    
-//    if(ftell(fp) < 0)
-//    {
-//
-//        return EOF;
-//    }
-//    else
-//    {
-    
-        if(fp == 0){
-            return EOF;
-        }
-    
-        int temp;
-        temp = fgetc(fp);
+    int temp;
 
-        if(temp < 0)
-        {
-            fclose(fp);
-            return EOF;
-        }
-        col = col + 1;
-        if(temp == '\n')
-        {
-            col = 1;
-            lin = lin + 1;
-            //printf("\n");
-        }
+    if(fp == 0){
+        return EOF;
+    }
 
-        return temp;
-    //}
+    
+    temp = fgetc(fp);
+
+    if(temp < 0)
+    {
+        fclose(fp);
+        return EOF;
+    }
+    col = col + 1;
+    if(temp == '\n')
+    {
+        col = 1;
+        lin = lin + 1;
+        //printf("\n");
+    }
+
+    return temp;
+
 }
 
 
@@ -300,34 +298,34 @@ void findToken(char *status,int len){
     {
         char tokenChar;
         tokenChar = status[0];
-        if(tokenChar == '+'){tokenType = TOKEN_PLUS; return;}
-        if(tokenChar == '-'){tokenType = TOKEN_MINUS; return;}
-        if(tokenChar == '*'){tokenType = TOKEN_MULT; return;}
-        if(tokenChar == '/'){tokenType = TOKEN_DIVIDE; return;}
-        if(tokenChar == '%'){tokenType = TOKEN_PERCENT; return;}
-        if(tokenChar == '='){tokenType = TOKEN_ASSIGNMENT; return;}
-        if(tokenChar == '<'){tokenType = TOKEN_LESS; return;}
-        if(tokenChar == '>'){tokenType = TOKEN_GREATER; return;}
-        if(tokenChar == '&'){tokenType = TOKEN_ADDRESS; return;}
-        if(tokenChar == '|'){tokenType = TOKEN_BITWISEOR; return;}
-        if(tokenChar == '^'){tokenType = TOKEN_BITWISEEXCLOR; return;}
-        if(tokenChar == '~'){tokenType = TOKEN_BITWISENOT; return;}
-        if(tokenChar == '!'){tokenType = TOKEN_NOT; return;}
-        if(tokenChar == '['){tokenType = TOKEN_LSB; return;}
-        if(tokenChar == ']'){tokenType = TOKEN_RSB; return;}
-        if(tokenChar == '('){tokenType = TOKEN_LRB; return;}
-        if(tokenChar == ')'){tokenType = TOKEN_RRB; return;}
-        if(tokenChar == '{'){tokenType = TOKEN_LCB; return;}
-        if(tokenChar == '}'){tokenType = TOKEN_RCB; return;}
-        if(tokenChar == ';'){tokenType = TOKEN_SEMICOLON; return;}
-        if(tokenChar == ','){tokenType = TOKEN_COMMA; return;}
-        if(tokenChar == ':'){tokenType = TOKEN_COLON; return;}
+        if(tokenChar == 43){tokenType = TOKEN_PLUS; return;}
+        if(tokenChar == 45){tokenType = TOKEN_MINUS; return;}
+        if(tokenChar == 42){tokenType = TOKEN_MULT; return;}
+        if(tokenChar == 47){tokenType = TOKEN_DIVIDE; return;}
+        if(tokenChar == 37){tokenType = TOKEN_PERCENT; return;}
+        if(tokenChar == 61){tokenType = TOKEN_ASSIGNMENT; return;}
+        if(tokenChar == 60){tokenType = TOKEN_LESS; return;}
+        if(tokenChar == 62){tokenType = TOKEN_GREATER; return;}
+        if(tokenChar == 38){tokenType = TOKEN_ADDRESS; return;}
+        if(tokenChar == 124){tokenType = TOKEN_BITWISEOR; return;}
+        if(tokenChar == 94){tokenType = TOKEN_BITWISEEXCLOR; return;}
+        if(tokenChar == 126){tokenType = TOKEN_BITWISENOT; return;}
+        if(tokenChar == 33){tokenType = TOKEN_NOT; return;}
+        if(tokenChar == 91){tokenType = TOKEN_LSB; return;}
+        if(tokenChar == 93){tokenType = TOKEN_RSB; return;}
+        if(tokenChar == 40){tokenType = TOKEN_LRB; return;}
+        if(tokenChar == 41){tokenType = TOKEN_RRB; return;}
+        if(tokenChar == 123){tokenType = TOKEN_LCB; return;}
+        if(tokenChar == 125){tokenType = TOKEN_RCB; return;}
+        if(tokenChar == 59){tokenType = TOKEN_SEMICOLON; return;}
+        if(tokenChar == 44){tokenType = TOKEN_COMMA; return;}
+        if(tokenChar == 58){tokenType = TOKEN_COLON; return;}
         //if(tokenChar == '#'){tokenType = 510; return;}
         if(isLetter(tokenChar))
         {
             tokenType = TOKEN_IDENTIFIER;
             stringValue[0] = tokenChar;
-            stringValue[1] = '\0';
+            stringValue[1] = 0;
             return;
         }
         if(isDigit(tokenChar))
@@ -391,13 +389,13 @@ void findToken(char *status,int len){
             intValue = strToInt(status);
             return;
         }
-        if(status[0] == '\'') // Char literal
+        if(status[0] == 39) // Char literal
         {
             tokenType = TOKEN_CONSTCHAR;
             strTrimQuotes(status, stringValue);
             return;
         }
-        if(status[0] == '\"') // String literal
+        if(status[0] == 34) // String literal
         {
             tokenType = TOKEN_STRING_LITERAL;
             strTrimQuotes(status, stringValue);
@@ -456,7 +454,7 @@ void getNextToken()
         }
 
         // Support for line comments
-        if((currentChar == '/') && (nextChar == '/')){
+        if((currentChar == 47) && (nextChar == 47)){
             while ((currentChar != '\n') && (currentChar != EOF)){
                 currentChar = nextChar;
                 nextChar = readNextCharacter();
@@ -489,7 +487,7 @@ void getNextToken()
                 nextChar = readNextCharacter();
             }
             
-            status[len] = '\0';
+            status[len] = 0;
             //Analize the token
             findToken(status, len);
             len = 0;

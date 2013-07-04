@@ -94,7 +94,12 @@ void strTrimQuotes(char *a, char *b)
 // Returns true if the character is within the range of [a-zA-Z]
 int isLetter(char c)
 {
-	return (((c >= 97) && (c <= 122)) || ((c >= 65) && (c <= 90)) || (c == 95));
+	if(((c >= 97) && (c <= 122)) || ((c >= 65) && (c <= 90)) || (c == 95))
+    {
+        return 1;
+    }
+    
+    return 0;
 }
 
 // Checks if the character c is a digit.
@@ -102,7 +107,11 @@ int isLetter(char c)
 // Returns true if the character is within the range of [0-9]
 int isDigit(char c)
 {
-	return ((c >= 48) && (c <= 57));
+	if((c >= 48) && (c <= 57))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 // Checks if the character c is a whitespace:
@@ -111,12 +120,17 @@ int isDigit(char c)
 // Returns true if the character is whitespace.
 int isWhitespace(char c)
 {
-	return ((c == 32) || (c == 10) || (c == 13) || (c == 9));
+	if((c == 32) || (c == 10) || (c == 13) || (c == 9))
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 int isTerminalChar(char c)
 {
-	return (
+	if(
         (c == 40 ) ||
         (c == 41 ) ||
         (c == 91 ) ||
@@ -127,12 +141,21 @@ int isTerminalChar(char c)
         (c == 44 ) ||
         (c == 39) ||
         (c == 34)
-        );
+        )
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 int isOperator(char c)
 {
-	return (!(isWhitespace(c)>0) && !(isLetter(c)>0) && !(isDigit(c)>0));
+	if(!(isWhitespace(c)>0) && !(isLetter(c)>0) && !(isDigit(c)>0))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 int characterClass(char c)
@@ -157,33 +180,33 @@ int peek(int current, int next)
     ccurrent = current;
     cnext = next;
 
-    if((current == 34) && !isInChar && !isInString) // add the starting "
+    if((current == 34) && !(isInChar>0) && !(isInString>0)) // add the starting "
     {
         isInString = 1;
         return 0;
     }
-    if((next == 34) && isInString) {return 0;} // add the ending "
-    if((current == 34) && isInString) // terminate after the ending "
+    if((next == 34) && (isInString>0)) {return 0;} // add the ending "
+    if((current == 34) && (isInString>0)) // terminate after the ending "
     {
         isInString = 0;
         return 1;
     }
-    if(isInString) {return 0;}
+    if(isInString>0) {return 0;}
 
     // Char literals (duplicated to support something like "'a'"):
 
-    if((current == 39) && !isInChar) // add the starting "
+    if((current == 39) && !(isInChar>0)) // add the starting "
     {
         isInChar = 1;
         return 0;
     }
-    if((next == 39) && isInChar) {return 0;} // add the ending "
-    if((current == 39) && isInChar) // terminate after the ending "
+    if((next == 39) && (isInChar>0)) {return 0;} // add the ending "
+    if((current == 39) && (isInChar>0)) // terminate after the ending "
     {
         isInChar = 0;
         return 1;
     }
-    if(isInChar) {return 0;}
+    if(isInChar>0) {return 0;}
 
     if((current < 0) || (next < 0)) {return 1;} // EOF
 	if(isWhitespace(cnext) > 0) {return 1;} // Whitespace always terminates.
@@ -196,7 +219,7 @@ int peek(int current, int next)
     //    isInString = 1;
     //    return 0;
     //}
-    if(current == '#') return 0;
+    if(current == 35) return 0;
 
     if((isLetter(ccurrent)>0) && (isLetter(cnext)>0)) return 0; //Letter letter: avg
     if((isDigit(ccurrent)>0) && (isDigit(cnext)>0)) return 0; // Digit digit: 42

@@ -278,9 +278,6 @@ int findTypeClassType(){
 
 int findTypeClassVar(){
     struct object_t *tempTypeObject;
-    struct type_t *newElement;
-    
-    newElement = malloc(sizeof(struct type_t));
     
     if(isGlobal == 0){
         tempTypeObject = objectLocal;

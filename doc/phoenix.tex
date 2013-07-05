@@ -1,8 +1,13 @@
 \documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
 \title{Phoenix}
-\author{Alexander Miller, Daniel Brand}
-\date{Juli 2013}
+\author{Alexander Miller, Daniel Brand \\ \\
+		Compiler Construction \\
+		Department of Computer Sciences \\
+		University of Salzburg}
+\date{\today}
 
 \setcounter{tocdepth}{2}
 
@@ -13,17 +18,25 @@
 	\newpage
 
 	\section{Einleitung}
-	Irgendwos ugu aga ugu
+	Phoenix ist ein Compiler für eine Teilmenge von C, geschrieben in C. Ausgabesprache ist ein Binärformat für einen DLX Interpreter.
 
-	\section{Features}
-	Und hier unsere Features.
+	\section{Aufbau}
+	Scanner, Parser, Code Generation. Target Machine.
 
-	\section{Weltformel}
-	TODO
+	\section{Scanner}
+	Liest ASCII files, arbeitet mit Strings. Von Zeichen zu Token.
 
-	\section{Danksagung}
-	Danke.
+	\section{Parser}
+	LL(1)-Parser. Von Token zu Syntax-Tree.
 
-	\section{Anhang}
-	Unsere EBNF ugugad sdf asdkl;jf 
+	\section{Code Generation}
+	Recursive descent.
+
+	\section{Target Machine}
+	DLX, 32bit, RISC.
+
+	\section{Anhang 1: EBNF}
+	start ::= top\_declaration || function\_declaration.
+
+	\section{Anhang 2: Unterstütze Instruktionen}
 \end{document}

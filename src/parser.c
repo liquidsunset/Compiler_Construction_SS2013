@@ -79,23 +79,26 @@ struct object_t *lastFieldElementLocal;
 struct type_t *typeInt;
 struct type_t *typeChar;
 struct type_t *typeBool;
+struct type_t *typeString;
 
 
 void initTypes(){
     typeInt = malloc(sizeof(struct type_t));
     typeChar = malloc(sizeof(struct type_t));
     typeBool = malloc(sizeof(struct type_t));
-    
+    typeString = malloc(sizeof(struct type_t));
+
     typeInt->form = FORM_INT;
     typeInt->size = 4;
     typeChar->form = FORM_CHAR;
     typeChar->size = 4;
     typeBool->form = FORM_BOOL;
     typeBool->size = 4;
+    //typeString->form = ???
+    typeString->size = 4;
     lastOffsetPointerGlobal = 0;
     lastOffsetPointerLocal = 0;
     lastFieldPointer = 0;
-    
 }
 
 void addToList()
@@ -1661,16 +1664,10 @@ void printf_func() {
             if(tokenType == TOKEN_STRING_LITERAL)
             {
                 object = addStringToList();
-                printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
-                //printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
                 offset = strLength(stringValue) + 1;
-                //printf("object->name=%s\n", object->name);
-                //printf("stringLength('%s')+1=%d\n", object->name, offset);
                 object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
-                //printf("object->offset=%d\n", object->offset);
                 object->class = CLASS_STRING;
                 lastOffsetPointerGlobal = object->offset;
-                //printf("lastOffsetPointerGlobal=%d\n", lastOffsetPointerGlobal);
                 put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
                 getNextToken();
                 if(tokenType != TOKEN_RRB)
@@ -1715,6 +1712,7 @@ void printf_func() {
 
 void factor(struct item_t * item) {
     struct object_t * object;
+    int offset;
 
     if(tokenType == TOKEN_NOT) {
         getNextToken();
@@ -1757,12 +1755,19 @@ void factor(struct item_t * item) {
 
     if(tokenType == TOKEN_STRING_LITERAL)
     {
-        mark("String not expected here");
+        //mark("String not expected here");
         // Until we support strings as arguments, parse as a constant 0.
-        item->mode = CODEGEN_MODE_CONST;
-        item->type = typeInt;
-        item->reg = 0;
-        item->value = 0;
+        object = addStringToList();
+        offset = strLength(stringValue) + 1;
+        object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
+        object->class = CLASS_STRING;
+        lastOffsetPointerGlobal = object->offset;
+
+        item->mode = CODEGEN_MODE_VAR;
+        item->type = typeString;
+        item->reg = CODEGEN_GP;
+        item->offset = object->offset;
+
         getNextToken();
         return;
     }

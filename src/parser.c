@@ -789,7 +789,7 @@ void string2Reg(struct item_t * item)
 
     item->mode = CODEGEN_MODE_REG;
     newReg = requestRegister();
-    put(TARGET_LW, newReg, item->reg, item->offset);
+    put(TARGET_ADDI, newReg, item->reg, item->offset);
     item->reg = newReg;
     item->offset = 0;
 }
@@ -1482,6 +1482,7 @@ void fopen_func(struct item_t * item)
                     put(TARGET_FOPEN, newReg, item->reg, item->offset);
                     item->reg = newReg;
                     item->type = typeInt;
+                    item->mode = CODEGEN_MODE_REG;
                 }
                 else
                 {

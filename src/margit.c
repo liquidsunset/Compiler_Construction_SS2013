@@ -130,7 +130,7 @@ void load(char * filename) {
 			temp = fgetc(fp);
 			if(temp == EOF)
 			{
-				file_ptr = 0;
+				file_ptr = 1;
 				bump_ptr = i;
 				GP = bump_ptr;
 				reg[27] = 0;

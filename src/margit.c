@@ -385,6 +385,11 @@ int fetch() {
 		{
 			printf("%d FGETC %d, %d, %d", pc, a, b, c);
 			int ch;
+			if(reg[b]<0 || reg[b] > file_ptr)
+			{
+				printf("\nERROR: Bad file access\n");
+				return 0;
+			}
 			ch = fgetc(file[reg[b]]);
 			reg[a] = ch;
 			pc = pc + 4;

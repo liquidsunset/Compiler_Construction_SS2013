@@ -1486,24 +1486,15 @@ void malloc_func(struct item_t * item)
 
 void fopen_func(struct item_t * item)
 {
-    struct object_t * object;
-    int offset;
-
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();
-            if(tokenType == TOKEN_STRING_LITERAL)
+            if(isIn(tokenType, FIRST_EXPRESSION))
             {
-                getNextToken();
-
-                object = addStringToList();
-                offset = strLength(stringValue) + 1;
-                object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
-                object->class = CLASS_STRING;
-                lastOffsetPointerGlobal = object->offset;
+                expression(item);
 
                 if(tokenType == TOKEN_COMMA)
                 {
@@ -1518,9 +1509,10 @@ void fopen_func(struct item_t * item)
                 {
                     getNextToken();
 
-                    item->type = typeInt;
+                    //load(item); // DONT LOAD STRINGS
                     item->reg = requestRegister();
-                    put(TARGET_FOPEN, item->reg, CODEGEN_GP, object->offset);
+                    put(TARGET_FOPEN, item->reg, CODEGEN_GP, item->offset);
+                    item->type = typeInt;
                 }
                 else
                 {

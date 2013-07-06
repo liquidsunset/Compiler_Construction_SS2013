@@ -1486,7 +1486,7 @@ void fopen_func(struct item_t * item)
                 {
                     getNextToken();
 
-                    //load(item); // DONT LOAD STRINGS IN FOPEN
+                    load(item);
                     newReg = requestRegister();
                     put(TARGET_FOPEN, newReg, item->reg, item->offset);
                     item->reg = newReg;

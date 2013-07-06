@@ -332,6 +332,15 @@ int addTypeToList(){
             newElement = typeArrayChar;
         }
         
+        if(isGlobal == 1){
+            tempTypeObject->offset = lastOffsetPointerGlobal - 4;
+            lastOffsetPointerGlobal = lastOffsetPointerGlobal - 4;
+        }
+        if(isGlobal == 0){
+            tempTypeObject->offset = lastOffsetPointerLocal - 4;
+            lastOffsetPointerLocal = lastOffsetPointerLocal - 4;
+        }
+        
         tempTypeObject->type = newElement;
         
         return 0;

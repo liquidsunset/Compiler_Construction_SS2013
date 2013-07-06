@@ -911,6 +911,16 @@ void fixLink(int branchAddress)
     }
 }
 
+int wordalignOffset(int offset)
+{
+    if(offset%4 == 0)
+    {
+        return offset;
+    }
+
+    return ((offset+4)/4)*4;
+}
+
 void unloadBool(struct item_t * item)
 {
     if(item->mode == CODEGEN_MODE_COND)
@@ -1247,7 +1257,8 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_IF) ||
         (tokenType == TOKEN_RETURN) ||
         (tokenType == TOKEN_PRINTF) ||
-        (tokenType == TOKEN_FCLOSE)))
+        (tokenType == TOKEN_FCLOSE) ||
+        (tokenType == TOKEN_FPUTC)))
     { return 1; }
 
     return 0;
@@ -1429,49 +1440,51 @@ void malloc_func(struct item_t * item)
 
 void fopen_func(struct item_t * item)
 {
+    struct object_t * object;
+    int offset;
+
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
+            if(tokenType == TOKEN_STRING_LITERAL)
             {
-                getFromList();
                 getNextToken();
+
+                object = addStringToList();
+                offset = strLength(stringValue) + 1;
+                object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
+                object->class = CLASS_STRING;
+                lastOffsetPointerGlobal = object->offset;
+
                 if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
-                    if(tokenType == TOKEN_STRING_LITERAL)
+                   if(tokenType == TOKEN_STRING_LITERAL)
                     {
-                        getNextToken();
-                        if(tokenType == TOKEN_RRB)
-                        {
-                            getNextToken();
-                            item->type = typeInt;
-                        }
-                        else
-                        {
-                            mark(") expected (fopen_func)");
-                            getNextToken();
-                        }
-                    }
-                    else
-                    {
-                        mark("File mode expected (fopen_func)");
                         getNextToken();
                     }
                 }
+
+                if(tokenType == TOKEN_RRB)
+                {
+                    getNextToken();
+
+                    item->type = typeInt;
+                    item->reg = requestRegister();
+                    put(TARGET_FOPEN, item->reg, CODEGEN_GP, object->offset);
+                }
                 else
                 {
-                    mark("Comma expected (fopen_func)");
+                    mark(") expected (fopen_func)");
                     getNextToken();
                 }
             }
             else
             {
-                mark("Identifier expected (fopen_func)");
-                getNextToken();
+                error("Filename expected (fopen_func)");
             }
         }
         else
@@ -1484,6 +1497,8 @@ void fopen_func(struct item_t * item)
 
 void fclose_func()
 {
+    struct item_t * item;
+
     if(tokenType == TOKEN_FCLOSE)
     {
         getNextToken();
@@ -1492,11 +1507,13 @@ void fclose_func()
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                getFromList();
-                getNextToken();
+                item = malloc(sizeof(struct item_t));
+                expression(item);
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
+                    load(item);
+                    put(TARGET_FCLOSE, 0, 0, item->reg);
                 }
                 else
                 {
@@ -1528,12 +1545,14 @@ void fgetc_func(struct item_t * item)
             getNextToken();
             if(tokenType == TOKEN_IDENTIFIER)
             {
-                getFromList();
-                getNextToken();
+                expression(item);
+
                 if(tokenType == TOKEN_RRB)
                 {
                     getNextToken();
-
+                    load(item);
+                    put(TARGET_FGETC, item->reg, item->reg, item->offset);
+                    item->mode = CODEGEN_MODE_REG;
                     item->type = typeInt;
 
                     return;
@@ -1560,29 +1579,53 @@ void fgetc_func(struct item_t * item)
 
 void fputc_func()
 {
+    struct item_t * fileItem;
+    struct item_t * charItem;
+
     if(tokenType == TOKEN_FPUTC)
     {
         getNextToken();
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();
-            if(tokenType == TOKEN_IDENTIFIER)
+            if(isIn(tokenType, FIRST_EXPRESSION))
             {
-                getFromList();
-                getNextToken();
-                if(tokenType == TOKEN_RRB)
+                charItem = malloc(sizeof(struct item_t));
+                expression(charItem);
+
+                if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
+                    if(isIn(tokenType, FIRST_EXPRESSION))
+                    {
+                        fileItem = malloc(sizeof(struct item_t));
+                        expression(fileItem);
+                        if(tokenType == TOKEN_RRB)
+                        {
+                            getNextToken();
+                            load(charItem);
+                            load(fileItem);
+
+                            put(TARGET_FPUTC, fileItem->reg, 0, charItem->reg);
+                        }
+                        else
+                        {
+                            error(") expected (fputc_func)");
+                        }
+                    }
+                    else
+                    {
+                        error("Expression expected for file (fputc_func)");
+                    }
                 }
                 else
                 {
-                    mark(") expected (fputc_func)");
-                    getNextToken();
+                    error(", expected (fputc_func)");
                 }
             }
             else
             {
-                mark("Identifier expected (fputc_func)");
+                mark("Expression expected for character (fputc_func)");
                 getNextToken();
             }
         }
@@ -1594,15 +1637,7 @@ void fputc_func()
     }
 }
 
-int wordalignOffset(int offset)
-{
-    if(offset%4 == 0)
-    {
-        return offset;
-    }
 
-    return ((offset+4)/4)*4;
-}
 
 void printf_func() {
     struct item_t * item;
@@ -2395,6 +2430,17 @@ void instruction()
         if(tokenType != TOKEN_SEMICOLON)
         {
             mark("; expected after printf");
+        }
+        getNextToken();
+        return;
+    }
+
+    if(tokenType == TOKEN_FPUTC)
+    {
+        fputc_func();
+        if(tokenType != TOKEN_SEMICOLON)
+        {
+            mark("; expected after fputc");
         }
         getNextToken();
         return;

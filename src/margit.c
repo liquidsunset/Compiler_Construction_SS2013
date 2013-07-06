@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include "globals.c"
@@ -7,6 +8,10 @@
 
 // Virtual Registers
 int reg[32];
+
+// File IO
+FILE * file[32];
+int file_ptr;
 
 // Virtual Memory of 4*150kB
 unsigned int mem[MEMSIZE];
@@ -35,11 +40,11 @@ int c;
 // Globals
 
 int isF1(int opcode) {
-	return (0 <= opcode) && (opcode < 21);
+	return (0 <= opcode) && (opcode < 24);
 }
 
 int isF2(int opcode) {
-	return (22 <= opcode) && (opcode < 42);
+	return (24 <= opcode) && (opcode < 42);
 }
 
 int isF3(int opcode) {
@@ -87,7 +92,7 @@ void init() {
 	// // F3 (43-63)
 	// TARGET_JSR = 43;
 	// TARGET_J = 44;
-	
+
 }
 
 void decode() {
@@ -125,6 +130,7 @@ void load(char * filename) {
 			temp = fgetc(fp);
 			if(temp == EOF)
 			{
+				file_ptr = 0;
 				bump_ptr = i;
 				GP = bump_ptr;
 				reg[27] = 0;
@@ -365,6 +371,30 @@ int fetch() {
 			reg[31] = pc + 4;
 			pc = pc + c*4;
 		}
+		else if(op == TARGET_FOPEN)
+		{
+			printf("%d FOPEN %d, %d, %d", pc, a, b, c);
+			char * filename = getString((reg[b] + c) / 4);
+			printf("\nOpening file \"%s\" as #%d", filename, file_ptr);
+			file[file_ptr] = fopen(filename, "r+");
+			reg[a] = file_ptr;
+			file_ptr += 1;
+			pc = pc + 4;
+		}
+		else if(op == TARGET_FGETC)
+		{
+			printf("%d FGETC %d, %d, %d", pc, a, b, c);
+			int ch;
+			ch = fgetc(file[reg[b]]);
+			reg[a] = ch;
+			pc = pc + 4;
+		}
+		else if(op == TARGET_FPUTC)
+		{
+			printf("%d FPUTC %d, %d, %d", pc, a, b, c);
+			fputc(reg[c], file[reg[a]]);
+			pc = pc + 4;
+		}
 
 		// F2 register addressing
 		else if(op == TARGET_ADD)
@@ -410,42 +440,7 @@ int fetch() {
 			printf("%d RET %d", pc, c);
 			pc = reg[c];
 		}
-
-		// F2 IO
-		else if(op == TARGET_FLO)
-		{
-			printf("%d FLO %d, %d, %d", pc, a, b, c);
-			int mode = O_RDONLY;
-			if(mem[reg[b]] == 'w')
-			{
-				mode = O_WRONLY;
-			}
-			reg[c] = open((char *) mem[reg[a]], mode);
-
-			pc = pc + 4;
-		}
-		else if(op == TARGET_FLC)
-		{
-			printf("%d FLC %d, %d, %d", pc, a, b, c);
-			close(reg[c]);
-			pc = pc + 4;
-		}
-		else if(op == TARGET_RDC)
-		{
-			printf("%d RDC %d, %d, %d", pc, a, b, c);
-
-			char buf;
-			read(reg[a], &buf, 1);
-			reg[c] = buf;
-			pc = pc + 4;
-		}
-		else if(op == TARGET_WRC)
-		{
-			printf("%d WRC %d, %d, %d", pc, a, b, c);
-			const char buf = (char)reg[c];
-			write(reg[a], &buf, 1);
-			pc = pc + 4;
-		}
+		
 		else if(op == TARGET_MALLOC)
 		{
 			printf("%d MALLOC %d, %d, %d", pc, a, b, c);
@@ -496,6 +491,13 @@ int fetch() {
 		{
 			printf("Trapped");
 			return 0;
+		}
+		else if(op == TARGET_FCLOSE)
+		{
+			printf("%d FCLOSE %d, %d, %d", pc, a, b, c);
+			printf("\nClosing %d", reg[c]);
+			fclose(file[reg[c]]);
+			pc = pc + 4;
 		}
 	}
 

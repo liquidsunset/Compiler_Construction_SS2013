@@ -263,9 +263,10 @@ struct type_t *findTypeClassType(){
         while(tempTypeObject->next != 0){
             if(strCompare(tempTypeObject->name, typeName)){
                 return tempTypeObject->type;
-                }
             }
         tempTypeObject = tempTypeObject->next;
+        }
+        
             
         if(strCompare(tempTypeObject->name, typeName) == 1){
             return tempTypeObject->type;

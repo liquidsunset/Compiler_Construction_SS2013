@@ -387,7 +387,22 @@ int addTypeToField(){
         return 0;
     }
 
-    //TODO Struct in Struct
+    if((isArray == 0) && (isStruct == 1)){
+        struct type_t *newType;
+        newType = findTypeClassType();
+        
+        if(isGlobal == 0){
+            lastFieldElementLocal->type = newType;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size +4;
+        }
+        if(isGlobal == 1){
+            lastFieldElementGlobal->type = newType;
+            lastFieldElementGlobal->offset = lastFieldPointer;
+            lastFieldPointer = lastFieldPointer + newType->size;
+            lastObjectGlobal->type->size = lastObjectGlobal->type->size +4;
+        }
+        
+    }
     
     if(currentType == FORM_INT ){
         if(isGlobal == 0){

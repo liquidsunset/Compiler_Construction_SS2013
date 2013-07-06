@@ -79,7 +79,6 @@ struct object_t *lastFieldElementLocal;
 struct type_t *typeInt;
 struct type_t *typeChar;
 struct type_t *typeBool;
-struct type_t *typeString;
 struct type_t *typeArrayInt;
 struct type_t *typeArrayChar;
 
@@ -88,7 +87,6 @@ void initTypes(){
     typeInt = malloc(sizeof(struct type_t));
     typeChar = malloc(sizeof(struct type_t));
     typeBool = malloc(sizeof(struct type_t));
-    typeString = malloc(sizeof(struct type_t));
     typeArrayInt = malloc(sizeof(struct type_t));
     typeArrayChar = malloc(sizeof(struct type_t));
 
@@ -100,9 +98,6 @@ void initTypes(){
     
     typeBool->form = FORM_BOOL;
     typeBool->size = 4;
-    
-    typeString->form = FORM_STRING;
-    typeString->size = 4;
     
     typeArrayInt->form = FORM_ARRAY;
     typeArrayInt->base = typeInt;

@@ -46,10 +46,10 @@ struct type_t {
     struct type_t *base;
 };
 
-typedef char *string_t;
+//typedef char *string_t; not yet implemented
 
 struct object_t{
-    string_t name;
+    char  *name;
     int class;
     int offset;
     struct type_t *type;

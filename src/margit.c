@@ -385,12 +385,14 @@ int fetch() {
 		{
 			printf("%d FGETC %d, %d, %d", pc, a, b, c);
 			int ch;
-			if(reg[b]<0 || reg[b] > file_ptr)
+			if(reg[b]<1 || reg[b] > file_ptr)
 			{
 				printf("\nERROR: Bad file access\n");
 				return 0;
 			}
 			ch = fgetc(file[reg[b]]);
+			printf("\nCharacter '%c'\n", ch);
+			getchar();
 			reg[a] = ch;
 			pc = pc + 4;
 		}
@@ -462,15 +464,15 @@ int fetch() {
 		}
 		else if(op == TARGET_PRINTF)
 		{
-			//printf("%d PRINTF %d, %d, %d", pc, a, b, c);
+			printf("%d PRINTF %d, %d, %d", pc, a, b, c);
 			printf("'%s'", getString((reg[b] + c) / 4));
 			getchar();
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
 		{
-			//printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
-			printf("\n> %d", reg[c]);
+			printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
+			printf("\n> '%d'", reg[c]);
 			getchar();
 			pc = pc + 4;
 		}

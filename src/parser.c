@@ -1664,23 +1664,6 @@ void printf_func() {
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();            
-            if(tokenType == TOKEN_STRING_LITERAL)
-            {
-                object = addStringToList();
-                offset = strLength(stringValue) + 1;
-                object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
-                object->class = CLASS_STRING;
-                lastOffsetPointerGlobal = object->offset;
-                put(TARGET_PRINTF, 0, CODEGEN_GP, object->offset);
-                getNextToken();
-                if(tokenType != TOKEN_RRB)
-                {
-                    mark(") expected (printf)");
-                }
-
-                getNextToken();
-                return;
-            }
 
             if(isIn(tokenType, FIRST_EXPRESSION))
             {
@@ -1691,14 +1674,15 @@ void printf_func() {
                     mark(") expected (printf)");
                 }
                 getNextToken();
+                load(item);
                 if(item->type != typeInt)
                 {
-                    error("integer expected (printf)");
-                    return;
+                    put(TARGET_PRINTF, 0, item->reg, item->offset);
                 }
-
-                load(item);
-                put(TARGET_PRINTFI, 0, 0, item->reg);
+                else
+                {
+                    put(TARGET_PRINTFI, 0, 0, item->reg);
+                }
                 releaseRegister(item->reg);
             }
             else

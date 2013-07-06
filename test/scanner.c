@@ -629,6 +629,10 @@ void findToken(char *status,int len){
     
     char tokenChar;
     
+    printf("Davor");
+    printf(status);
+    printf("Danach");
+
     if(len == 1)
     {
         tokenChar = status[0];
@@ -762,7 +766,6 @@ void getNextToken()
         return;
     }
 
-    
     status = malloc(sizeof(char) * 1024);
     
     len = 0;
@@ -846,7 +849,7 @@ void getNextToken()
             }
 
         }
-    }
+    } //while
 }
 
 
@@ -854,10 +857,14 @@ int main(){
     initTokens();
     tokenType = -1;
     openFile("test/scanner.c");
-    printf(tokenType);
+    //printf(tokenType);
     while(tokenType != TOKEN_EOF){
         getNextToken();
         printf(tokenType);
     }
+    //printf(peek(35, 105));
+    //printf(peek(105, 110));
+    //printf(peek(101, 32));
+
     
 }

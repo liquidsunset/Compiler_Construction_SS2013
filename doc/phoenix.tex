@@ -1,7 +1,7 @@
 \documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc} % Umlaute
+\usepackage[T1]{fontenc} % Pipes
+\usepackage[ngerman]{babel} % Deutsche Captions
 
 \title{Phoenix}
 \author{Alexander Miller, Daniel Brand \\ \\
@@ -14,12 +14,14 @@
 
 \begin{document}
 	\maketitle
-	\newpage
+	%\newpage
 	\tableofcontents
-	\newpage
+	%\newpage
 
 	\section{Einleitung}
-	Phoenix ist ein Compiler für eine Teilmenge von C, geschrieben in C. Ausgabesprache ist ein Binärformat für einen DLX Interpreter.
+	Phoenix ist ein Compiler für eine Teilmenge von C, geschrieben in C.
+	Ausgabesprache ist ein Binärformat für einen DLX Interpreter.
+	Phoenix unterstützt grundlegende Sprachkonzepte: Type Checking, Lazy Evaluation, Arrays und Records.
 
 	\section{Aufbau}
 	Scanner, Parser, Code Generation. Target Machine.
@@ -30,14 +32,43 @@
 	\section{Parser}
 	LL(1)-Parser. Von Token zu Syntax-Tree.
 
+	\subsection{Typen}
+
+	\subsection{Arrays}
+
+	\subsection{Records}
+
+	\subsection{Schleifen}
+
+	\subsection{Type Checking}
+	Erklärung von Type Checking
+
+	\subsection{Boolean Expressions}
+
+	\subsection{Lazy Evaluation}
+
+	\subsection{Arithmetic Expressions}
+
 	\section{Code Generation}
 	Recursive descent.
 
 	\section{Target Machine}
 	DLX, 32bit, RISC.
 
+	\subsection{Binärformat}
+	Code, Strings, Globals
+
+	\subsection{Ausführung}
+	Setzen von GP, Allokieren von Heap, Stack. Semantik der Instruktionen
+
+	\newpage
 	\section{Anhang 1: EBNF}
 	start ::= top\_declaration || function\_declaration.
 
+	\newpage
 	\section{Anhang 2: Unterstütze Instruktionen}
+	J
+	BSR
+	ADDI
+	etc.
 \end{document}

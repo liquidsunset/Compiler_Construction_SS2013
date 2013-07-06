@@ -849,31 +849,14 @@ void getNextToken()
     }
 }
 
-// ----------------------------------------------------------------------------
 
-// ------------------------ Tests ---------------------------------------------
-// These tests should never be of priority for self-compilation.
-//
-//int main()
-//{
-//    initTokens();
-//    
-//    printf("\n\nNext Testfile- easy.c\n\n");
-//    
-//    openFile("test/easy.c");
-//    tokenType = -1;
-//    if(tokenType != TOKEN_EOF){
-//        do
-//        {
-//            getNextToken();
-//            printf("Line %d:%d %d\n", positionLine, positionColumn, tokenType);
-//            if(tokenType == TOKEN_IDENTIFIER){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_STRING_LITERAL){printf("%s\n", stringValue);}
-//            if(tokenType == TOKEN_CONSTINT){printf("%d\n", intValue);}
-//            if(tokenType == TOKEN_CONSTCHAR){printf("%s\n", stringValue);}
-//        }
-//        while(tokenType!= TOKEN_EOF);
-//        //getchar();
-//    }
-//}
-// ----------------------------------------------------------------------------
+int main(){
+    initTokens();
+    openFile("test/scanner.c");
+    while(tokenType != TOKEN_EOF){
+        getNextToken();
+        printf(tokenType);
+    }
+    
+}
+

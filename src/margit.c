@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "globals.c"
 
-#define MEMSIZE 2001
+#define MEMSIZE 30000
 
 // Virtual Registers
 int reg[32];

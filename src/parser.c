@@ -80,6 +80,8 @@ struct type_t *typeInt;
 struct type_t *typeChar;
 struct type_t *typeBool;
 struct type_t *typeString;
+struct type_t *typeArrayInt;
+struct type_t *typeArrayChar;
 
 
 void initTypes(){
@@ -87,15 +89,29 @@ void initTypes(){
     typeChar = malloc(sizeof(struct type_t));
     typeBool = malloc(sizeof(struct type_t));
     typeString = malloc(sizeof(struct type_t));
+    typeArrayInt = malloc(sizeof(struct type_t));
+    typeArrayChar = malloc(sizeof(struct type_t));
 
     typeInt->form = FORM_INT;
     typeInt->size = 4;
+    
     typeChar->form = FORM_CHAR;
     typeChar->size = 4;
+    
     typeBool->form = FORM_BOOL;
     typeBool->size = 4;
-    //typeString->form = ???
+    
+    typeString->form = FORM_STRING;
     typeString->size = 4;
+    
+    typeArrayInt->form = FORM_ARRAY;
+    typeArrayInt->base = typeInt;
+    typeArrayInt->size = 4;
+    
+    typeArrayChar->form = FORM_ARRAY;
+    typeArrayChar->base = typeChar;
+    typeArrayChar->size = 4;
+    
     lastOffsetPointerGlobal = 0;
     lastOffsetPointerLocal = 0;
     lastFieldPointer = 0;
@@ -279,59 +295,6 @@ int findTypeClassType(){
 
 }
 
-int findTypeClassVar(){
-    struct object_t *tempTypeObject;
-    
-    if(isGlobal == 0){
-        tempTypeObject = objectLocal;
-    }
-    
-    if(isGlobal == 1){
-        tempTypeObject = objectGlobal;
-    }
-    
-    while (tempTypeObject->next != 0 ) {
-        if(tempTypeObject->type == 0 && tempTypeObject->class != CLASS_PROC){
-            return -1;
-        }
-        if(tempTypeObject->class == CLASS_VAR){
-        if (tempTypeObject->type->base->form == currentType) {              //Type schon in einem Object????
-            if(isGlobal == 0){
-                lastObjectLocal->type = tempTypeObject->type;
-                return 0;
-            }
-            if(isGlobal == 1){
-                lastObjectGlobal->type = tempTypeObject->type;
-                return 0;
-            }
-        }
-        }
-        tempTypeObject = tempTypeObject->next;
-    }
-    if(tempTypeObject->type == 0 && tempTypeObject->class != CLASS_PROC){
-        return -1;
-    }
-    if(tempTypeObject->class == CLASS_VAR){
-    if (tempTypeObject->type->base->form == currentType) {              //Type schon in einem Object????
-        if(isGlobal == 0){
-            lastObjectLocal->type = tempTypeObject->type;
-            return 0;
-        }
-        if(isGlobal == 1){
-            lastObjectGlobal->type = tempTypeObject->type;
-            return 0;
-        }
-    }
-    }
-//    newElement->form = currentType;
-//    
-//    tempTypeObject->type = newElement;
-//
-//    
-   return -1;
-}
-
-
 int addTypeToList(){
     
     struct type_t *newElement;
@@ -350,7 +313,7 @@ int addTypeToList(){
     
     
 
-    if((objectClass == CLASS_VAR) && (isArray ==0 && isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
+    if((objectClass == CLASS_VAR) && (isArray ==0) && (isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
         if(findTypeClassType() == 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
@@ -385,20 +348,17 @@ int addTypeToList(){
     }
     
         
-    if(objectClass == CLASS_VAR && (isArray == 1 && isStruct == 0)){
+    if((isArray == 1 && isStruct == 0)){
     
-        //if(findTypeClassVar() == -1){
-        newElement->form = FORM_ARRAY;
+
         if(currentType == FORM_INT){
-            newElement->base = typeInt;
+            newElement = typeArrayInt;
         }
         if (currentType == FORM_CHAR) {
-            newElement->base = typeChar;
+            newElement = typeArrayChar;
         }
         
-        newElement->base->form = currentType;
         tempTypeObject->type = newElement;
-        //}
         
         return 0;
     }
@@ -422,13 +382,15 @@ int addTypeToList(){
 
 int addTypeToField(){
     
-    if(currentType == FORM_INT && isArray == 1 && isStruct == 0){
+    if((isArray == 1) && (isStruct == 0)){
         struct type_t *newType;
-        newType = malloc(sizeof(struct type_t));
-        newType->size = 4;
-        newType->form = FORM_ARRAY;
-        newType->base = typeInt;
-        
+
+        if(currentType == FORM_INT){
+            newType = typeArrayInt;
+        }
+        if(currentType == FORM_CHAR){
+            newType = typeArrayChar;
+        }
         
         
         if(isGlobal == 0){
@@ -443,9 +405,9 @@ int addTypeToField(){
             lastObjectGlobal->type->size = lastObjectGlobal->type->size + 4;
         }
         return 0;
-        
     }
 
+    //TODO Struct in Struct
     
     if(currentType == FORM_INT ){
         if(isGlobal == 0){

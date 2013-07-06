@@ -854,6 +854,7 @@ int main(){
     initTokens();
     tokenType = -1;
     openFile("test/scanner.c");
+    printf(tokenType);
     while(tokenType != TOKEN_EOF){
         getNextToken();
         printf(tokenType);

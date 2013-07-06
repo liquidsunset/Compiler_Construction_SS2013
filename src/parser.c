@@ -261,7 +261,7 @@ struct type_t *findTypeClassType(){
     
     if(tempTypeObject != 0){    
         while(tempTypeObject->next != 0){
-            if(strCompare(tempTypeObject->name, typeName)){
+            if(strCompare(tempTypeObject->name, typeName) == 1){
                 return tempTypeObject->type;
             }
         tempTypeObject = tempTypeObject->next;
@@ -273,8 +273,6 @@ struct type_t *findTypeClassType(){
         }
     }
     return 0;
-    
-
 }
 
 int addTypeToList(){
@@ -358,8 +356,6 @@ int addTypeToList(){
     
     return 0;
 }
-
-
 
 int addTypeToField(){
     

@@ -1745,7 +1745,7 @@ void factor(struct item_t * item) {
         lastOffsetPointerGlobal = object->offset;
 
         item->mode = CODEGEN_MODE_VAR;
-        item->type = typeString;
+        item->type = typeArrayChar;
         item->reg = CODEGEN_GP;
         item->offset = object->offset;
 

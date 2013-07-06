@@ -22,6 +22,7 @@ static int CODEGEN_MODE_VAR;
 static int CODEGEN_MODE_REG;
 static int CODEGEN_MODE_REF;
 static int CODEGEN_MODE_COND;
+static int CODEGEN_MODE_STRING;
 
 static int PC;
 
@@ -551,6 +552,7 @@ void initCodeGen()
     CODEGEN_MODE_REG = 3;
     CODEGEN_MODE_REF = 4;
     CODEGEN_MODE_COND = 5;
+    CODEGEN_MODE_STRING = 6;
 
     output = malloc(CODESIZE * sizeof(int));
 }
@@ -781,6 +783,17 @@ void writeToFile(){
     fclose(file);
 }
 
+void string2Reg(struct item_t * item)
+{
+    int newReg;
+
+    item->mode = CODEGEN_MODE_REG;
+    newReg = requestRegister();
+    put(TARGET_LW, newReg, item->reg, item->offset);
+    item->reg = newReg;
+    item->offset = 0;
+}
+
 void ref2Reg(struct item_t * item)
 {
     item->mode = CODEGEN_MODE_REG;
@@ -827,6 +840,11 @@ void load(struct item_t * item)
     if(item->mode == CODEGEN_MODE_REF)
     {
         ref2Reg(item);
+        return;
+    }
+    if(item->mode == CODEGEN_MODE_STRING)
+    {
+        string2Reg(item);
         return;
     }
 }
@@ -1435,6 +1453,7 @@ void malloc_func(struct item_t * item)
 
 void fopen_func(struct item_t * item)
 {
+    int newReg;
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();
@@ -1458,9 +1477,10 @@ void fopen_func(struct item_t * item)
                 {
                     getNextToken();
 
-                    //load(item); // DONT LOAD STRINGS
-                    item->reg = requestRegister();
-                    put(TARGET_FOPEN, item->reg, CODEGEN_GP, item->offset);
+                    //load(item); // DONT LOAD STRINGS IN FOPEN
+                    newReg = requestRegister();
+                    put(TARGET_FOPEN, newReg, item->reg, item->offset);
+                    item->reg = newReg;
                     item->type = typeInt;
                 }
                 else
@@ -1739,7 +1759,7 @@ void factor(struct item_t * item) {
         object->class = CLASS_STRING;
         lastOffsetPointerGlobal = object->offset;
 
-        item->mode = CODEGEN_MODE_VAR;
+        item->mode = CODEGEN_MODE_STRING;
         item->type = typeArrayChar;
         item->reg = CODEGEN_GP;
         item->offset = object->offset;

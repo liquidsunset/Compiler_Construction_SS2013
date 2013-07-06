@@ -1,4 +1,4 @@
-default: parser
+default: all
 
 all: run-parser run-margit
 

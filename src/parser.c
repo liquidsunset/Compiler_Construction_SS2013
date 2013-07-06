@@ -1462,7 +1462,6 @@ void malloc_func(struct item_t * item)
 
 void fopen_func(struct item_t * item)
 {
-    int newReg;
     if(tokenType == TOKEN_FOPEN)
     {
         getNextToken();
@@ -1487,9 +1486,7 @@ void fopen_func(struct item_t * item)
                     getNextToken();
 
                     load(item);
-                    newReg = requestRegister();
-                    put(TARGET_FOPEN, newReg, item->reg, item->offset);
-                    item->reg = newReg;
+                    put(TARGET_FOPEN, item->reg, item->reg, item->offset);
                     item->type = typeInt;
                     item->mode = CODEGEN_MODE_REG;
                 }
@@ -1958,6 +1955,11 @@ void simple_expression(struct item_t * item)
     if(tokenType == TOKEN_MINUS)
     {
         getNextToken();
+        simple_expression(item);
+        load(item);
+        put(TARGET_SUB, item->reg, 0, item->reg);
+
+        return;
     }
 
     //leftItem = malloc(sizeof(struct item_t));

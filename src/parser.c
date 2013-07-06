@@ -248,12 +248,7 @@ struct object_t *createObject(int classType){
 }
 
 
-struct type_t *findType(){
-    return 0;
-}
-
-
-int findTypeClassType(){
+struct type_t *findTypeClassType(){
     struct object_t *tempTypeObject;
     
     if(isGlobal == 0){
@@ -264,34 +259,20 @@ int findTypeClassType(){
         tempTypeObject = objectGlobal;
     }
     
-    if(tempTypeObject != 0){                                //Liste leer  => nothing to do here
+    if(tempTypeObject != 0){    
         while(tempTypeObject->next != 0){
             if(strCompare(tempTypeObject->name, typeName)){
-                if(isGlobal == 0){
-                    lastObjectLocal->type = tempTypeObject->type;
-                    return 0;
-                }
-                if(isGlobal == 1){
-                    lastObjectGlobal->type = tempTypeObject->type;
-
+                return tempTypeObject->type;
                 }
             }
-            tempTypeObject = tempTypeObject->next;
+        tempTypeObject = tempTypeObject->next;
             
-            if(strCompare(tempTypeObject->name, typeName)){
-                if(isGlobal == 0){
-                    lastObjectLocal->type = tempTypeObject->type;
-                    return 0;
-                }
-                if(isGlobal == 1){
-                    lastObjectGlobal->type = tempTypeObject->type;
-                    return 0;
-                }
-            }
-            
+        if(strCompare(tempTypeObject->name, typeName) == 1){
+            return tempTypeObject->type;
         }
     }
-    return -1;
+    return 0;
+    
 
 }
 
@@ -299,9 +280,6 @@ int addTypeToList(){
     
     struct type_t *newElement;
     struct object_t *tempTypeObject;
-    
-    newElement = malloc(sizeof(struct type_t));
-    
 
     if(isGlobal == 0){
         tempTypeObject = lastObjectLocal;
@@ -311,17 +289,18 @@ int addTypeToList(){
         tempTypeObject = lastObjectGlobal;
     }
     
-    
-
-    if((objectClass == CLASS_VAR) && (isArray ==0) && (isStruct == 1)){       //Type schon vorhanden => suche nach dem struct/array
-        if(findTypeClassType() == 0){
+    if((objectClass == CLASS_VAR) && (isArray ==0) && (isStruct == 1)){
+        newElement = findTypeClassType();
+        if(newElement != 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
                 lastOffsetPointerGlobal = lastOffsetPointerGlobal - 4;
+                lastObjectGlobal->type = newElement;
             }
             if(isGlobal == 0){
                 tempTypeObject->offset = lastOffsetPointerLocal - 4;
                 lastOffsetPointerLocal = lastOffsetPointerLocal - 4;
+                lastObjectLocal->type = newElement;
             }
             return 0;
         }
@@ -364,6 +343,7 @@ int addTypeToList(){
     }
     
     if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
+        newElement = malloc(sizeof(struct type_t));
         newElement->form = FORM_RECORD;
         newElement->size = 0;
         tempTypeObject->type = newElement;

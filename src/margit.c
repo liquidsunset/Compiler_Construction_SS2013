@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "globals.c"
 
-#define MEMSIZE 30000
+#define MEMSIZE 250000
 
 // Virtual Registers
 int reg[32];
@@ -13,7 +13,7 @@ int reg[32];
 FILE * file[32];
 int file_ptr;
 
-// Virtual Memory of 4*150kB
+// Virtual Memory
 unsigned int mem[MEMSIZE];
 
 // Global pointer
@@ -258,7 +258,6 @@ int fetch() {
 		else if(op == TARGET_POP)
 		{
 			printf("%d POP %d, %d, %d", pc, a, b, c);
-			//SP = SP + 1;
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
@@ -266,7 +265,6 @@ int fetch() {
 		else if(op == TARGET_PSH)
 		{
 			printf("%d PSH %d, %d, %d", pc, a, b, c);
-			//SP = SP - 1;
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;
@@ -358,7 +356,7 @@ int fetch() {
 		}
 		else if(op == TARGET_FOPEN)
 		{
-			printf("%d FOPEN %d, %d, %d", pc, a, b, c);
+			printf("%d FOPEN %d, %d, %d\n", pc, a, b, c);
 			char * filename = getString((reg[b] + c) / 4);
 			printf("\nOpening file \"%s\" as #%d", filename, file_ptr);
 			file[file_ptr] = fopen(filename, "r+");
@@ -368,7 +366,7 @@ int fetch() {
 		}
 		else if(op == TARGET_FGETC)
 		{
-			printf("%d FGETC %d, %d, %d", pc, a, b, c);
+			printf("%d FGETC %d, %d, %d\n", pc, a, b, c);
 			int ch;
 			if(reg[b]<1 || reg[b] > file_ptr)
 			{
@@ -376,8 +374,6 @@ int fetch() {
 				return 0;
 			}
 			ch = fgetc(file[reg[b]]);
-			printf("\nCharacter '%c'\n", ch);
-			getchar();
 			reg[a] = ch;
 			pc = pc + 4;
 		}
@@ -450,15 +446,17 @@ int fetch() {
 		else if(op == TARGET_PRINTF)
 		{
 			printf("%d PRINTF %d, %d, %d", pc, a, b, c);
-			printf("'%s'", getString((reg[b] + c) / 4));
-			getchar();
+			char * string = getString((reg[b] + c) / 4);
+			printf("\n>'%s'\n", string);
+			free(string);
+			//getchar();
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
 		{
 			printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
-			printf("\n> '%d'", reg[c]);
-			getchar();
+			printf("\n> %d\n", reg[c]);
+			//getchar();
 			pc = pc + 4;
 		}
 
@@ -493,7 +491,7 @@ int fetch() {
 		}
 	}
 
-	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d)",
+	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d)\n",
 		reg[1], reg[2], reg[3], reg[4], reg[27], reg[28], reg[29], reg[30], reg[31]);
 
 	reg[0] = 0; // keep it zero
@@ -519,7 +517,7 @@ int main(int argc,  char ** argv) {
 	getchar();
 	while(fetch())
 	{
-        printf("\n");
+        //printf("\n");
         //getchar();
 	}
 	

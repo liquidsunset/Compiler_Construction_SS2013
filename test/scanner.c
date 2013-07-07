@@ -757,7 +757,7 @@ void getNextToken()
         return;
     }
 
-    status = malloc(sizeof(char) * 1024);
+    status = malloc(sizeof(char) * 50);
     
     len = 0;
     tokenType = -1;
@@ -826,6 +826,7 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
+            printf("Found token.");
             // printf("%d",tokenType);
             // if(tokenType == 100 || tokenType == 300){
             //     printf(" (%s)",stringValue);
@@ -852,6 +853,10 @@ int main(){
     while(tokenType != TOKEN_EOF){
         getNextToken();
         printf(tokenType);
+        if(tokenType == 100)
+        {
+            printf(stringValue);
+        }
     }
     //printf(peek(35, 105));
     //printf(peek(105, 110));

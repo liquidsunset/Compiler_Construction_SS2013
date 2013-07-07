@@ -156,34 +156,19 @@ void load(char * filename) {
 
 char * getString(int startAddress)
 {
-	int byte;
+	int word;
 	char * string;
 	int i;
 
 	i = 0;
 	string = malloc(sizeof(char) * 1000);
-	byte = (mem[startAddress] >> 24) & 255;
-	while(byte != 0)
+	word = mem[startAddress];
+	while(word != 0)
 	{
-		string[i] = byte;
+		string[i] = word;
 		i++;
 
-		if(i%4 == 0)
-		{
-			byte = (mem[startAddress + (i/4)] >> 24) & 255;
-		}
-		if(i%4 == 1)
-		{
-			byte = (mem[startAddress + (i/4)] >> 16) & 255;
-		}
-		if(i%4 == 2)
-		{
-			byte = (mem[startAddress + (i/4)] >> 8) & 255;
-		}
-		if(i%4 == 3)
-		{
-			byte = mem[startAddress + (i/4)] & 255;
-		}
+		word = mem[startAddress+i];
 	}
 	string[i] = 0;
 

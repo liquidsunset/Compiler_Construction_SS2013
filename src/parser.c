@@ -683,33 +683,14 @@ void putString(char * string)
     int c;
 
     i = 0;
-    word = 0;
-
     while(string[i] != 0)
     {
         c = string[i];
-        if(i%4 == 0)
-        {
-            word = word | (c << 24);
-        }
-        if(i%4 == 1)
-        {
-            word = word | (c << 16);
-        }
-        if(i%4 == 2)
-        {
-            word = word | (c << 8);
-        }
-        if(i%4 == 3)
-        {
-            word = word | c;
-            putRaw(word);
-            word = 0;
-        }
+        putRaw(c);
 
         i = i + 1;
     }
-    putRaw(word); // finish the current word
+    putRaw(0); // string terminator
 }
 
 void writeToFile(){
@@ -1746,7 +1727,7 @@ void factor(struct item_t * item) {
         // Until we support strings as arguments, parse as a constant 0.
         object = addStringToList();
         offset = strLength(stringValue) + 1;
-        object->offset = lastOffsetPointerGlobal - wordalignOffset(offset);
+        object->offset = lastOffsetPointerGlobal - (4*offset);
         object->class = CLASS_STRING;
         lastOffsetPointerGlobal = object->offset;
 

@@ -1,6 +1,3 @@
-
-#include <stdio.h> // used for tests
-
 static int FIRST_FUNCTION_DEFINITION;
 static int FIRST_GLOBAL_VARIABLE_DECLARATION;
 static int FIRST_TYPE;
@@ -156,8 +153,6 @@ static int TARGET_MALLOC;
 static int TARGET_TRAP;
 static int TARGET_PRINTF;
 static int TARGET_PRINTFI;
-
-
 
 static int fp;
 
@@ -628,10 +623,6 @@ int readNextCharacter(){
 void findToken(char *status,int len){
     
     char tokenChar;
-    
-    printf("Davor");
-    printf(status);
-    printf("Danach");
 
     if(len == 1)
     {

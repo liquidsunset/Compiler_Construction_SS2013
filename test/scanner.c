@@ -826,7 +826,6 @@ void getNextToken()
             //Analize the token
             findToken(status, len);
             len = 0;
-            printf("Found token.");
             // printf("%d",tokenType);
             // if(tokenType == 100 || tokenType == 300){
             //     printf(" (%s)",stringValue);

@@ -1855,37 +1855,6 @@ void factor(struct item_t * item) {
         fputc_func();
         return;
     }
-
-    if(tokenType == TOKEN_LRB)
-    {
-        getNextToken();
-        expression(item);
-        if(tokenType == TOKEN_RRB)
-        {
-            getNextToken();
-            return;
-        }
-        else
-        {
-            mark(") missing (factor)");
-            getNextToken();
-            return;
-        }
-    }
-    if(tokenType == TOKEN_CONSTINT)
-    {
-        getNextToken();
-        return;
-    }
-    if(tokenType == TOKEN_CONSTCHAR)
-    {
-        getNextToken();
-        return;
-    }
-    if(tokenType == TOKEN_STRING_LITERAL){
-        getNextToken();
-        return;
-    }
     
     error("Factor expected (factor)");
 }

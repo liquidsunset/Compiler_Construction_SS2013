@@ -1,8 +1,16 @@
-\documentclass{article}
+\documentclass[a4paper]{article}
 \usepackage[utf8]{inputenc} % Umlaute
 \usepackage[T1]{fontenc} % Pipes
 \usepackage[ngerman]{babel} % Deutsche Captions
-\usepackage{listings}
+\usepackage{listings} % source code listings
+\usepackage{multicol} % Aufzählungen in mehreren Spalten
+\usepackage[margin=1.5in]{geometry}
+
+% Optionen für Listings
+% \lstset{
+% 	breaklines=true,
+% 	keepspaces=false
+% }
 
 \title{Phoenix \\ \large Konstruktion eines Compilers}
 \author{Alexander Miller, Daniel Brand \\ \\
@@ -20,16 +28,40 @@
 	%\newpage
 
 	\section{Einleitung}
-	\subsection{Beschreibung}
-	Phoenix ist ein Compiler für eine Teilmenge von C, geschrieben in C.
-	Ausgabesprache ist ein Binärformat für einen DLX Interpreter.
-	Phoenix unterstützt grundlegende Sprachkonzepte: Type Checking, Lazy Evaluation, Arrays und Records.
+	Diese Dokumentation beschreibt die Features unseres Compilers Phoenix.
+	Wir entschieden uns für C als Sprache, da die geforderten sprachlichen Features damit unmittelbar umgesetzt werden können.
 
 	\subsection{Team}
 	Phoenix wurde geschrieben von:
 	\begin{itemize}
 		\item Daniel Brand (1023077)
 		\item Alexander Miller (1120667)
+	\end{itemize}
+
+	\section{Features}
+	\begin{multicols}{2}
+	\begin{itemize}
+		\item Basic Types
+		\item Arrays
+		\item Records
+		\item Boolean Expressions
+		\item Arithmetic Expressions
+		\item Strings
+		\item File I/O
+		\item While (auch verschachtelt)
+		\item If-Else (auch verschachtelt)
+		\item Lazy Evaluation
+		\item Call-by-value
+		\item Call-by-reference
+		\item Scoping von Variablen (Global und lokal)
+		\item Type-checking
+	\end{itemize}
+	\end{multicols}
+
+	Nicht implementiert:
+	\begin{itemize}
+		\item Self-Compilation
+		\item Seperate Compilation
 	\end{itemize}
 
 	\section{Aufbau}
@@ -57,7 +89,7 @@
 	Phoenix unterstützt die Deklaration von Variablen vom Typ Integer und Character.
 	Implizit können auch Booleans deklariert werden.
 	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
-	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflift erkannt).
+	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflikt erkannt).
 
 	\subsubsection{Arrays}
 
@@ -65,7 +97,7 @@
 
 	\subsection{Schleifen}
 
-	Unser C erlaubt nur while-Schleifen.
+	Phoenix-C erlaubt nur while-Schleifen. for-Schleifen können aber damit ebenfalls ausgedrückt werden.
 
 	\subsection{Type Checking}
 	Erklärung von Type Checking
@@ -113,22 +145,99 @@
 	\newpage
 	\section{Anhang 1: EBNF}
 	\begin{lstlisting}
-	start ::= {include_def} {top_declaration}.
-	include_def ::= "#include" (string_literal || ("<" {identifier || "."} ">") ).
-	top_declaration ::= type_declaration || variable_declaration || function_declaration.
-	type_declaration ::= struct_declaration || typedef_declaration.
-	variable_declaration ::= ["static"] type ["*"] identifier.
-	function_declaration ::= type identifier formalParameters (";" || "{" [variableDeclarationSequence] {instruction} "}" )
-	struct_declaration ::= "struct" identifier "{" {variable_declaration ";"} "}"
-	typedef_declaration ::=
-	type ::= "int" || "char" || "void" || identifier || ("struct" identifier)
-	identifier ::= letter {letter || digit}
-	formalParameters ::=
-	variableDeclarationSequence ::=
-	instruction ::=
-	letter ::=
-	digit ::=
+start = {include_def} {top_declaration}.
 
+include_def = "#include" (string_literal ||
+	("<" {identifier || "."} ">") ).
+
+top_declaration = type_declaration ";" ||
+				variable_declaration ";" ||
+				function_declaration.
+
+type_declaration = struct_declaration || typedef_declaration.
+
+variable_declaration = ["static"] type ["*"] identifier.
+
+function_declaration = type identifier formalParameters
+	(
+		";" ||
+		"{" [variableDeclarationSequence] {instruction} "}"
+	).
+
+struct_declaration = "struct" identifier
+	"{" {variable_declaration ";"} "}".
+
+typedef_declaration =
+
+type = "int" || "char" || "void" || identifier || ("struct" identifier).
+
+identifier = letter {letter || digit}.
+
+formalParameters = "(" formalParameter { "," formalParameter } ")".
+
+formalParameter = type identifier.
+
+variableDeclarationSequence = { variable_declaration ";" }.
+
+instruction = if_else ||
+	fclose_func ";" ||
+	while_loop ||
+	return_statement ";" ||
+	printf_func ";" ||
+	fputc_func ";" ||
+	identifier ( actualParameters || "=" expression) ";".
+
+if_else = "if" "(" expression ")" "{" { instruction } "}" [ "else" "{" { instruction } "}" ].
+
+fclose_func = "fclose" "(" expression ")".
+
+while_loop = "while" "(" expression ")" "{" { instruction } ")".
+
+return_statement = "return" expression.
+
+printf_func = "printf" "(" expression ")".
+
+fputc_func = "fputc" "(" expression "," expression ")".
+
+actualParameters = "(" [expression { "," expression } ] ")".
+
+expression = simple_expression [ ("==" || "<=" || "<" || "!=" || ">" || ">=") expression ].
+
+simple_expression = ("-" simple_expression) ||
+	term [ ("+" || "-" || "||") term].
+
+term = factor [ ("*" || "/" || "&") factor].
+
+factor = ("!" factor) ||
+	"(" expression ")" ||
+	integer ||
+	string_literal ||
+	identifier ||
+	sizeof_func ||
+	malloc_func ||
+	fopen_func ||
+	fgetc_func ||
+	fputc_func.
+
+sizeof_func = "sizeof" "(" type ")".
+
+malloc_func = "malloc" "(" expression ")".
+
+fopen_func = "fopen" "(" expression ["," expression] ")".
+
+fgetc_func = "fgetc" "(" expression ")".
+
+fputc_func = "fputc" "(" expression "," expression ")".
+
+string_literal = """ string """.
+
+string = letter { letter || digit || " " }.
+
+integer = digit { digit }.
+
+letter = A-Za-z.
+
+digit = 0-9.
 	\end{lstlisting}
 
 	\newpage

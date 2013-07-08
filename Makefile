@@ -11,7 +11,7 @@ run-margit: margit
 	./bin/margit
 
 run-parser: parser
-	./bin/parser test/scanner.c
+	./bin/parser test/parser.c
 
 margit: margit.o
 	gcc -o bin/margit bin/margit.o

@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc} % Umlaute
 \usepackage[T1]{fontenc} % Pipes
 \usepackage[ngerman]{babel} % Deutsche Captions
+\usepackage{listings}
 
 \title{Phoenix}
 \author{Alexander Miller, Daniel Brand \\ \\
@@ -111,12 +112,72 @@
 
 	\newpage
 	\section{Anhang 1: EBNF}
-	start ::= top\_declaration || function\_declaration.
+	\begin{lstlisting}
+	start ::= {include_def} {top_declaration}.
+	include_def ::= "#include" (string_literal || ("<" {identifier || "."} ">") ).
+	top_declaration ::= type_declaration || variable_declaration || function_declaration.
+	type_declaration ::= struct_declaration || typedef_declaration.
+	variable_declaration ::= ["static"] type ["*"] identifier.
+	function_declaration ::= type identifier formalParameters (";" || "{" [variableDeclarationSequence] {instruction} "}" )
+	struct_declaration ::= "struct" identifier "{" {variable_declaration ";"} "}"
+	typedef_declaration ::=
+	type ::= "int" || "char" || "void" || identifier || ("struct" identifier)
+	identifier ::= letter {letter || digit}
+	formalParameters ::=
+	variableDeclarationSequence ::=
+	instruction ::=
+	letter ::=
+	digit ::=
+
+	\end{lstlisting}
 
 	\newpage
 	\section{Anhang 2: Unterstütze Instruktionen}
-	J
-	BSR
+	\begin{lstlisting}
+	TARGET_NOP = 0;
+
+	// F1 (1-23)
 	ADDI
-	etc.
+	SUBI
+	MULI
+	DIVI
+	MODI
+	CMPI
+	LW
+	SW
+	POP
+	PSH
+	BEQ
+	BGE
+	BGT
+	BLE
+	BLT
+	BNE
+	BR
+	BSR
+	MALLOC
+	RET
+	FOPEN
+	FGETC
+	FPUTC
+
+	// F2 (24-43)
+	SUB
+	MUL
+	DIV
+	MOD
+	CMP
+	RET
+	AND
+	OR
+	PRINTF
+	PRINTFI
+	ADD
+
+	// F3 (43-63)
+	JSR
+	J
+	TRAP
+	FCLOSE
+	\end{lstlisting}
 \end{document}

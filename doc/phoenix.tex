@@ -23,6 +23,7 @@
 	Phoenix ist ein Compiler für eine Teilmenge von C, geschrieben in C.
 	Ausgabesprache ist ein Binärformat für einen DLX Interpreter.
 	Phoenix unterstützt grundlegende Sprachkonzepte: Type Checking, Lazy Evaluation, Arrays und Records.
+
 	\subsection{Team}
 	Phoenix wurde geschrieben von:
 	\begin{itemize}
@@ -31,21 +32,39 @@
 	\end{itemize}
 
 	\section{Aufbau}
-	Scanner, Parser, Code Generation. Target Machine.
+	Phoenix ist in mehrere Teile aufgeteilt.
+	\begin{itemize}
+		\item Scanner (in scanner.c)
+		\item Parser (in parser.c)
+		\item Code Generation (ebenfalls in parser.c)
+		\item Target Machine (in margit.c)
+	\end{itemize}
+
 
 	\section{Scanner}
-	Liest ASCII files, arbeitet mit Strings. Von Zeichen zu Token.
+	Der Scanner liest ein Textfile in ASCII-Kodierung ein und fügt Zeichen zu syntaktischen Einheiten (Tokens) zusammen.
+	Diese Tokens sind in ihrer Bedeutung eindeutig definiert (Anhang).
+
+	Der Scanner in Phoenix liest solange Zeichen von der Eingabedatei ein, bis er eine Wortgrenze erkennt.
+	Danach versucht er, das bis zu diesem Zeitpunkt eingelesene Wort zu kategorisieren und dies als Token an den Parser weiter zu geben.
 
 	\section{Parser}
-	LL(1)-Parser. Von Token zu Syntax-Tree.
+	Der Parser arbeitet nach dem LL(1)-Prinzip. Er liest von Links nach Rechts, evaluert von Links und hat einen Lookahead von einem Token.
 
 	\subsection{Typen}
 
-	\subsection{Arrays}
+	Phoenix unterstützt die Deklaration von Variablen vom Typ Integer und Character.
+	Implizit können auch Booleans deklariert werden.
+	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
+	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflift erkannt).
 
-	\subsection{Records}
+	\subsubsection{Arrays}
+
+	\subsubsection{Records}
 
 	\subsection{Schleifen}
+
+	Unser C erlaubt nur while-Schleifen.
 
 	\subsection{Type Checking}
 	Erklärung von Type Checking
@@ -60,16 +79,35 @@
 	Recursive descent.
 
 	\section{Target Machine}
-	DLX, 32bit, RISC.
+	Die Target Machine ist eine DLX-Maschine.
+	Somit besitzt sie 32 Register mit jeweils 32bit.
+	Zusätzlich zu den DLX-Befehlen haben wir neue Instruktionen für Input/Output eingeführt.
 
 	\subsection{Binärformat}
-	Code, Strings, Globals
+	Das erwartete Binärformat ist in folgende Segmente aufgeteilt.
+	\begin{itemize}
+		\item Code
+		\item Strings
+		\item Globale Variablen
+	\end{itemize}
+
+	Zur Laufzeit werden von der Target Machine Heap und Stack zur Verfügung gestellt.
 
 	\subsection{Ausführung}
-	Setzen von GP, Allokieren von Heap, Stack. Semantik der Instruktionen
+	Die Target Machine lädt das Binärfile in den virtuellen RAM.
+	Der GP wird an die erste freie Stelle nach dem gelesen File gesetzt.
+	Der PC wird auf 1 gesetzt.
 
 	\subsection{System IO}
-	Printf, File IO.
+	Wir haben neue Instruktionen für Input und Output eingeführt.
+	Diese sind analog zu den benutzten POSIX-Syscalls.
+	\begin{itemize}
+		\item fopen
+		\item fclose
+		\item fgetc
+		\item fputc
+		\item printf
+	\end{itemize}
 
 	\newpage
 	\section{Anhang 1: EBNF}

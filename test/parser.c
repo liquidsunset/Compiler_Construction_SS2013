@@ -32,7 +32,6 @@ static int LINK;
 static int RR;
 
 static int returnFJumpAddress;
-static struct object_t * procedureContext;
 
 static int * output;
 
@@ -60,6 +59,8 @@ struct object_t{
     int value;
     int reg;
 };
+
+static struct object_t * procedureContext;
 
 void getFromList()
 {

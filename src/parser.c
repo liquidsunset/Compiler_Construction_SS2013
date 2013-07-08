@@ -3070,8 +3070,15 @@ void struct_declaration()
             }
             else
             {
-                mark("{ expected (struct_declaration)");
-                getNextToken();
+                if(tokenType == TOKEN_SEMICOLON) //forward declaration
+                {
+                    return; // the semicolon is dealth with in calling function.
+                }
+                else
+                {
+                    mark("{ or ; expected (struct_declaration)");
+                    getNextToken();
+                }
             }
 
             while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {

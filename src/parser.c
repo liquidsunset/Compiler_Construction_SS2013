@@ -450,7 +450,7 @@ int addFieldToList(struct object_t * object){
     newObjectElement->next = 0;
 
     newTempObject = object->type->fields;
-    
+
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
             if(strCompare(newTempObject->name, stringValue)){
@@ -2191,7 +2191,6 @@ void variable_declaration()
         if(tokenType == TOKEN_MULT)
         {
             isArray = 1;
-            isStruct = 0;
             getNextToken();
         }
 
@@ -3087,6 +3086,9 @@ void struct_declaration()
                 // identifier name is still set after variable_declaration() completed.
                 objectClass = CLASS_FIELD; 
                 addFieldToList(object);
+
+                isArray = 0;
+                isStruct 0;
 
                 if(tokenType == TOKEN_SEMICOLON)
                 {

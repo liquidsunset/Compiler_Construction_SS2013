@@ -364,7 +364,6 @@ void initTokens(){
     TARGET_BLT = 15;
     TARGET_BNE = 16;
     TARGET_BR = 17;
-    TARGET_BSR = 18;
     TARGET_MALLOC = 19;
     TARGET_RET = 20;
     TARGET_FOPEN = 21;
@@ -395,6 +394,7 @@ void initTokens(){
     TARGET_J = 44;
     TARGET_TRAP = 45;
     TARGET_FCLOSE = 46;
+    TARGET_BSR = 47;
     
     stringValue = malloc(sizeof(char) * 1024);
     typeName = malloc(sizeof(char) * 1024);

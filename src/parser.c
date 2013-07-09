@@ -438,6 +438,7 @@ int addTypeToField(){
 
 
 int addFieldToList(struct object_t * object){
+
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
@@ -1320,7 +1321,7 @@ void type(struct item_t * item)
 
         if(object == 0)
         {
-            error("Unknown type");
+            error("Unknown object");
         }
         getNextToken();
         return;

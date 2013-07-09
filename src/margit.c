@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "globals.c"
 
-#define MEMSIZE 2500000
+#define MEMSIZE 250000000
 
 // Virtual Registers
 int reg[32];
@@ -263,6 +263,10 @@ int fetch() {
 				printf("ERROR: Segmentation fault. Bad read.");
 				return 0;
 			}
+			if(b != 28 && addr > 0 && addr < (GP*4))
+			{
+				printf("\nWARNING:Load from code segment. Global?\n");
+			}
 			reg[a] = mem[addr];
 			pc = pc + 4;
 		}
@@ -274,6 +278,10 @@ int fetch() {
 			{
 				printf("\nERROR: Segmentation fault. Bad write.\n");
 				return 0;
+			}
+			if(b != 28 && addr > 0 && addr < (GP*4))
+			{
+				printf("\nWARNING: Store to code segment. Global?\n");
 			}
 			mem[addr] = reg[a];
 			pc = pc + 4;

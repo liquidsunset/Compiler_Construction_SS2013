@@ -247,13 +247,9 @@ struct object_t *createObject(int classType){
 struct type_t *findStructType(){
     struct object_t *tempTypeObject;
     
-    if(isGlobal == 0){
-        tempTypeObject = objectLocal;
-    }
-    
-    if(isGlobal == 1){
-        tempTypeObject = objectGlobal;
-    }
+
+    tempTypeObject = objectGlobal;
+
     
     if(tempTypeObject != 0){    
         while(tempTypeObject->next != 0){
@@ -389,7 +385,7 @@ int addTypeToField(){
         return 0;
     }
 
-    if((isArray == 1) && (isStruct == 1)){
+    if((isArray == 0) && (isStruct == 1)){
         struct type_t *newType;
         newType = findStructType();
         

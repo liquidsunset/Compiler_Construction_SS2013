@@ -1053,9 +1053,13 @@ void termBinaryOperator(
                 {
                     put(TARGET_MULI, leftItem->reg, leftItem->reg, rightItem->value);
                 }
-                else{if(operatorSymbol == TOKEN_DIVIDE){
+                if(operatorSymbol == TOKEN_DIVIDE){
                     put(TARGET_DIVI, leftItem->reg, leftItem->reg, rightItem->value);
-                }}
+                }
+                if(operatorSymbol == TOKEN_BITWISEAND)
+                {
+                    put(TARGET_ANDI, leftItem->reg, leftItem->reg, rightItem->value);
+                }
             }
         }
         else
@@ -1066,9 +1070,9 @@ void termBinaryOperator(
             {
                 put(TARGET_MUL, leftItem->reg, leftItem->reg, rightItem->reg);
             }
-            else {if(operatorSymbol == TOKEN_DIVIDE){
+            if(operatorSymbol == TOKEN_DIVIDE){
                 put(TARGET_DIV, leftItem->reg, leftItem->reg, rightItem->reg);
-            }}
+            }
             releaseRegister(rightItem->reg);
         }
     }
@@ -1855,7 +1859,7 @@ void term(struct item_t * item)
 
     factor(item);
 
-    while((tokenType == TOKEN_MULT) || (tokenType == TOKEN_DIVIDE) || (tokenType == TOKEN_PERCENT) || (tokenType == TOKEN_AND))
+    while((tokenType == TOKEN_MULT) || (tokenType == TOKEN_DIVIDE) || (tokenType == TOKEN_PERCENT) || (tokenType == TOKEN_AND) || (tokenType == TOKEN_BITWISEAND))
     {
         operatorSymbol = tokenType;
         if(operatorSymbol == TOKEN_AND)

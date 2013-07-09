@@ -464,7 +464,7 @@ int addFieldToList(struct object_t * object){
     }
     else{
         newTempObject = newObjectElement;
-        lastObjectGlobal->type->fields = newTempObject;
+        object->type->fields = newTempObject;
         lastFieldElementGlobal = newTempObject;
     }
     

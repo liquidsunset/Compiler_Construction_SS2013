@@ -244,7 +244,7 @@ struct object_t *createObject(int classType){
 }
 
 
-struct type_t *findTypeClassType(){
+struct type_t *findStructType(){
     struct object_t *tempTypeObject;
     
     if(isGlobal == 0){
@@ -285,7 +285,7 @@ int addTypeToList(){
     }
     
     if((objectClass == CLASS_VAR) && (isArray ==0) && (isStruct == 1)){
-        newElement = findTypeClassType();
+        newElement = findStructType();
         if(newElement != 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
@@ -391,7 +391,7 @@ int addTypeToField(){
 
     if((isArray == 0) && (isStruct == 1)){
         struct type_t *newType;
-        newType = findTypeClassType();
+        newType = findStructType();
         
         if(isGlobal == 0){
             lastFieldElementLocal->type = newType;
@@ -437,7 +437,7 @@ int addTypeToField(){
 }
 
 
-int addFieldToList(){
+int addFieldToList(struct object_t * object){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
@@ -449,15 +449,7 @@ int addFieldToList(){
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
 
-    if(isGlobal == 0){
-        newTempObject = lastObjectLocal->type->fields;
-    }
-    
-    if(isGlobal == 1){
-        newTempObject = lastObjectGlobal->type->fields;
-    }
-    
-    //TODO: set Reg
+    newTempObject = object->type->fields;
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
@@ -3047,21 +3039,28 @@ void typedef_declaration()
 
 void struct_declaration()
 {
+    struct object_t * object;
+
     if(tokenType == TOKEN_STRUCT)
     {
-        
         getNextToken();
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            isStruct = 1;
-            objectClass = CLASS_TYPE; 
-            isArray = 0;
-            isGlobal = 1;
-            if(createObject(CLASS_TYPE) == 0){
-                error("Symbol-Table: Could not create Object");
+            object = findObject(objectGlobal, stringValue);
+
+            if(object == 0)
+            {
+                isStruct = 1;
+                objectClass = CLASS_TYPE; 
+                isArray = 0;
+                isGlobal = 1;
+                object = createObject(CLASS_TYPE);
+                if(object == 0){
+                    error("Symbol-Table: Could not create Object");
+                }
             }
-            
+
             getNextToken();
 
             if(tokenType == TOKEN_LCB)
@@ -3087,7 +3086,7 @@ void struct_declaration()
                 // type is set by type() within variable_declaration().
                 // identifier name is still set after variable_declaration() completed.
                 objectClass = CLASS_FIELD; 
-                addFieldToList();
+                addFieldToList(object);
 
                 if(tokenType == TOKEN_SEMICOLON)
                 {

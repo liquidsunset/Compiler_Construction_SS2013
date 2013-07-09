@@ -3049,6 +3049,7 @@ void struct_declaration()
 
                     if(tokenType == TOKEN_IDENTIFIER) // whoops, a function declaration!
                     {
+                        printf(stringValue);
                         isGlobal = 0;
                         typeObject = object;        
                         object = findProcedureObject(objectGlobal, stringValue);

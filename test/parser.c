@@ -4137,7 +4137,7 @@ void start() {
 }
 // ----------------------------------------------------------------------------
 
-int main(){
+void main(){
     printf("Phoenix: Parser");
     printf("===============");
 
@@ -4148,12 +4148,10 @@ int main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/scanner.c");
+    openFile("test/m6.c");
     start();
     writeToFile();
     printf("Parsed with");
     printf(errorCount);
     printf(warningCount);
-
-    return 0;
 }

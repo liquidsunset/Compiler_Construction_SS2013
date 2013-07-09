@@ -244,7 +244,7 @@ struct object_t *createObject(int classType){
 }
 
 
-struct type_t *findTypeClassType(){
+struct type_t *findStructType(){
     struct object_t *tempTypeObject;
     
     if(isGlobal == 0){
@@ -285,7 +285,7 @@ int addTypeToList(){
     }
     
     if((objectClass == CLASS_VAR) && (isArray ==0) && (isStruct == 1)){
-        newElement = findTypeClassType();
+        newElement = findStructType();
         if(newElement != 0){
             if(isGlobal == 1){
                 tempTypeObject->offset = lastOffsetPointerGlobal - 4;
@@ -391,7 +391,7 @@ int addTypeToField(){
 
     if((isArray == 0) && (isStruct == 1)){
         struct type_t *newType;
-        newType = findTypeClassType();
+        newType = findStructType();
         
         if(isGlobal == 0){
             lastFieldElementLocal->type = newType;
@@ -437,7 +437,7 @@ int addTypeToField(){
 }
 
 
-int addFieldToList(){
+int addFieldToList(struct object_t *object){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
@@ -449,13 +449,7 @@ int addFieldToList(){
     newObjectElement->class = objectClass;
     newObjectElement->next = 0;
 
-    if(isGlobal == 0){
-        newTempObject = lastObjectLocal->type->fields;
-    }
-    
-    if(isGlobal == 1){
-        newTempObject = lastObjectGlobal->type->fields;
-    }
+    newTempObject = object->type->fields;
     
     //TODO: set Reg
     
@@ -1328,7 +1322,7 @@ void type(struct item_t * item)
 
         if(object == 0)
         {
-            error("Unknown type");
+            error("Unknown object");
         }
         getNextToken();
         return;

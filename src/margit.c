@@ -425,6 +425,12 @@ int fetch() {
 			reg[a] = reg[b] * reg[c];
 			pc = pc + 4;
 		}
+		else if(op == TARGET_OR)
+		{
+			//printf("%d OR %d, %d, %d", pc, a, b, c);
+			reg[a] = reg[b] | reg[c];
+			pc = pc + 4;
+		}
 		else if(op == TARGET_DIV)
 		{
 			//printf("%d DIV %d, %d, %d", pc, a, b, c);

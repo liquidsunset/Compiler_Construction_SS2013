@@ -3817,7 +3817,7 @@ void function_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            printf("%s", stringValue);
+            printf(stringValue);
             object = findProcedureObject(objectGlobal, stringValue);
             if(object != 0) // the procedure appeared before, either as declaration or invokation
             {

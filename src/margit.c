@@ -26,6 +26,7 @@ unsigned int FP;
 unsigned int bump_ptr;
 
 unsigned int charactersRead;
+unsigned int charactersWritten;
 
 // Instruction register
 int ir;
@@ -139,6 +140,7 @@ void load(char * filename) {
 				reg[28] = GP * 4;
 				reg[30] = (MEMSIZE-1) * 4;
 				charactersRead = 0;
+				charactersWritten=0;
 				break;
 			}
 
@@ -403,6 +405,7 @@ int fetch() {
 		{
 			printf("%d FPUTC %d, %d, %d", pc, a, b, c);
 			fputc(reg[c], file[reg[a]]);
+			charactersWritten++;
 			pc = pc + 4;
 		}
 
@@ -477,14 +480,14 @@ int fetch() {
 			char * string = getString((reg[b] + c) / 4);
 			printf("\n>'%s'\n", string);
 			free(string);
-			//getchar();
+			getchar();
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
 		{
 			printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
 			printf("\n> %d\n", reg[c]);
-			//getchar();
+			getchar();
 			pc = pc + 4;
 		}
 		else
@@ -577,6 +580,6 @@ int main(int argc,  char ** argv) {
         //getchar();
 	}
 	
-    printf("\nExecution stopped.\nRead %d characters\n", charactersRead);
+    printf("\nExecution stopped.\nRead %d characters\nWritten %d characters\n", charactersRead, charactersWritten);
 	return 0;
 }

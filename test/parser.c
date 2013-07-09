@@ -118,11 +118,11 @@ void initTypes(){
 void addToList()
 {
     printf("Adding");
-    PRITNF(stringValue);
+    printf(stringValue);
 }
 
 
-struct object_t *findObject(struct object_t *firstElement, char *identifier){
+struct object_t * findObject(struct object_t *firstElement, char *identifier){
     
     if(firstElement != 0){
         while (firstElement->next != 0) {
@@ -2193,7 +2193,7 @@ void procedureCall(struct item_t * item)
     object = findObject(objectGlobal,stringValue);
     if(object == 0)
     {
-        mark("undeclared procedure procedureCall");
+        mark("undeclared procedure (procedureCall)");
         isGlobal = 1;
         object = createObject(CLASS_PROC);
 
@@ -3086,6 +3086,8 @@ void typedef_declaration()
 
 void struct_declaration()
 {
+    struct object_t * object;
+
     if(tokenType == TOKEN_STRUCT)
     {
         
@@ -3093,12 +3095,18 @@ void struct_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            isStruct = 1;
-            objectClass = CLASS_TYPE; 
-            isArray = 0;
-            isGlobal = 1;
-            if(createObject(CLASS_TYPE) == 0){
-                error("Symbol-Table: Could not create Object");
+
+            object = findObject(objectGlobal, stringValue);
+
+            if(object == 0)
+            {
+                isStruct = 1;
+                objectClass = CLASS_TYPE; 
+                isArray = 0;
+                isGlobal = 1;
+                if(createObject(CLASS_TYPE) == 0){
+                    error("Symbol-Table: Could not create Object");
+                }
             }
             
             getNextToken();

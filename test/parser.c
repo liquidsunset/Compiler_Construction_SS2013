@@ -975,13 +975,13 @@ struct object_t * findObject(struct object_t *firstElement, char *identifier){
     
     if(firstElement != 0){
         while (firstElement->next != 0) {
-            if(strCompare(firstElement->name, identifier)){
+            if(strCompare(firstElement->name, identifier)>0){
                 //printf("\nSymbol table: found %s\n", stringValue);
                 return firstElement;
             }
             firstElement = firstElement->next;
         }
-        if(strCompare(firstElement->name, identifier)){
+        if(strCompare(firstElement->name, identifier)>0){
             //printf("\nSymbol table: found %s\n", stringValue);
             return firstElement;
         }
@@ -994,13 +994,13 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
     
     if(firstElement != 0){
         while (firstElement->next != 0) {
-            if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
+            if((strCompare(firstElement->name, identifier)>0) && (firstElement->class == CLASS_PROC)){
                 //printf("\nSymbol table: found %s\n", identifier);
                 return firstElement;
             }
             firstElement = firstElement->next;
         }
-        if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
+        if((strCompare(firstElement->name, identifier)>0) && (firstElement->class == CLASS_PROC)){
             //printf("\nSymbol table: found %s\n", identifier);
             return firstElement;
         }
@@ -1011,7 +1011,7 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
 
 int addTypeToList();
 
-struct object_t *addStringToList(){
+struct object_t * addStringToList(){
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
@@ -4027,15 +4027,6 @@ void top_declaration() {
     {
         type_declaration();
         isGlobal = 1;
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; expected after type declaration (top_declaration)");
-            getNextToken();
-        }
         return;
     }
 

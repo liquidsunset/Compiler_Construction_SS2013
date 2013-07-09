@@ -532,7 +532,7 @@ void mark(char *message)
 
 void initCodeGen()
 {
-    CODESIZE = 10000;
+    CODESIZE = 65000;
 
     CODEGEN_GP = 28;
     PC = 2; // the first word is saved for the TRAP, the second words is saved for the J to main

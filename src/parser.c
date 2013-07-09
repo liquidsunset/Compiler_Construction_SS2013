@@ -3060,6 +3060,10 @@ void struct_declaration()
                     error("Symbol-Table: Could not create Object");
                 }
             }
+            else
+            {
+                lastObjectGlobal = object;
+            }
 
             getNextToken();
 

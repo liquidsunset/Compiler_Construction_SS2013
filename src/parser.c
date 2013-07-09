@@ -389,7 +389,7 @@ int addTypeToField(){
         return 0;
     }
 
-    if((isArray == 0) && (isStruct == 1)){
+    if((isArray == 1) && (isStruct == 1)){
         struct type_t *newType;
         newType = findStructType();
         

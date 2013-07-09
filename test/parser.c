@@ -2453,7 +2453,7 @@ void fputc_func()
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();
-            if(isIn(tokenType, FIRST_EXPRESSION))
+            if(isIn(tokenType, FIRST_EXPRESSION)>0)
             {
                 charItem = malloc(sizeof(struct item_t));
                 expression(charItem);
@@ -2461,7 +2461,7 @@ void fputc_func()
                 if(tokenType == TOKEN_COMMA)
                 {
                     getNextToken();
-                    if(isIn(tokenType, FIRST_EXPRESSION))
+                    if(isIn(tokenType, FIRST_EXPRESSION)>0)
                     {
                         fileItem = malloc(sizeof(struct item_t));
                         expression(fileItem);
@@ -2516,7 +2516,7 @@ void printf_func() {
         {
             getNextToken();            
 
-            if(isIn(tokenType, FIRST_EXPRESSION))
+            if(isIn(tokenType, FIRST_EXPRESSION)>0)
             {
                 item = malloc(sizeof(struct item_t));
                 expression(item);
@@ -2935,7 +2935,7 @@ struct object_t * actualParameter(
 {
     struct item_t * item;
 
-    if(isIn(tokenType, FIRST_EXPRESSION))
+    if(isIn(tokenType, FIRST_EXPRESSION)>0)
     {
         item = malloc(sizeof(struct item_t));
         expression(item);
@@ -2973,7 +2973,7 @@ void actualParameters(struct object_t * object)
     {
         getNextToken();
         nextFormalParameter = object->params;
-        if(isIn(tokenType, FIRST_EXPRESSION))
+        if(isIn(tokenType, FIRST_EXPRESSION)>0)
         {
             nextFormalParameter = actualParameter(object, nextFormalParameter);
             while(tokenType == TOKEN_COMMA)
@@ -3019,7 +3019,7 @@ int sJump(int branchAddress)
 
 int isBR(int address)
 {
-    return ((output[address] >> 26) & 63) == TARGET_BSR;
+    return ((output[address] / 67108864) & 63) == TARGET_BSR;
 }
 
 void pushUsedRegisters() // pushed reg[1] to reg[27] onto the stack
@@ -3068,7 +3068,7 @@ void procedureCall(struct item_t * item)
     item->type = object->type;
     pushUsedRegisters();
     actualParameters(object);
-    if((object->offset != 0) && !(isBR(object->offset)))
+    if((object->offset != 0) && !(isBR(object->offset)>0))
     {  
         sJump(object->offset - PC);
     }
@@ -3092,7 +3092,7 @@ void variable_declaration()
         getNextToken();
     }
 
-    if(isIn(tokenType, FIRST_TYPE))
+    if(isIn(tokenType, FIRST_TYPE)>0)
     {
         item = malloc(sizeof(struct item_t));
         type(item);
@@ -3131,7 +3131,7 @@ void return_statement(struct item_t * item)
     {
         getNextToken();
 
-        if(isIn(tokenType, FIRST_EXPRESSION))
+        if(isIn(tokenType, FIRST_EXPRESSION)>0)
         {
             expression(item);
             if(item->type != procedureContext->type)
@@ -3409,7 +3409,7 @@ void if_else()
             getNextToken();
         }
 
-        if(isIn(tokenType, FIRST_EXPRESSION))
+        if(isIn(tokenType, FIRST_EXPRESSION)>0)
         {
             item = malloc(sizeof(struct item_t));
             expression(item);
@@ -3445,7 +3445,7 @@ void if_else()
                 getNextToken();
             }
 
-            while(isIn(tokenType, FIRST_INSTRUCTION))
+            while(isIn(tokenType, FIRST_INSTRUCTION)>0)
             {
                 instruction();
             }
@@ -3476,7 +3476,7 @@ void if_else()
                     getNextToken();
                 }
 
-                while(isIn(tokenType, FIRST_INSTRUCTION))
+                while(isIn(tokenType, FIRST_INSTRUCTION)>0)
                 {
                     instruction();
                 }
@@ -3518,7 +3518,7 @@ void while_loop()
             getNextToken();
         }
 
-        if(isIn(tokenType, FIRST_EXPRESSION))
+        if(isIn(tokenType, FIRST_EXPRESSION)>0)
         {
             bJumpAddress = PC;
 
@@ -3555,7 +3555,7 @@ void while_loop()
                 getNextToken();
             }
 
-            while(isIn(tokenType, FIRST_INSTRUCTION))
+            while(isIn(tokenType, FIRST_INSTRUCTION)>0)
             {
                 instruction();
             }
@@ -3588,7 +3588,7 @@ struct type_t * basicArrayRecordType()
     struct item_t *item;
     
 
-    if(isIn(tokenType, FIRST_TYPE))
+    if(isIn(tokenType, FIRST_TYPE)>0)
     {
         newType = malloc(sizeof(struct type_t));
         newObject = malloc(sizeof(struct object_t));
@@ -3738,7 +3738,7 @@ void formalParameters(struct object_t * object)
 
     nextParameter = object->params;
 
-    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+    if(isIn(tokenType, FIRST_VARIABLE_DECLARATION)>0)
     {
         nextParameter = formalParameter(object, nextParameter);
         numberOfParameters = numberOfParameters + 1;
@@ -3793,7 +3793,7 @@ int variableDeclarationSequence(struct object_t * object) // returns the number 
     int x;
 
     x = 0;
-    while(isIn(tokenType, FIRST_VARIABLE_DECLARATION))
+    while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)>0)
     {
         variable_declaration();
         x = x + 1;
@@ -3814,7 +3814,8 @@ int variableDeclarationSequence(struct object_t * object) // returns the number 
             getNextToken();
         }
     }
-    printf("# of local variables=%d\n", x);
+    printf("# of local variables="); printf(x);
+
     return x;
 }
 
@@ -3823,7 +3824,7 @@ void function_declaration()
     struct item_t * item;
     struct object_t * object;
 
-    if(isIn(tokenType, FIRST_TYPE))
+    if(isIn(tokenType, FIRST_TYPE)>0)
     {
         item = malloc(sizeof(struct item_t));
         type(item);
@@ -3877,7 +3878,7 @@ void function_declaration()
             prologue(variableDeclarationSequence(object) * 4);
             procedureContext = object;
 
-            while(isIn(tokenType, FIRST_INSTRUCTION))
+            while(isIn(tokenType, FIRST_INSTRUCTION)>0)
             {
                 instruction();
             }
@@ -3915,7 +3916,7 @@ void typedef_declaration()
     {
         getNextToken();
 
-        if(isIn(tokenType, FIRST_TYPE))
+        if(isIn(tokenType, FIRST_TYPE)>0)
         {
             item = malloc(sizeof(struct item_t));
             type(item);
@@ -3983,7 +3984,7 @@ void struct_declaration()
                 getNextToken();
             }
 
-            while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)) {
+            while(isIn(tokenType, FIRST_VARIABLE_DECLARATION)>0) {
                 variable_declaration();
 
                 // type is set by type() within variable_declaration().
@@ -4036,7 +4037,7 @@ void type_declaration()
 
 void top_declaration() {
 
-    if(isIn(tokenType, FIRST_TYPE_DECLARATION))
+    if(isIn(tokenType, FIRST_TYPE_DECLARATION)>0)
     {
         type_declaration();
         isGlobal = 1;
@@ -4057,7 +4058,7 @@ void top_declaration() {
             isStruct = 0;
         }
         if(createObject(CLASS_VAR) == 0){
-            error("Symbol-Table: Could not create Object");;
+            error("Symbol-Table: Could not create Object");
         }
 
         if(tokenType == TOKEN_SEMICOLON)
@@ -4072,7 +4073,7 @@ void top_declaration() {
         return;
     }
 
-    if(isIn(tokenType, FIRST_TYPE))
+    if(isIn(tokenType, FIRST_TYPE)>0)
     {
         isGlobal = 0;
         function_declaration();
@@ -4100,7 +4101,7 @@ void include_def()
             if(tokenType == TOKEN_LESS)
             {
                 getNextToken();
-                while(tokenType == TOKEN_IDENTIFIER || tokenType == TOKEN_POINT)
+                while((tokenType == TOKEN_IDENTIFIER) || (tokenType == TOKEN_POINT))
                 {
                     getNextToken();
                 }
@@ -4122,7 +4123,7 @@ void start() {
     }
 
     while(tokenType != TOKEN_EOF) {
-        if(isIn(tokenType, FIRST_TOP_DECLARATION))
+        if(isIn(tokenType, FIRST_TOP_DECLARATION)>0)
         {
             isGlobal = 1;
             top_declaration();
@@ -4136,7 +4137,7 @@ void start() {
 }
 // ----------------------------------------------------------------------------
 
-int main(int argc, char ** argv){
+int main(){
     printf("Phoenix: Parser");
     printf("===============");
 
@@ -4147,14 +4148,7 @@ int main(int argc, char ** argv){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    if(argc == 1)
-    {
-        openFile("test/scanner.c");
-    }
-    else
-    {
-        openFile(argv[1]);
-    }
+    openFile("test/scanner.c");
     start();
     writeToFile();
     printf("Parsed with");

@@ -437,7 +437,8 @@ int addTypeToField(){
 }
 
 
-int addFieldToList(struct object_t *object){
+int addFieldToList(struct object_t * object){
+
     struct object_t *newObjectElement;
     struct object_t *newTempObject;
     
@@ -450,8 +451,6 @@ int addFieldToList(struct object_t *object){
     newObjectElement->next = 0;
 
     newTempObject = object->type->fields;
-    
-    //TODO: set Reg
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
@@ -3041,21 +3040,28 @@ void typedef_declaration()
 
 void struct_declaration()
 {
+    struct object_t * object;
+
     if(tokenType == TOKEN_STRUCT)
     {
-        
         getNextToken();
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            isStruct = 1;
-            objectClass = CLASS_TYPE; 
-            isArray = 0;
-            isGlobal = 1;
-            if(createObject(CLASS_TYPE) == 0){
-                error("Symbol-Table: Could not create Object");
+            object = findObject(objectGlobal, stringValue);
+
+            if(object == 0)
+            {
+                isStruct = 1;
+                objectClass = CLASS_TYPE; 
+                isArray = 0;
+                isGlobal = 1;
+                object = createObject(CLASS_TYPE);
+                if(object == 0){
+                    error("Symbol-Table: Could not create Object");
+                }
             }
-            
+
             getNextToken();
 
             if(tokenType == TOKEN_LCB)
@@ -3081,7 +3087,7 @@ void struct_declaration()
                 // type is set by type() within variable_declaration().
                 // identifier name is still set after variable_declaration() completed.
                 objectClass = CLASS_FIELD; 
-                addFieldToList();
+                addFieldToList(object);
 
                 if(tokenType == TOKEN_SEMICOLON)
                 {

@@ -215,6 +215,12 @@ int fetch() {
 			reg[a] = reg[b] + c;
 			pc = pc + 4;
 		}
+		else if(op == TARGET_ANDI)
+		{
+			//printf("%d ANDI %d, %d, %d", pc, a, b, c);
+			reg[a] = reg[b] & c;
+			pc = pc + 4;
+		}
 		else if(op == TARGET_SUBI)
 		{
 			//printf("%d SUBI %d, %d, %d", pc, a, b, c);

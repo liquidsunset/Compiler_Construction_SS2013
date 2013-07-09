@@ -2191,7 +2191,10 @@ void variable_declaration()
 
         if(tokenType == TOKEN_MULT)
         {
-            isArray = 1;
+            if(isStruct == 0)
+            {
+                isArray = 1;
+            }
             getNextToken();
         }
 

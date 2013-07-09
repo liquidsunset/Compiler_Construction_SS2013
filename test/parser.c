@@ -1062,7 +1062,7 @@ struct object_t *createObject(int classType){
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
-            if(strCompare(newTempObject->name, stringValue)){
+            if(strCompare(newTempObject->name, stringValue)>0){
                 return 0;
             }
             newTempObject = newTempObject->next;
@@ -1153,7 +1153,7 @@ int addTypeToList(){
         }
     }
     
-    if(objectClass == CLASS_VAR && (isArray == 0 && isStruct == 0)){
+    if((objectClass == CLASS_VAR) && ((isArray == 0) && (isStruct == 0))){
         if(currentType == FORM_INT){
             tempTypeObject->type = typeInt;
         }
@@ -1174,7 +1174,7 @@ int addTypeToList(){
     }
     
         
-    if((isArray == 1 && isStruct == 0)){
+    if((isArray == 1) && (isStruct == 0)){
     
 
         if(currentType == FORM_INT){
@@ -1198,7 +1198,7 @@ int addTypeToList(){
         return 0;
     }
     
-    if(objectClass == CLASS_TYPE && (isArray == 0 && isStruct == 1)){
+    if((objectClass == CLASS_TYPE) && ((isArray == 0) && (isStruct == 1))){
         newElement = malloc(sizeof(struct type_t));
         newElement->form = FORM_RECORD;
         newElement->size = 0;
@@ -1313,7 +1313,7 @@ int addFieldToList(){
     
     if(newTempObject != 0){
         while (newTempObject->next != 0) {
-            if(strCompare(newTempObject->name, stringValue)){
+            if(strCompare(newTempObject->name, stringValue)>0){
                 return -1;
             }
             newTempObject = newTempObject->next;
@@ -1468,7 +1468,7 @@ int requestRegister()
 {
     int i;
     i = 1;
-    while(isRegisterUsed[i] && (i <= 32))
+    while((isRegisterUsed[i]>0) && (i <= 32))
     {
         i = i + 1;
     }
@@ -1553,6 +1553,7 @@ void putString(char * string)
 void writeToFile(){
     int i;
     int instruction;
+    int file;
 
     struct object_t *tempTypeObject;
 
@@ -1615,14 +1616,14 @@ void writeToFile(){
 
     i = 0;
 
-    FILE * file = fopen("a.out", "w");
+    file = fopen("a.out");
     while(i < PC)
     {
         instruction = output[i];
         
-        fputc((instruction >> 24) & 255, file);
-        fputc((instruction >> 16) & 255, file);
-        fputc((instruction >> 8) & 255, file);
+        fputc((instruction / 16777216) & 255, file);
+        fputc((instruction / 65536) & 255, file);
+        fputc((instruction / 256) & 255, file);
         fputc(instruction & 255, file);
 
         i = i + 1;

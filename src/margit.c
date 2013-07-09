@@ -487,6 +487,11 @@ int fetch() {
 			//getchar();
 			pc = pc + 4;
 		}
+		else
+		{
+			printf("\nERROR: Unknown OP code %d at %d", op, pc);
+			return 0;
+		}
 
 	}
 	else if(isF3(op))
@@ -519,9 +524,9 @@ int fetch() {
 		}
 		else if(op == TARGET_PUSHUSEDREGISTERS)
 		{
-			printf("%d TARGET_PUSHUSEDREGISTERS", pc);
+			printf("%d PUSHUSEDREGISTERS", pc);
 			int i;
-			for(i = 1; i < 27; i++)
+			for(i = 1; i <= 26; i++)
 			{
 			reg[30] = reg[30]-4;
 			mem[(reg[30])/4] = reg[i];
@@ -531,9 +536,9 @@ int fetch() {
 		}
 		else if(op == TARGET_POPUSEDREGISTERS)
 		{
-			printf("%d TARGET_POPUSEDREGISTERS", pc);
+			printf("%d POPUSEDREGISTERS", pc);
 			int i;
-			for(i = 26; i > 0; i++)
+			for(i = 26; i >= 1; i--)
 			{
 				reg[i] = mem[(reg[30])/4];
 				reg[30] = reg[30]+4;		

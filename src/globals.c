@@ -290,18 +290,13 @@ void initTokens(){
     TARGET_FGETC = 22;
     TARGET_FPUTC = 23;
 
-    // F2 (24-43)
-    
+    // F2 (24-43) 
     TARGET_SUB = 24;
     TARGET_MUL = 25;
     TARGET_DIV = 26;
     TARGET_MOD = 27;
     TARGET_CMP = 28;
     TARGET_RET = 29;
-    // TARGET_FLO = 30;
-    // TARGET_FLC = 31;
-    // TARGET_RDC = 32;
-    // TARGET_WRC = 33;
     TARGET_ANDI = 34;
     TARGET_OR = 35;
     TARGET_PRINTF = 36;

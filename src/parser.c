@@ -595,16 +595,35 @@ int negate(int operator)
     return 0;
 }
 
+void releaseAllRegisters()
+{
+    int i;
+
+    i = 0;
+    while(i < 32)
+    {
+        releaseRegister(i);
+        i = i + 1;
+    }
+}
+
 int requestRegister()
 {
     int i;
     i = 1;
-    while(isRegisterUsed[i] && (i <= 32))
+    while(i <= 26)
     {
+        if(isRegisterUsed[i] == 0)
+        {
+            isRegisterUsed[i] = 1;
+            return i;
+        }
         i = i + 1;
     }
-    isRegisterUsed[i] = 1;
-    return i; // 32 is error
+
+    printf("All registers in use!\n\n");
+    exit(-1);
+    return -1;
 }
 
 void releaseRegister(int i)
@@ -634,7 +653,8 @@ void putAt(int op, int a, int b, int c,  int pos)
     // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
     // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
 
-    //printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
+    printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
+
     if(pos >= CODESIZE)
     {
         error("Exceeded codesize");
@@ -1101,6 +1121,7 @@ void expressionOperator(
             put(TARGET_CMP, leftItem->reg, leftItem->reg, rightItem->reg);
             releaseRegister(rightItem->reg);
         }
+
         leftItem->mode = CODEGEN_MODE_COND;
         leftItem->type = typeBool;
         leftItem->operator = operatorSymbol;
@@ -1778,41 +1799,6 @@ void factor(struct item_t * item) {
                 return;
             }
         }
-
-        // // We do not support procedure calls now
-        // if(tokenType == TOKEN_LRB) // procedure call
-        // {
-        //     while(isIn(tokenType, FIRST_EXPRESSION))
-        //     {
-        //         expression(0);
-        //         if(tokenType == TOKEN_COMMA)
-        //         {
-        //             getNextToken();
-        //         }
-        //     }
-
-        //     if(tokenType == TOKEN_RRB)
-        //     {
-        //         getNextToken();
-        //     }
-        //     else
-        //     {
-        //         mark(") expected (factor)");
-        //         getNextToken();
-        //     }
-
-        //     if(tokenType == TOKEN_SEMICOLON)
-        //     {
-        //         getNextToken();
-        //     }
-        //     else
-        //     {
-        //         mark("; expected after expression (factor)");
-        //         getNextToken();
-        //     }
-
-        //     return;
-        // }
         return;
     }
 
@@ -1833,12 +1819,6 @@ void factor(struct item_t * item) {
         fopen_func(item);
         return;
     }
-
-//    if(tokenType == TOKEN_FCLOSE)
-//    {
-//        fclose_func();
-//        return;
-//    }
 
     if(tokenType == TOKEN_FGETC)
     {
@@ -2441,6 +2421,8 @@ void instruction()
                 mark("; expected after procedure call");
                 getNextToken();
             }
+
+            releaseRegister(leftItem->reg);
             return;
         }
 
@@ -2979,6 +2961,7 @@ void function_declaration()
                 getNextToken();
             }
 
+            releaseAllRegisters();
             prologue(variableDeclarationSequence(object) * 4);
             procedureContext = object;
 
@@ -3063,7 +3046,7 @@ void struct_declaration()
 
                     if(tokenType == TOKEN_IDENTIFIER) // whoops, a function declaration!
                     {
-                        printf(stringValue);
+                        printf("\n> Entering function '%s'\n", stringValue);
                         isGlobal = 0;
                         typeObject = object;        
                         object = findProcedureObject(objectGlobal, stringValue);
@@ -3108,7 +3091,7 @@ void struct_declaration()
                             mark("{ expected (function_declaration)");
                             getNextToken();
                         }
-
+                        releaseAllRegisters();
                         prologue(variableDeclarationSequence(object) * 4);
                         procedureContext = object;
 

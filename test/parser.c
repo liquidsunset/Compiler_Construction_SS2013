@@ -1403,7 +1403,7 @@ void mark(char *message)
 
 void initCodeGen()
 {
-    CODESIZE = 10000;
+    CODESIZE = 65000;
 
     CODEGEN_GP = 28;
     PC = 2; // the first word is saved for the TRAP, the second words is saved for the J to main
@@ -1633,7 +1633,7 @@ void writeToFile(){
     fclose(file);
 }
 
-void string2Reg(struct item_t * item)
+void stringToReg(struct item_t * item)
 {
     int newReg;
 
@@ -1644,14 +1644,14 @@ void string2Reg(struct item_t * item)
     item->offset = 0;
 }
 
-void ref2Reg(struct item_t * item)
+void refToReg(struct item_t * item)
 {
     item->mode = CODEGEN_MODE_REG;
     put(TARGET_LW, item->reg, item->reg, item->offset);
     item->offset = 0;
 }
 
-void const2Reg(struct item_t * item)
+void constToReg(struct item_t * item)
 {
     item->mode = CODEGEN_MODE_REG;
     item->reg = requestRegister();
@@ -1662,7 +1662,7 @@ void const2Reg(struct item_t * item)
     item->offset = 0;
 }
 
-void var2Reg(struct item_t * item)
+void varToReg(struct item_t * item)
 {
     int newReg;
     
@@ -1679,22 +1679,22 @@ void load(struct item_t * item)
 {
     if(item->mode == CODEGEN_MODE_CONST)
     {
-        const2Reg(item);
+        constToReg(item);
         return;
     }
     if(item->mode == CODEGEN_MODE_VAR)
     {
-        var2Reg(item);
+        varToReg(item);
         return;
     }
     if(item->mode == CODEGEN_MODE_REF)
     {
-        ref2Reg(item);
+        refToReg(item);
         return;
     }
     if(item->mode == CODEGEN_MODE_STRING)
     {
-        string2Reg(item);
+        stringToReg(item);
         return;
     }
 }

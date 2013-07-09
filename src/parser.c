@@ -3037,6 +3037,7 @@ void struct_declaration()
             {
                 if(tokenType == TOKEN_SEMICOLON) //forward declaration
                 {
+                    getNextToken();
                     return; // the semicolon is dealt with in calling function.
                 }
                 else
@@ -3158,6 +3159,17 @@ void struct_declaration()
                 mark("} expected (struct_declaration)");
                 getNextToken();
             }
+
+            if(tokenType == TOKEN_SEMICOLON)
+            {
+                getNextToken();
+                return;
+            }
+            else
+            {
+                mark("; expected after struct declaration");
+                getNextToken();
+            }
         }
         else
         {
@@ -3181,15 +3193,6 @@ void top_declaration() {
     {
         type_declaration();
         isGlobal = 1;
-        if(tokenType == TOKEN_SEMICOLON)
-        {
-            getNextToken();
-        }
-        else
-        {
-            mark("; expected after type declaration (top_declaration)");
-            getNextToken();
-        }
         return;
     }
 

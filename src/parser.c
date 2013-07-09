@@ -1088,8 +1088,8 @@ void expressionOperator(
     struct item_t * rightItem,
     int operatorSymbol)
 {
-    if(((leftItem->type == typeInt) || (leftItem->type == typeChar)) && ((rightItem->type == typeInt) || (rightItem->type == typeChar)))
-    {
+    //if(((leftItem->type == typeInt) || (leftItem->type == typeChar)) && ((rightItem->type == typeInt) || (rightItem->type == typeChar)))
+    //{
         load(leftItem);
         if((rightItem->mode != CODEGEN_MODE_CONST) || (rightItem->value != 0 ))
         {
@@ -1103,11 +1103,11 @@ void expressionOperator(
         leftItem->operator = operatorSymbol;
         leftItem->fls = 0;
         leftItem->tru = 0;
-    }
-    else
-    {
-        error("Integer expressions expected");
-    }
+    //}
+    //else
+    //{
+    //    error("Integer expressions expected");
+    //}
 }
 
 void simpleExpressionBinaryOperator(
@@ -2147,7 +2147,7 @@ void procedureCall(struct item_t * item)
     object = findObject(objectGlobal,stringValue);
     if(object == 0)
     {
-        mark("undeclared procedure procedureCall");
+        mark("undeclared procedure (procedureCall)");
         isGlobal = 1;
         object = createObject(CLASS_PROC);
 
@@ -2998,48 +2998,10 @@ void function_declaration()
     }
 }
 
-void typedef_declaration()
-{
-    struct item_t * item;
-
-    if(tokenType == TOKEN_TYPEDEF)
-    {
-        getNextToken();
-
-        if(isIn(tokenType, FIRST_TYPE))
-        {
-            item = malloc(sizeof(struct item_t));
-            type(item);
-            while(tokenType == TOKEN_MULT)
-            {
-                // TODO: Handle references
-                getNextToken();
-            }
-
-            if(tokenType == TOKEN_IDENTIFIER)
-            {
-                // TODO: Add type to symbol table
-                getNextToken();
-            }
-            else
-            {
-                error("Identifier expected (typedef_declaration)");
-            }
-        }
-        else
-        {
-            error("type expected (typedef_declaration)");
-        }
-    }
-    else
-    {
-        error("typedef expected");
-    }
-}
-
 void struct_declaration()
 {
     struct object_t * object;
+    struct object_t * typeObject;
 
     if(tokenType == TOKEN_STRUCT)
     {
@@ -3075,12 +3037,93 @@ void struct_declaration()
             {
                 if(tokenType == TOKEN_SEMICOLON) //forward declaration
                 {
-                    return; // the semicolon is dealth with in calling function.
+                    return; // the semicolon is dealt with in calling function.
                 }
                 else
                 {
-                    mark("{ or ; expected (struct_declaration)");
-                    getNextToken();
+                    if(tokenType == TOKEN_MULT) // read away the * on function declaration
+                    {
+                        getNextToken();
+                    }
+
+                    if(tokenType == TOKEN_IDENTIFIER) // whoops, a function declaration!
+                    {
+                        isGlobal = 0;
+                        typeObject = object;        
+                        object = findProcedureObject(objectGlobal, stringValue);
+                        if(object != 0) // the procedure appeared before, either as declaration or invokation
+                        {
+                            if(object->type != typeObject->type)
+                            {
+                                mark("return type mismatch in procedure");
+                            }
+                            fixLink(object->offset);
+                        }
+                        else // the procedure is newly declared
+                        {
+                            isGlobal = 1; // add procedure to global symbol table
+                            object = createObject(CLASS_PROC);
+                            isGlobal = 0; // return to local mode
+                            object->class = CLASS_PROC;
+                        }
+                        getNextToken();
+                        object->type = typeObject->type;
+
+                        object->offset = PC;
+
+                        formalParameters(object);
+
+                        if(tokenType == TOKEN_SEMICOLON) // function prototype
+                        {
+                            printf("Sensed prototype\n");
+                            object->offset = 0;
+                            getNextToken();
+                            return;
+                        }
+
+                        returnFJumpAddress = 0;
+
+                        if(tokenType == TOKEN_LCB)
+                        {
+                            getNextToken();
+                        }
+                        else
+                        {
+                            mark("{ expected (function_declaration)");
+                            getNextToken();
+                        }
+
+                        prologue(variableDeclarationSequence(object) * 4);
+                        procedureContext = object;
+
+                        while(isIn(tokenType, FIRST_INSTRUCTION))
+                        {
+                            instruction();
+                        }
+
+                        fixLink(returnFJumpAddress); // if returnFJumpAddress is still 0, there there was no return call
+                        epilogue(object->value * 4);
+
+                        if(tokenType == TOKEN_RCB)
+                        {
+                            getNextToken();
+                        }
+                        else
+                        {
+                            mark("} expected (function_declaration)");
+                            getNextToken();
+                        }
+                        objectLocal = 0;
+                        lastObjectLocal = 0;
+                        lastFieldElementLocal = 0;
+                        lastOffsetPointerLocal = 0;
+                        return;
+                    }
+                    else
+                    {
+                        mark("{ or ; expected (struct_declaration)");
+                        return;
+                    }
                 }
             }
 
@@ -3128,12 +3171,6 @@ void type_declaration()
     if(tokenType == TOKEN_STRUCT)
     {
         struct_declaration();
-        return;
-    }
-
-    if(tokenType == TOKEN_TYPEDEF)
-    {
-        typedef_declaration();
         return;
     }
 }

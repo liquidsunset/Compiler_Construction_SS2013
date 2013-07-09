@@ -1578,81 +1578,73 @@ void writeToFile(){
     int i;
     int instruction;
     int file;
-
     struct object_t *tempTypeObject;
-
     
     // Add strings
     tempTypeObject = strings;
     
     if(tempTypeObject != 0){
         while(tempTypeObject->next != 0){
-//            if(tempTypeObject->class == CLASS_STRING){
-//                putString(tempTypeObject->name);
-//            }
             tempTypeObject = tempTypeObject->next;
         }
-//        if(tempTypeObject->class == CLASS_STRING){
-//            putString(tempTypeObject->name);
-//        }
         
-        while (tempTypeObject->previous != 0) {
-            if(tempTypeObject->class == CLASS_STRING){
-                putString(tempTypeObject->name);
-            }
-            tempTypeObject = tempTypeObject->previous;
-        }
+        // while (tempTypeObject->previous != 0) {
+        //     if(tempTypeObject->class == CLASS_STRING){
+        //         putString(tempTypeObject->name);
+        //     }
+        //     tempTypeObject = tempTypeObject->previous;
+        // }
         
-        if(tempTypeObject->class == CLASS_STRING){
-            putString(tempTypeObject->name);
-        }
+        // if(tempTypeObject->class == CLASS_STRING){
+        //     putString(tempTypeObject->name);
+        // }
     }
 
 
-    // Add global variables    
-    tempTypeObject = objectGlobal;
+//     // Add global variables    
+//     tempTypeObject = objectGlobal;
     
-    if(tempTypeObject != 0){
-        while(tempTypeObject->next != 0){
-            if(tempTypeObject->class == CLASS_VAR){
-                put(0, 0, 0, 0);
-            }
-            tempTypeObject = tempTypeObject->next;
-        }
-        if(tempTypeObject->class == CLASS_VAR){
-            put(0, 0, 0, 0);
-        }
-    }
+//     if(tempTypeObject != 0){
+//         while(tempTypeObject->next != 0){
+//             if(tempTypeObject->class == CLASS_VAR){
+//                 put(0, 0, 0, 0);
+//             }
+//             tempTypeObject = tempTypeObject->next;
+//         }
+//         if(tempTypeObject->class == CLASS_VAR){
+//             put(0, 0, 0, 0);
+//         }
+//     }
 
-    // Add trap to terminate execution
-    putAt(TARGET_TRAP, 0, 0, 0, 0);
+// //     // Add trap to terminate execution
+//     putAt(TARGET_TRAP, 0, 0, 0, 0);
 
-    // Set first instruction to J to main
-    tempTypeObject = findProcedureObject(objectGlobal, "main");
-    if(tempTypeObject != 0)
-    {
-        putAt(TARGET_J, 0, 0, tempTypeObject->offset * 4, 1);
-    }
-    else
-    {
-        error("No main function found");
-    }
+//     // Set first instruction to J to main
+//     tempTypeObject = findProcedureObject(objectGlobal, "main");
+//     if(tempTypeObject != 0)
+//     {
+//         putAt(TARGET_J, 0, 0, tempTypeObject->offset * 4, 1);
+//     }
+//     else
+//     {
+//         error("No main function found");
+//     }
 
-    i = 0;
+//     i = 0;
 
-    file = fopen("a.out");
-    while(i < PC)
-    {
-        instruction = output[i];
+//     file = fopen("a.out");
+//     while(i < PC)
+//     {
+//         instruction = output[i];
         
-        fputc((instruction / 16777216) & 255, file);
-        fputc((instruction / 65536) & 255, file);
-        fputc((instruction / 256) & 255, file);
-        fputc(instruction & 255, file);
+//         fputc((instruction / 16777216) & 255, file);
+//         fputc((instruction / 65536) & 255, file);
+//         fputc((instruction / 256) & 255, file);
+//         fputc(instruction & 255, file);
 
-        i = i + 1;
-    }
-    fclose(file);
+//         i = i + 1;
+//     }
+//     fclose(file);
 }
 
 void stringToReg(struct item_t * item)
@@ -4139,6 +4131,7 @@ void start() {
         {
             isGlobal = 1;
             top_declaration();
+            printf("top_declaration");
         }
         else
         {

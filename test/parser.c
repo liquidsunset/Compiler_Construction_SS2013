@@ -64,25 +64,26 @@ static struct object_t * procedureContext;
 
 void getFromList()
 {
-    printf("Reading %s\n", stringValue);
+    printf("Reading");
+    printf(stringValue);
 }
 
 
-struct object_t *objectGlobal;
-struct object_t *objectLocal;
-struct object_t *strings;
+static struct object_t *objectGlobal;
+static struct object_t *objectLocal;
+static struct object_t *strings;
 
-struct object_t *lastObjectGlobal;
-struct object_t *lastObjectLocal;
+static struct object_t *lastObjectGlobal;
+static struct object_t *lastObjectLocal;
 
-struct object_t *lastFieldElementGlobal;
-struct object_t *lastFieldElementLocal;
+static struct object_t *lastFieldElementGlobal;
+static struct object_t *lastFieldElementLocal;
 
-struct type_t *typeInt;
-struct type_t *typeChar;
-struct type_t *typeBool;
-struct type_t *typeArrayInt;
-struct type_t *typeArrayChar;
+static struct type_t *typeInt;
+static struct type_t *typeChar;
+static struct type_t *typeBool;
+static struct type_t *typeArrayInt;
+static struct type_t *typeArrayChar;
 
 
 void initTypes(){
@@ -116,7 +117,8 @@ void initTypes(){
 
 void addToList()
 {
-    printf("Adding %s\n", stringValue);
+    printf("Adding");
+    PRITNF(stringValue);
 }
 
 
@@ -144,13 +146,13 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
     if(firstElement != 0){
         while (firstElement->next != 0) {
             if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
-                printf("\nSymbol table: found %s\n", identifier);
+                //printf("\nSymbol table: found %s\n", identifier);
                 return firstElement;
             }
             firstElement = firstElement->next;
         }
         if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
-            printf("\nSymbol table: found %s\n", identifier);
+            //printf("\nSymbol table: found %s\n", identifier);
             return firstElement;
         }
     }
@@ -364,9 +366,9 @@ int addTypeToList(){
 }
 
 int addTypeToField(){
-    
+    struct type_t *newType;
     if((isArray == 1) && (isStruct == 0)){
-        struct type_t *newType;
+        
 
         if(currentType == FORM_INT){
             newType = typeArrayInt;
@@ -391,7 +393,7 @@ int addTypeToField(){
     }
 
     if((isArray == 0) && (isStruct == 1)){
-        struct type_t *newType;
+
         newType = findTypeClassType();
         
         if(isGlobal == 0){
@@ -500,8 +502,10 @@ void fail(char *message)
 
     errorCount = errorCount + 1;
 
-    printf("\nFail near Line %d: %s\n", niceLine, message);
-    exit(-1);
+    printf("Fail near Line");
+    printf(niceLine);
+    printf(message);
+    //exit(-1);
 }
 
 void error(char *message)
@@ -518,7 +522,9 @@ void error(char *message)
 
     errorCount = errorCount + 1;
 
-    printf("\nError near Line %d: %s\n", niceLine, message);
+    printf("Error near Line");
+    printf(niceLine);
+    printf(message);
 }
 
 void mark(char *message)
@@ -535,7 +541,9 @@ void mark(char *message)
     
     warningCount = warningCount + 1;
 
-    printf("\nWarning Near Line %d: %s\n", niceLine, message);
+    printf("Warning near Line");
+    printf(niceLine);
+    printf(message);
 }
 // -----------------------------------------------------------------------------
 
@@ -3268,7 +3276,9 @@ void start() {
 // ----------------------------------------------------------------------------
 
 int main(int argc, char ** argv){
-    printf("\nPhoenix: Parser\n===============\n");
+    printf("Phoenix: Parser");
+    printf("===============");
+
     initTokens();
 
     initTypes();
@@ -3286,7 +3296,9 @@ int main(int argc, char ** argv){
     }
     start();
     writeToFile();
-    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+    printf("Parsed with");
+    printf(errorCount);
+    printf(warningCount);
 
     return 0;
 }

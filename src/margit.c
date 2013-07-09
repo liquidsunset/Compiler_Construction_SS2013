@@ -364,6 +364,12 @@ int fetch() {
 			}
 		}
 		// F1 unconditional branching
+		else if(op == TARGET_BSR)
+		{
+			printf("%d BSR %d", pc, c);
+			reg[31] = pc + 4;
+			pc = pc + c*4;
+		}
 		else if(op == TARGET_BR)
 		{
 			printf("%d BR %d", pc, c);
@@ -509,6 +515,29 @@ int fetch() {
 			printf("%d FCLOSE %d, %d, %d", pc, a, b, c);
 			printf("\nClosing %d", reg[c]);
 			fclose(file[reg[c]]);
+			pc = pc + 4;
+		}
+		else if(op == TARGET_PUSHUSEDREGISTERS)
+		{
+			printf("%d TARGET_PUSHUSEDREGISTERS", pc);
+			int i;
+			for(i = 1; i < 27; i++)
+			{
+			reg[30] = reg[30]-4;
+			mem[(reg[30])/4] = reg[i];
+			
+			}
+			pc = pc + 4;
+		}
+		else if(op == TARGET_POPUSEDREGISTERS)
+		{
+			printf("%d TARGET_POPUSEDREGISTERS", pc);
+			int i;
+			for(i = 26; i > 0; i++)
+			{
+				reg[i] = mem[(reg[30])/4];
+				reg[30] = reg[30]+4;		
+			}
 			pc = pc + 4;
 		}
 	}

@@ -2113,6 +2113,7 @@ void actualParameters(struct object_t * object)
 
 int sJump(int branchAddress)
 {
+    printf("sJump(%d)\n", branchAddress);
     put(TARGET_BSR, 0, 0, branchAddress);
     return PC - 1;
 }
@@ -2124,28 +2125,30 @@ int isBR(int address)
 
 void pushUsedRegisters() // pushed reg[1] to reg[27] onto the stack
 {
-    int i;
+    // int i;
 
-    i = 1;
+    // i = 1;
 
-    while(i < 27)
-    {
-        put(TARGET_PSH, i, SP, 4); // push reg[i] (size 4 bytes) on to the stack
-        i = i + 1;
-    }
+    // while(i < 27)
+    // {
+    //     put(TARGET_PSH, i, SP, 4); // push reg[i] (size 4 bytes) on to the stack
+    //     i = i + 1;
+    // }
+    put(TARGET_PUSHUSEDREGISTERS, 0, 0, 0);
 }
 
 void popUsedRegisters()
 {
-    int i;
+    // int i;
 
-    i = 26;
+    // i = 26;
 
-    while(i > 0)
-    {
-        put(TARGET_POP, i, SP, 4); // pop data (size 4 bytes) on stack to reg[i]
-        i = i - 1;
-    }
+    // while(i > 0)
+    // {
+    //     put(TARGET_POP, i, SP, 4); // pop data (size 4 bytes) on stack to reg[i]
+    //     i = i - 1;
+    // }
+    put(TARGET_POPUSEDREGISTERS, 0, 0, 0);
 }
 
 void procedureCall(struct item_t * item)
@@ -2932,7 +2935,7 @@ void function_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            printf("%s", stringValue);
+            printf("%d %s", PC, stringValue);
             object = findProcedureObject(objectGlobal, stringValue);
             if(object != 0) // the procedure appeared before, either as declaration or invokation
             {

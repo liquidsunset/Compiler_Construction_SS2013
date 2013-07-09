@@ -158,7 +158,8 @@ static int TARGET_FOPEN;
 static int TARGET_FCLOSE;
 static int TARGET_FGETC;
 static int TARGET_FPUTC;
-
+static int TARGET_PUSHUSEDREGISTERS;
+static int TARGET_POPUSEDREGISTERS;
 
 void initTokens(){
     TOKEN_NULL = 0;
@@ -313,6 +314,8 @@ void initTokens(){
     TARGET_J = 44;
     TARGET_TRAP = 45;
     TARGET_FCLOSE = 46;
+    TARGET_PUSHUSEDREGISTERS = 47;
+    TARGET_POPUSEDREGISTERS = 48;
     
     stringValue = malloc(sizeof(char) * 1024);
     typeName = malloc(sizeof(char) * 1024);

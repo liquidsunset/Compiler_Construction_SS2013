@@ -62,6 +62,7 @@ static int TOKEN_SHIFTRIGHT;
 static int TOKEN_ADDRESS;
 static int TOKEN_AND;
 static int TOKEN_BITWISEOR;
+static int TOKEN_BITWISEAND;
 static int TOKEN_OR;
 static int TOKEN_BITWISEEXCLOR;
 static int TOKEN_BITWISENOT;
@@ -121,7 +122,7 @@ static int *isRegisterUsed;
 static int TARGET_NOP;
 static int TARGET_ADD;
 static int TARGET_ADDI;
-static int TARGET_AND;
+static int TARGET_ANDI;
 static int TARGET_DIV;
 static int TARGET_DIVI;
 static int TARGET_J;
@@ -290,6 +291,7 @@ void initTokens(){
     TOKEN_DECREMENT = 421;
     TOKEN_NOT = 422;
     TOKEN_ACCESS = 423;
+    TOKEN_BITWISEAND = 424;
     
     TOKEN_LSB = 500;
     TOKEN_RSB = 501;
@@ -374,7 +376,7 @@ void initTokens(){
     TARGET_FLC = 31;
     TARGET_RDC = 32;
     TARGET_WRC = 33;
-    TARGET_AND = 34;
+    TARGET_ANDI = 34;
     TARGET_OR = 35;
     TARGET_PRINTF = 36;
     TARGET_PRINTFI = 37;
@@ -706,7 +708,7 @@ void findToken(char *status,int len){
         if(tokenChar == 61){tokenType = TOKEN_ASSIGNMENT; return;}
         if(tokenChar == 60){tokenType = TOKEN_LESS; return;}
         if(tokenChar == 62){tokenType = TOKEN_GREATER; return;}
-        if(tokenChar == 38){tokenType = TOKEN_ADDRESS; return;}
+        if(tokenChar == 38){tokenType = TOKEN_BITWISEAND; return;}
         if(tokenChar == 124){tokenType = TOKEN_BITWISEOR; return;}
         if(tokenChar == 94){tokenType = TOKEN_BITWISEEXCLOR; return;}
         if(tokenChar == 126){tokenType = TOKEN_BITWISENOT; return;}

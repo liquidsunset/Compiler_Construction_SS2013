@@ -299,7 +299,7 @@ void findToken(char *status,int len){
         if(tokenChar == 61){tokenType = TOKEN_ASSIGNMENT; return;}
         if(tokenChar == 60){tokenType = TOKEN_LESS; return;}
         if(tokenChar == 62){tokenType = TOKEN_GREATER; return;}
-        if(tokenChar == 38){tokenType = TOKEN_ADDRESS; return;}
+        if(tokenChar == 38){tokenType = TOKEN_BITWISEAND; return;}
         if(tokenChar == 124){tokenType = TOKEN_BITWISEOR; return;}
         if(tokenChar == 94){tokenType = TOKEN_BITWISEEXCLOR; return;}
         if(tokenChar == 126){tokenType = TOKEN_BITWISENOT; return;}

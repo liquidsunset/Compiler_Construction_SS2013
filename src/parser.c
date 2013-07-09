@@ -3089,7 +3089,7 @@ void struct_declaration()
                 addFieldToList(object);
 
                 isArray = 0;
-                isStruct 0;
+                isStruct = 0;
 
                 if(tokenType == TOKEN_SEMICOLON)
                 {

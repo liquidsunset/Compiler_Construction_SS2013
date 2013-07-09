@@ -2070,24 +2070,24 @@ void simpleExpressionOR(struct item_t * item)
 
 int isIn(int tokenType, int rule) {
 
-    if(rule == FIRST_TOP_DECLARATION && (
+    if((rule == FIRST_TOP_DECLARATION) && (
         (tokenType == TOKEN_TYPEDEF) ||
         (tokenType == TOKEN_STRUCT) ||
         (tokenType == TOKEN_STATIC) ||
-        isIn(tokenType, FIRST_TYPE) ))
+        (isIn(tokenType, FIRST_TYPE)>0) ))
     { return 1; }
 
-    if(rule == FIRST_TYPE_DECLARATION && (
+    if((rule == FIRST_TYPE_DECLARATION) && (
         (tokenType == TOKEN_STRUCT) ||
         (tokenType == TOKEN_TYPEDEF)))
     { return 1; }
 
-    if(rule == FIRST_BASIC_TYPES && (
+    if((rule == FIRST_BASIC_TYPES) && (
         (tokenType == TOKEN_INT) ||
         (tokenType == TOKEN_CHAR)))
     { return 1; }
 
-    if(rule == FIRST_EXPRESSION && (
+    if((rule == FIRST_EXPRESSION) && (
         (tokenType == TOKEN_MINUS) ||
         (tokenType == TOKEN_IDENTIFIER) ||
         (tokenType == TOKEN_CONSTINT) ||
@@ -2101,20 +2101,20 @@ int isIn(int tokenType, int rule) {
         (tokenType == TOKEN_NOT)))
     { return 1; }
 
-    if(rule == FIRST_TYPE && (
+    if((rule == FIRST_TYPE) && (
         (tokenType == TOKEN_INT) ||
         (tokenType == TOKEN_CHAR) ||
         (tokenType == TOKEN_VOID) ||
         (tokenType == TOKEN_STRUCT )))
     { return 1; }
 
-    if(rule == FIRST_VARIABLE_DECLARATION && (
+    if((rule == FIRST_VARIABLE_DECLARATION) && (
         (tokenType == TOKEN_STATIC) ||
-        isIn(tokenType, FIRST_TYPE) ))
+        (isIn(tokenType, FIRST_TYPE)>0) ))
     { return 1; }
 
-    if(rule == FIRST_INSTRUCTION && (
-        isIn(tokenType, FIRST_TYPE_DECLARATION) ||
+    if((rule == FIRST_INSTRUCTION) && (
+        (isIn(tokenType, FIRST_TYPE_DECLARATION)>0) ||
         (tokenType == TOKEN_IDENTIFIER) ||
         (tokenType == TOKEN_WHILE) ||
         (tokenType == TOKEN_IF) ||
@@ -2235,7 +2235,7 @@ void sizeof_func(struct item_t * item)
         {
             getNextToken();
             
-            if(isIn(tokenType, FIRST_TYPE))
+            if(isIn(tokenType, FIRST_TYPE)>0)
             {
                 type(item);
                 if(tokenType == TOKEN_RRB)
@@ -2266,7 +2266,7 @@ void malloc_func(struct item_t * item)
         {
             getNextToken();
             
-            if(isIn(tokenType, FIRST_EXPRESSION))
+            if(isIn(tokenType, FIRST_EXPRESSION)>0)
             {
                 expression(item);
                 if(tokenType == TOKEN_RRB)
@@ -2309,7 +2309,7 @@ void fopen_func(struct item_t * item)
         if(tokenType == TOKEN_LRB)
         {
             getNextToken();
-            if(isIn(tokenType, FIRST_EXPRESSION))
+            if(isIn(tokenType, FIRST_EXPRESSION)>0)
             {
                 expression(item);
 

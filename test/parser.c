@@ -149,14 +149,18 @@ static int TARGET_BR;
 static int TARGET_BSR;
 static int TARGET_RET;
 static int TARGET_JSR;
-static int TARGET_FLO;
-static int TARGET_FLC;
-static int TARGET_RDC;
-static int TARGET_WRC;
+// static int TARGET_FLO;
+// static int TARGET_FLC;
+// static int TARGET_RDC;
+// static int TARGET_WRC;
 static int TARGET_MALLOC;
 static int TARGET_TRAP;
 static int TARGET_PRINTF;
 static int TARGET_PRINTFI;
+static int TARGET_FOPEN;
+static int TARGET_FCLOSE;
+static int TARGET_FGETC;
+static int TARGET_FPUTC;
 
 static int fp;
 
@@ -363,28 +367,34 @@ void initTokens(){
     TARGET_BSR = 18;
     TARGET_MALLOC = 19;
     TARGET_RET = 20;
+    TARGET_FOPEN = 21;
+    TARGET_FGETC = 22;
+    TARGET_FPUTC = 23;
     
-    // F2 (23-43)
-    TARGET_ADD = 23;
+    // F2 (24-43)
+    
     TARGET_SUB = 24;
     TARGET_MUL = 25;
     TARGET_DIV = 26;
     TARGET_MOD = 27;
     TARGET_CMP = 28;
     TARGET_RET = 29;
-    TARGET_FLO = 30;
-    TARGET_FLC = 31;
-    TARGET_RDC = 32;
-    TARGET_WRC = 33;
+    // TARGET_FLO = 30;
+    // TARGET_FLC = 31;
+    // TARGET_RDC = 32;
+    // TARGET_WRC = 33;
     TARGET_ANDI = 34;
     TARGET_OR = 35;
     TARGET_PRINTF = 36;
     TARGET_PRINTFI = 37;
+    TARGET_ADD = 38;
+    
     
     // F3 (43-63)
     TARGET_JSR = 43;
     TARGET_J = 44;
     TARGET_TRAP = 45;
+    TARGET_FCLOSE = 46;
     
     stringValue = malloc(sizeof(char) * 1024);
     typeName = malloc(sizeof(char) * 1024);

@@ -847,7 +847,7 @@ void getNextToken()
 int main(){
     initTokens();
     tokenType = -1;
-    openFile("test/scanner.c");
+    openFile("test/parser.c");
     //printf(tokenType);
     while(tokenType != TOKEN_EOF){
         getNextToken();

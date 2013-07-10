@@ -716,8 +716,10 @@ int readNextCharacter(){
 
 
 void findToken(char *status,int len){
-    
     char tokenChar;
+
+    printf("status");
+    printf(status);
     
     if(len == 1)
     {
@@ -831,7 +833,7 @@ void findToken(char *status,int len){
             
         } // if(len >= 3)
     }
-    
+    printf("Unknown token");
     tokenType = -1;
     
 }

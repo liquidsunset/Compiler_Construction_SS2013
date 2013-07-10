@@ -150,7 +150,7 @@ void load(char * filename) {
 			c3 = fgetc(fp);
 		
 			mem[i] =  (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
-			// printf("%x\n", mem[i]);
+			// //printf("%x\n", mem[i]);
 			i++;
 		}
 		printf("Loaded %d bytes", (i*4));
@@ -185,7 +185,7 @@ int fetch() {
 
 	if((pc/4) >= MEMSIZE)
 	{
-		printf("\n%d ERROR: PC exceeded memory size\n", pc);
+		//printf("\n%d ERROR: PC exceeded memory size\n", pc);
 		return 0;
 	}
 
@@ -195,13 +195,13 @@ int fetch() {
 
 	if(pc >= (GP*4))
 	{
-		printf("\n%d ERROR: PC exceeded code segment\n", pc);
+		//printf("\n%d ERROR: PC exceeded code segment\n", pc);
 		return 0;
 	}
 
 	if(op == TARGET_NOP)
 	{
-		printf("\n%d ERROR: Hit NOP %d\n", pc, TARGET_NOP);
+		//printf("\n%d ERROR: Hit NOP %d\n", pc, TARGET_NOP);
 		return 0;
 	}
 	
@@ -213,92 +213,92 @@ int fetch() {
 		// F1 immediate addressing
 		if(op == TARGET_ADDI)
 		{
-			printf("%d ADDI %d, %d, %d", pc, a, b, c);
+			//printf("%d ADDI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] + c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_ANDI)
 		{
-			printf("%d ANDI %d, %d, %d", pc, a, b, c);
+			//printf("%d ANDI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] & c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_SUBI)
 		{
-			printf("%d SUBI %d, %d, %d", pc, a, b, c);
+			//printf("%d SUBI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MULI)
 		{
-			printf("%d MULI %d, %d, %d", pc, a, b, c);
+			//printf("%d MULI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] * c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_DIVI)
 		{
-			printf("%d DIVI %d, %d, %d", pc, a, b, c);
+			//printf("%d DIVI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] / c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MODI)
 		{
-			printf("%d MODI %d, %d, %d", pc, a, b, c);
+			//printf("%d MODI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] % c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_CMPI)
 		{
-			printf("%d CMPI %d, %d, %d", pc, a, b, c);
+			//printf("%d CMPI %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - c;
 			pc = pc + 4;
 		}
 		// F1 memory instructions
 		else if(op == TARGET_LW)
 		{
-			printf("%d LW %d, %d, %d", pc, a, b, c);
+			//printf("%d LW %d, %d, %d", pc, a, b, c);
 			int addr = (reg[b]+c)/4;
 			if(addr < 0 || addr > MEMSIZE)
 			{
-				printf("ERROR: Segmentation fault. Bad read.");
+				//printf("ERROR: Segmentation fault. Bad read.");
 				return 0;
 			}
 			if(b != 28 && addr > 0 && addr < (GP*4))
 			{
-				printf("\nWARNING:Load from code segment. Global?\n");
+				//printf("\nWARNING:Load from code segment. Global?\n");
 			}
 			reg[a] = mem[addr];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_SW)
 		{
-			printf("%d SW %d, %d, %d", pc, a, b, c);
+			//printf("%d SW %d, %d, %d", pc, a, b, c);
 			int addr = (reg[b]+c)/4;
 			if(addr < 0 || addr > MEMSIZE)
 			{
-				printf("\nERROR: Segmentation fault. Bad write.\n");
+				//printf("\nERROR: Segmentation fault. Bad write.\n");
 				return 0;
 			}
 			if(b != 28 && addr > 0 && addr < (GP*4))
 			{
-				printf("\nWARNING: Store to code segment. Global?\n");
+				//printf("\nWARNING: Store to code segment. Global?\n");
 			}
 			mem[addr] = reg[a];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_POP)
 		{
-			printf("%d POP %d, %d, %d", pc, a, b, c);
+			//printf("%d POP %d, %d, %d", pc, a, b, c);
 			reg[a] = mem[(reg[b])/4];
 			reg[b] = reg[b]+c;
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PSH)
 		{
-			printf("%d PSH %d, %d, %d", pc, a, b, c);
+			//printf("%d PSH %d, %d, %d", pc, a, b, c);
 			if(bump_ptr >= reg[30])
 			{
-				printf("\nERROR: Stack grew into heap.\n");
+				//printf("\nERROR: Stack grew into heap.\n");
 				return 0;
 			}
 			reg[b] = reg[b]-c;
@@ -308,7 +308,7 @@ int fetch() {
 		// F1 conditional branching
 		else if(op == TARGET_BEQ)
 		{
-			printf("%d BEQ %d, %d, %d", pc, a, b, c);
+			//printf("%d BEQ %d, %d, %d", pc, a, b, c);
 			if(reg[a] == 0)
 			{
 				pc = pc + c * 4;
@@ -320,7 +320,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BGE)
 		{
-			printf("%d BGE %d, %d, %d", pc, a, b, c);
+			//printf("%d BGE %d, %d, %d", pc, a, b, c);
 			if(reg[a] >= 0)
 			{
 				pc = pc + c * 4;
@@ -332,7 +332,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BGT)
 		{
-			printf("%d BGT %d, %d, %d", pc, a, b, c);
+			//printf("%d BGT %d, %d, %d", pc, a, b, c);
 			if(reg[a] > 0)
 			{
 				pc = pc + c * 4;
@@ -344,7 +344,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BLE)
 		{
-			printf("%d BLE %d, %d, %d", pc, a, b, c);
+			//printf("%d BLE %d, %d, %d", pc, a, b, c);
 			if(reg[a] <= 0)
 			{
 				pc = pc + c * 4;
@@ -356,7 +356,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BLT)
 		{
-			printf("%d BLT %d, %d, %d", pc, a, b, c);
+			//printf("%d BLT %d, %d, %d", pc, a, b, c);
 			if(reg[a] < 0)
 			{
 				pc = pc + c * 4;
@@ -368,7 +368,7 @@ int fetch() {
 		}
 		else if(op == TARGET_BNE)
 		{
-			printf("%d BNE %d, %d, %d", pc, a, b, c);
+			//printf("%d BNE %d, %d, %d", pc, a, b, c);
 			if(reg[a] != 0)
 			{
 				pc = pc + c * 4;
@@ -381,20 +381,20 @@ int fetch() {
 		// F1 unconditional branching
 		else if(op == TARGET_BSR)
 		{
-			printf("%d BSR %d", pc, c);
+			//printf("%d BSR %d", pc, c);
 			reg[31] = pc + 4;
 			pc = pc + c*4;
 		}
 		else if(op == TARGET_BR)
 		{
-			printf("%d BR %d", pc, c);
+			//printf("%d BR %d", pc, c);
 			pc = pc + c*4;
 		}
 		else if(op == TARGET_FOPEN)
 		{
-			printf("%d FOPEN %d, %d, %d\n", pc, a, b, c);
+			//printf("%d FOPEN %d, %d, %d\n", pc, a, b, c);
 			char * filename = getString((reg[b] + c) / 4);
-			printf("\nOpening file \"%s\" as #%d", filename, file_ptr);
+			//printf("\nOpening file \"%s\" as #%d", filename, file_ptr);
 			file[file_ptr] = fopen(filename, "r+");
 			reg[a] = file_ptr;
 			file_ptr += 1;
@@ -402,11 +402,11 @@ int fetch() {
 		}
 		else if(op == TARGET_FGETC)
 		{
-			printf("%d FGETC %d, %d, %d\n", pc, a, b, c);
+			//printf("%d FGETC %d, %d, %d\n", pc, a, b, c);
 			int ch;
 			if(reg[b]<1 || reg[b] > file_ptr)
 			{
-				printf("\nERROR: Bad file access\n");
+				//printf("\nERROR: Bad file access\n");
 				return 0;
 			}
 			ch = fgetc(file[reg[b]]);
@@ -416,7 +416,7 @@ int fetch() {
 		}
 		else if(op == TARGET_FPUTC)
 		{
-			printf("%d FPUTC %d, %d, %d", pc, a, b, c);
+			//printf("%d FPUTC %d, %d, %d", pc, a, b, c);
 			fputc(reg[c], file[reg[a]]);
 			charactersWritten++;
 			pc = pc + 4;
@@ -425,43 +425,43 @@ int fetch() {
 		// F2 register addressing
 		else if(op == TARGET_ADD)
 		{
-			printf("%d ADD %d, %d, %d", pc, a, b, c);
+			//printf("%d ADD %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] + reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_SUB)
 		{
-			printf("%d SUB %d, %d, %d", pc, a, b, c);
+			//printf("%d SUB %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MUL)
 		{
-			printf("%d MUL %d, %d, %d", pc, a, b, c);
+			//printf("%d MUL %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] * reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_OR)
 		{
-			printf("%d OR %d, %d, %d", pc, a, b, c);
+			//printf("%d OR %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] | reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_DIV)
 		{
-			printf("%d DIV %d, %d, %d", pc, a, b, c);
+			//printf("%d DIV %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] / reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_MOD)
 		{
-			printf("%d MOD %d, %d, %d", pc, a, b, c);
+			//printf("%d MOD %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] % reg[c];
 			pc = pc + 4;
 		}
 		else if(op == TARGET_CMP)
 		{
-			printf("%d CMP %d, %d, %d", pc, a, b, c);
+			//printf("%d CMP %d, %d, %d", pc, a, b, c);
 			reg[a] = reg[b] - reg[c];
 			pc = pc + 4;
 		}
@@ -469,13 +469,13 @@ int fetch() {
 		// F2 return from subroutine
 		else if(op == TARGET_RET)
 		{
-			printf("%d RET %d", pc, c);
+			//printf("%d RET %d", pc, c);
 			pc = reg[c];
 		}
 		
 		else if(op == TARGET_MALLOC)
 		{
-			printf("%d MALLOC %d, %d, %d", pc, a, b, c);
+			//printf("%d MALLOC %d, %d, %d", pc, a, b, c);
 
 			// save value of bump pointer
 			int s = 4 * bump_ptr;
@@ -485,7 +485,7 @@ int fetch() {
 
 			if(bump_ptr >= reg[30])
 			{
-				printf("\nERROR: Heap grew into stack.\n");
+				//printf("\nERROR: Heap grew into stack.\n");
 				return 0;
 			}
 
@@ -496,23 +496,23 @@ int fetch() {
 		}
 		else if(op == TARGET_PRINTF)
 		{
-			printf("%d PRINTF %d, %d, %d", pc, a, b, c);
+			//printf("%d PRINTF %d, %d, %d", pc, a, b, c);
 			char * string = getString((reg[b] + c) / 4);
 			printf("\n>'%s'\n", string);
 			free(string);
-			getchar();
+			//getchar();
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PRINTFI)
 		{
-			printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
+			//printf("%d PRINTFI %d, %d, %d", pc, a, b, c);
 			printf("\n> %d\n", reg[c]);
-			getchar();
+			//getchar();
 			pc = pc + 4;
 		}
 		else
 		{
-			printf("\nERROR: Unknown OP code %d at %d", op, pc);
+			//printf("\nERROR: Unknown OP code %d at %d", op, pc);
 			return 0;
 		}
 
@@ -524,30 +524,30 @@ int fetch() {
 		// F3 unconditional jump
 		if(op == TARGET_JSR)
 		{
-			printf("%d JSR %d", pc, c);
+			//printf("%d JSR %d", pc, c);
 			reg[31] = pc + 4;
 			pc = c;
 		}
 		if(op == TARGET_J)
 		{
-			printf("%d J %d", pc, c);
+			//printf("%d J %d", pc, c);
 			pc = c;
 		}
 		if(op == TARGET_TRAP)
 		{
-			printf("Trapped");
+			//printf("Trapped");
 			return 0;
 		}
 		else if(op == TARGET_FCLOSE)
 		{
-			printf("%d FCLOSE %d, %d, %d", pc, a, b, c);
-			printf("\nClosing %d", reg[c]);
+			//printf("%d FCLOSE %d, %d, %d", pc, a, b, c);
+			//printf("\nClosing %d", reg[c]);
 			fclose(file[reg[c]]);
 			pc = pc + 4;
 		}
 		else if(op == TARGET_PUSHUSEDREGISTERS)
 		{
-			printf("%d PUSHUSEDREGISTERS", pc);
+			//printf("%d PUSHUSEDREGISTERS", pc);
 			int i;
 			for(i = 1; i <= 26; i++)
 			{
@@ -559,7 +559,7 @@ int fetch() {
 		}
 		else if(op == TARGET_POPUSEDREGISTERS)
 		{
-			printf("%d POPUSEDREGISTERS", pc);
+			//printf("%d POPUSEDREGISTERS", pc);
 			int i;
 			for(i = 26; i >= 1; i--)
 			{
@@ -570,8 +570,8 @@ int fetch() {
 		}
 	}
 
-	printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d, read: %d)\n",
-		reg[1], reg[2], reg[3], reg[4], reg[27], reg[28], reg[29], reg[30], reg[31], charactersRead);
+	//printf("\t(R1: %2d, R2: %2d, R3: %d, R4: %d, R27 (RR): %d, R28 (GP): %d, R29 (FP): %d, R30 (SP): %d, R31 (LINK): %d, read: %d)\n",
+	//	reg[1], reg[2], reg[3], reg[4], reg[27], reg[28], reg[29], reg[30], reg[31], charactersRead);
 
 	reg[0] = 0; // keep it zero
 	reg[28] = GP * 4; // global pointer is constant too
@@ -596,7 +596,7 @@ int main(int argc,  char ** argv) {
 	getchar();
 	while(fetch())
 	{
-        printf("\n");
+        //printf("\n");
         //getchar();
 	}
 	

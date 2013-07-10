@@ -296,6 +296,11 @@ int fetch() {
 		else if(op == TARGET_PSH)
 		{
 			printf("%d PSH %d, %d, %d", pc, a, b, c);
+			if(bump_ptr >= reg[30])
+			{
+				printf("\nERROR: Stack grew into heap.\n");
+				return 0;
+			}
 			reg[b] = reg[b]-c;
 			mem[(reg[b])/4] = reg[a];
 			pc = pc + 4;
@@ -471,11 +476,18 @@ int fetch() {
 		else if(op == TARGET_MALLOC)
 		{
 			printf("%d MALLOC %d, %d, %d", pc, a, b, c);
+
 			// save value of bump pointer
 			int s = 4 * bump_ptr;
 
 			// move bump pointer by reg[c]
 			bump_ptr = bump_ptr + reg[c]/4;
+
+			if(bump_ptr >= reg[30])
+			{
+				printf("\nERROR: Heap grew into stack.\n");
+				return 0;
+			}
 
 			// write saved value to reg[a]
 			reg[a] = s;

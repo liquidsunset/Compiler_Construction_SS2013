@@ -1789,16 +1789,6 @@ void fixLink(int branchAddress)
     }
 }
 
-int wordalignOffset(int offset)
-{
-    if(offset%4 == 0)
-    {
-        return offset;
-    }
-
-    return ((offset+4)/4)*4;
-}
-
 void unloadBool(struct item_t * item)
 {
     if(item->mode == CODEGEN_MODE_COND)

@@ -4149,7 +4149,7 @@ void main(){
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
-    openFile("test/m6.c");
+    openFile("test/hello.c");
     start();
     writeToFile();
     printf("Parsed with");

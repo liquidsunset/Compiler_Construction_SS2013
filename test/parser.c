@@ -403,7 +403,7 @@ static struct object_t * procedureContext;
 
 void getFromList()
 {
-    printf("Reading");
+    printf("ABCDEFGHIJKLMNOPQRSTUV");
     printf(stringValue);
 }
 
@@ -992,7 +992,6 @@ void initTypes(){
 
 void addToList()
 {
-    printf("Adding");
     printf(stringValue);
 }
 

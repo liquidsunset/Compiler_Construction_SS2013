@@ -2083,7 +2083,6 @@ void simpleExpressionOR(struct item_t * item)
 // -----------------------------------------------------------------------------
 
 int isIn(int tokenType, int rule) {
-
     if((rule == FIRST_TOP_DECLARATION) && (
         (tokenType == TOKEN_TYPEDEF) ||
         (tokenType == TOKEN_STRUCT) ||
@@ -4125,13 +4124,16 @@ void start() {
     {
         include_def();
     }
-
     while(tokenType != TOKEN_EOF) {
+        printf("tokenType:");
+        printf(tokenType);
+        printf(stringValue);
         if(isIn(tokenType, FIRST_TOP_DECLARATION)>0)
         {
             isGlobal = 1;
-            top_declaration();
             printf("top_declaration");
+            top_declaration();
+            printf("top_declaration done");
         }
         else
         {
@@ -4143,13 +4145,18 @@ void start() {
 // ----------------------------------------------------------------------------
 
 void main(){
+    printf("initTokens()");
     initTokens();
+    printf("initTypes");
     initTypes();
+    printf("initCodeGen");
     initCodeGen();
     errorCount = 0;
     warningCount = 0;
     tokenType = -1;
+    printf("openFile(...)");
     openFile("test/hello.c");
+    printf("start()");
     start();
     writeToFile();
     printf("Parsed with");

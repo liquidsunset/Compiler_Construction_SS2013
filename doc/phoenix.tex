@@ -9,6 +9,7 @@
 
 % Optionen für Listings
 \lstset{
+	language=C,
 	inputencoding=utf8,
   literate={ö}{{\"o}}1
            {ä}{{\"a}}1
@@ -55,7 +56,7 @@
 		\item While (auch verschachtelt)
 		\item If-Else (auch verschachtelt)
 		\item Lazy Evaluation
-		\item Prozduren
+		\item Prozeduren
 		\item Call-by-value
 		\item Call-by-reference
 		\item Scoping von Variablen (Global und lokal)
@@ -91,7 +92,7 @@
 	Wenn alle Variablen und Funktionen im selben File sind (bzw. die include-Anweisungen direkt auf die .c-Daten referenzieren), kann der Quellcode ohne Modifikationen auch vom GCC übersetzt werden.
 
 	\section{Parser}
-	Der Parser arbeitet nach dem LL(1)-Prinzip. Er liest von Links nach Rechts, evaluert von Links und hat einen Lookahead von einem Token.
+	Der Parser arbeitet nach dem LL(1)-Prinzip. Er liest von Links nach Rechts, evaluiert von Links und hat einen Lookahead von einem Token.
 
 	\subsection{Typen}
 
@@ -107,14 +108,56 @@
 	Strings können nicht nur zur Laufzeit als Character-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
 	Das ermöglicht Ausgaben mit printf und die im Scanner häufig benutzten stringCompares mit den definierten Keywords.
 
+	\begin{lstlisting}[title=string.c,frame=single]
+void printMe(char * string)
+{
+	printf(string);
+}
+
+void main()
+{
+	printf("Hello");
+	printMe("World");
+}
+	\end{lstlisting}
+
+	\begin{lstlisting}[title=Ausgabe der Target Machine,frame=single]
+Phoenix: Margit
+===============
+Loaded 160 bytes
+
+>'Hello'
+
+>'World'
+
+Execution stopped.
+	\end{lstlisting}
+
 	\subsubsection{Arrays}
 
 	Arrays werden mittels malloc zur Laufzeit am Heap erstellt.
 	Sie können aus den oben genannten Basic Types bestehen.
-
+	
+	\newpage
 	\subsubsection{Records}
 
 	Wie Arrays werden auch Records (structs in C) zur Laufzeit mittels malloc am Heap erzeugt.
+	
+	\begin{lstlisting}[title=Struct Beispiel,frame=single]
+struct type_t;
+struct object_t{
+	char  *name;
+    	int class;
+    	int offset;
+    	struct type_t *type;
+    	struct object_t *next;
+    	struct object_t *previous;
+    	struct object_t * params;
+    	int value;
+    	int reg;
+};
+         \end{lstlisting}
+
 
 	\subsection{Schleifen}
 

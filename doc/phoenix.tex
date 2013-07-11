@@ -5,6 +5,7 @@
 \usepackage{listings} % source code listings
 \usepackage{multicol} % Aufzählungen in mehreren Spalten
 \usepackage[margin=1.5in]{geometry}
+\lstset{breaklines = true,keepspaces = true,xleftmargin=20pt}
 
 % Optionen für Listings
 % \lstset{
@@ -165,32 +166,30 @@
 
 	\newpage
 	\section{Anhang 1: EBNF}
-	\begin{lstlisting}
+	
+	\begin{lstlisting}	
 start = {include_def} {top_declaration}.
 
 include_def = "#include" (string_literal ||
-	("<" {identifier || "."} ">") ).
+("<" {identifier || "."} ">") ).
 
 top_declaration = type_declaration ";" ||
-				variable_declaration ";" ||
-				function_declaration.
+variable_declaration ";" || function_declaration.
 
 type_declaration = struct_declaration || typedef_declaration.
 
 variable_declaration = ["static"] type ["*"] identifier.
 
 function_declaration = type identifier formalParameters
-	(
-		";" ||
-		"{" [variableDeclarationSequence] {instruction} "}"
-	).
+(";" || "{" [variableDeclarationSequence] {instruction} "}").
 
 struct_declaration = "struct" identifier
-	"{" {variable_declaration ";"} "}".
+"{" {variable_declaration ";"} "}".
 
 typedef_declaration =
 
-type = "int" || "char" || "void" || identifier || ("struct" identifier).
+type = "int" || "char" || "void" || identifier || 
+("struct" identifier).
 
 identifier = letter {letter || digit}.
 
@@ -200,15 +199,12 @@ formalParameter = type identifier.
 
 variableDeclarationSequence = { variable_declaration ";" }.
 
-instruction = if_else ||
-	fclose_func ";" ||
-	while_loop ||
-	return_statement ";" ||
-	printf_func ";" ||
-	fputc_func ";" ||
-	identifier ( actualParameters || "=" expression) ";".
+instruction = if_else || fclose_func ";" || while_loop || 
+return_statement ";" || printf_func ";" || fputc_func ";" ||
+identifier ( actualParameters || "=" expression) ";".
 
-if_else = "if" "(" expression ")" "{" { instruction } "}" [ "else" "{" { instruction } "}" ].
+if_else = "if" "(" expression ")" "{" { instruction } "}" 
+[ "else" "{" { instruction } "}" ].
 
 fclose_func = "fclose" "(" expression ")".
 
@@ -222,23 +218,17 @@ fputc_func = "fputc" "(" expression "," expression ")".
 
 actualParameters = "(" [expression { "," expression } ] ")".
 
-expression = simple_expression [ ("==" || "<=" || "<" || "!=" || ">" || ">=") expression ].
+expression = simple_expression 
+[ ("==" || "<=" || "<" || "!=" || ">" || ">=") expression ].
 
 simple_expression = ("-" simple_expression) ||
-	term [ ("+" || "-" || "||") term].
+term [ ("+" || "-" || "||") term].
 
 term = factor [ ("*" || "/" || "&") factor].
 
-factor = ("!" factor) ||
-	"(" expression ")" ||
-	integer ||
-	string_literal ||
-	identifier ||
-	sizeof_func ||
-	malloc_func ||
-	fopen_func ||
-	fgetc_func ||
-	fputc_func.
+factor = ("!" factor) || "(" expression ")" || integer || 
+string_literal || identifier || sizeof_func || malloc_func ||
+fopen_func || fgetc_func || fputc_func.
 
 sizeof_func = "sizeof" "(" type ")".
 

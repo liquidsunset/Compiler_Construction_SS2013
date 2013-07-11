@@ -595,6 +595,11 @@ int negate(int operator)
     return 0;
 }
 
+void releaseRegister(int i)
+{
+    isRegisterUsed[i] = 0;
+}
+
 void releaseAllRegisters()
 {
     int i;
@@ -626,10 +631,6 @@ int requestRegister()
     return -1;
 }
 
-void releaseRegister(int i)
-{
-    isRegisterUsed[i] = 0;
-}
 
 int address(char *identifier)
 {
@@ -3298,7 +3299,7 @@ int main(int argc, char ** argv){
     tokenType = -1;
     if(argc == 1)
     {
-        openFile("test/parser.c");
+        openFile("presentation/demo.c");
     }
     else
     {

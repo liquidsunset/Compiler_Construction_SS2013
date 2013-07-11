@@ -51,7 +51,7 @@
 	Die Features werden unterstützt:
 	\begin{multicols}{2}
 	\begin{itemize}
-		\item Basic Types (char und int)
+		\item Basic Types (\lstinline|char| und \lstinline|int|)
 		\item Arrays
 		\item Records
 		\item Boolean Expressions
@@ -59,8 +59,8 @@
 		\item Constant Folding
 		\item Strings
 		\item File I/O
-		\item While (auch verschachtelt)
-		\item If-Else (auch verschachtelt)
+		\item \lstinline|while| (auch verschachtelt)
+		\item \lstinline|if/else| (auch verschachtelt)
 		\item Lazy Evaluation
 		\item Prozeduren
 		\item Call-by-value (bei Basic Types)
@@ -84,7 +84,7 @@
 	Der Scanner in Phoenix liest solange Zeichen von der Eingabedatei ein, bis er eine Wortgrenze erkennt.
 	Danach versucht er, das bis zu diesem Zeitpunkt eingelesene Wort zu kategorisieren und dies als Token an den Parser weiter zu geben.
 
-	Abweichend von C haben wir das static Keyword benutzt, um frühzeitig die Parsingentscheidung zu treffen, ob eine Variable deklariert wird, oder eine Funktion.
+	Abweichend von C haben wir das \lstinline|static| Keyword benutzt, um frühzeitig die Parsingentscheidung zu treffen, ob eine Variable deklariert wird, oder eine Funktion.
 	Wenn alle Variablen und Funktionen im selben File sind (bzw. die include-Anweisungen direkt auf die .c-Daten referenzieren), kann der Quellcode ohne Modifikationen auch vom GCC übersetzt werden.
 
 	\section{Parser}
@@ -94,17 +94,17 @@
 
 	Phoenix unterstützt die Deklaration von Variablen vom Typ Integer und Character.
 	Eine Zuweisung einer Variable Character muss ebenfalls mit dem ASCII-Wert des Buchstabens geschehen.
-	Eine Zuweisung der Form $ch='a'$ wird nicht unterstützt.
+	Eine Zuweisung der Form \lstinline|ch='a'| wird nicht unterstützt.
 	Implizit können auch Booleans deklariert werden.
 	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
 	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflikt erkannt).
 
 	\subsubsection{Strings}
 
-	Strings können nicht nur zur Laufzeit als Character-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
+	Strings können nicht nur zur Laufzeit als \lstinline|char|-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
 	Das ermöglicht Ausgaben mit printf und die im Scanner häufig benutzten stringCompares mit den definierten Keywords.
 
-	\begin{lstlisting}[title=string.c,frame=single]
+	\begin{lstlisting}[title=string.c,frame=single,numbers=left]
 void printMe(char * string)
 {
 	printf(string);
@@ -130,13 +130,13 @@ Execution stopped.
 
 	\subsubsection{Arrays}
 
-	Arrays werden mittels malloc zur Laufzeit am Heap erstellt.
+	Arrays werden mittels \lstinline|malloc| zur Laufzeit am Heap erstellt.
 	Sie können aus den oben genannten Basic Types bestehen.
 	
 	%\newpage
 	\subsubsection{Records}
 
-	Wie Arrays werden auch Records (structs in C) zur Laufzeit mittels malloc am Heap erzeugt.
+	Wie Arrays werden auch Records (\lstinline|struct| in C) zur Laufzeit mittels \lstinline|malloc| am Heap erzeugt.
 	
 	\begin{lstlisting}[title=Beispiel eines Structs das behandelt werden kann,frame=single]
 struct type_t;
@@ -160,7 +160,7 @@ struct object_t{
 	\subsection{Type Checking}
 	In diesem Beispiel sieht man die schon beschriebene Verwendung von booleschen Ausdrücken und Characters.
 
-	\begin{lstlisting}[title=types.c,frame=single]
+	\begin{lstlisting}[title=types.c,frame=single,numbers=left]
 void main()
 {
 	int i;
@@ -184,7 +184,8 @@ Parsed with 0 errors, 2 warnings
 
 	\subsection{Boolean Expressions}
 
-	Boolean Expressions werden üblicherweise als Conditionals in if- oder while-Konstrukten verwendet.
+	Boolean Expressions werden üblicherweise als Conditionals in \lstinline|if|- oder \lstinline|while|-Konstrukten verwendet.
+	Wie in C haben wir keine Keywords für die konstanten true und false vorgesehen.
 
 	\subsubsection{Lazy Evaluation}
 

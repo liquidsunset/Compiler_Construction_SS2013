@@ -5,7 +5,7 @@
 \usepackage{listings} % source code listings
 \usepackage{multicol} % Aufzählungen in mehreren Spalten
 \usepackage[margin=1.5in]{geometry}
-\lstset{breaklines = true,keepspaces = true,xleftmargin=20pt}
+\lstset{breaklines = true,keepspaces = true,xleftmargin=15pt}
 
 % Optionen für Listings
 \lstset{
@@ -204,8 +204,6 @@ formalParameters (";" || "{"
 struct_declaration = "struct" identifier
 "{" {variable_declaration ";"} "}".
 
-typedef_declaration =
-
 type = "int" || "char" || "void" || identifier || 
 ("struct" identifier).
 
@@ -240,8 +238,8 @@ printf_func = "printf" "(" expression ")".
 fputc_func = "fputc" "(" expression "," 
 expression ")".
 
-actualParameters = "(" [expression {
-"," expression } ] ")".
+actualParameters = "(" [expression
+ {"," expression } ] ")".
 
 expression = simple_expression 
 [ ("==" || "<=" || "<" || "!=" || ">" || ">=")
@@ -279,7 +277,7 @@ letter = A-Za-z.
 
 digit = 0-9.
 	\end{lstlisting}
-
+	
 	\newpage
 	\section{Anhang 2: Unterstütze Instruktionen}
 	\begin{lstlisting}

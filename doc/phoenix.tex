@@ -99,30 +99,6 @@
 	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
 	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflikt erkannt).
 
-	Ein Beispiel von Type Checking:
-
-	\begin{lstlisting}[title=types.c,frame=single]
-void main()
-{
-	int i;
-	char ch;
-
-	i = (1<2); // Boolean expression
-	ch = 65;
-}\end{lstlisting}
-
-	\begin{lstlisting}[title=Ausgabe des Compilers,frame=single]
-Phoenix: Parser
-===============
-2 main
-
-Warning Near Line 6: type mismatch in assignment
-
-Warning Near Line 7: type mismatch in assignment
-
-Parsed with 0 errors, 2 warnings
-\end{lstlisting}
-
 	\subsubsection{Strings}
 
 	Strings können nicht nur zur Laufzeit als Character-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
@@ -184,7 +160,29 @@ struct object_t{
 	for-Schleifen können aber damit ebenfalls ausgedrückt werden.
 
 	\subsection{Type Checking}
-	Erklärung von Type Checking
+	In diesem Beispiel sieht man die schon beschriebene Verwendung von booleschen Ausdrücken und Characters.
+
+	\begin{lstlisting}[title=types.c,frame=single]
+void main()
+{
+	int i;
+	char ch;
+
+	i = (1<2); // Boolean expression
+	ch = 65;
+}\end{lstlisting}
+
+	\begin{lstlisting}[title=Ausgabe des Compilers,frame=single]
+Phoenix: Parser
+===============
+2 main
+
+Warning Near Line 6: type mismatch in assignment
+
+Warning Near Line 7: type mismatch in assignment
+
+Parsed with 0 errors, 2 warnings
+\end{lstlisting}
 
 	\subsection{Boolean Expressions}
 
@@ -383,6 +381,5 @@ ADD 	// Addition von Registern
 JSR 	// Jump in Subroutine
 J   	// Jump
 TRAP 	// Erfolg
-FCLOSE 	// File schliessen
-	\end{lstlisting}
+FCLOSE 	// File schliessen	\end{lstlisting}
 \end{document}

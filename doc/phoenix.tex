@@ -9,6 +9,7 @@
 
 % Optionen für Listings
 \lstset{
+	language=C,
 	inputencoding=utf8,
   literate={ö}{{\"o}}1
            {ä}{{\"a}}1
@@ -106,6 +107,31 @@
 
 	Strings können nicht nur zur Laufzeit als Character-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
 	Das ermöglicht Ausgaben mit printf und die im Scanner häufig benutzten stringCompares mit den definierten Keywords.
+
+	\begin{lstlisting}[title=string.c,frame=single]
+void printMe(char * string)
+{
+	printf(string);
+}
+
+void main()
+{
+	printf("Hello");
+	printMe("World");
+}
+	\end{lstlisting}
+
+	\begin{lstlisting}[title=Ausgabe der Target Machine,frame=single]
+Phoenix: Margit
+===============
+Loaded 160 bytes
+
+>'Hello'
+
+>'World'
+
+Execution stopped.
+	\end{lstlisting}
 
 	\subsubsection{Arrays}
 

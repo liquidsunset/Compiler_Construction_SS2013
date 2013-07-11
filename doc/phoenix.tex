@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc} % Umlaute
 \usepackage[T1]{fontenc} % Pipes
 \usepackage[ngerman]{babel} % Deutsche Captions
@@ -8,10 +8,12 @@
 \lstset{breaklines = true,keepspaces = true,xleftmargin=20pt}
 
 % Optionen für Listings
-% \lstset{
-% 	breaklines=true,
-% 	keepspaces=false
-% }
+\lstset{
+	inputencoding=utf8,
+  literate={ö}{{\"o}}1
+           {ä}{{\"a}}1
+           {ü}{{\"u}}1
+}
 
 \title{Phoenix \\ \large Konstruktion eines Compilers}
 \author{Alexander Miller, Daniel Brand \\ \\
@@ -85,19 +87,30 @@
 	Der Scanner in Phoenix liest solange Zeichen von der Eingabedatei ein, bis er eine Wortgrenze erkennt.
 	Danach versucht er, das bis zu diesem Zeitpunkt eingelesene Wort zu kategorisieren und dies als Token an den Parser weiter zu geben.
 
+	Abweichend von C haben wir das static Keyword benutzt, um frühzeitig die Parsingentscheidung zu treffen, ob eine Variable deklariert wird, oder eine Funktion.
+	Wenn alle Variablen und Funktionen im selben File sind (bzw. die include-Anweisungen direkt auf die .c-Daten referenzieren), kann der Quellcode ohne Modifikationen auch vom GCC übersetzt werden.
+
 	\section{Parser}
 	Der Parser arbeitet nach dem LL(1)-Prinzip. Er liest von Links nach Rechts, evaluert von Links und hat einen Lookahead von einem Token.
 
 	\subsection{Typen}
 
 	Phoenix unterstützt die Deklaration von Variablen vom Typ Integer und Character.
+	Eine Zuweisung einer Variable Character muss ebenfalls mit dem ASCII-Wert des Buchstabens geschehen.
+	Eine Zuweisung der Form $ch='a'$ wird nicht unterstützt.
 	Implizit können auch Booleans deklariert werden.
 	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
 	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflikt erkannt).
 
+	\subsubsection{Strings}
+
+	Strings können nicht nur zur Laufzeit als Character-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
+	Das ermöglicht Ausgaben mit printf und die im Scanner häufig benutzten stringCompares mit den definierten Keywords.
+
 	\subsubsection{Arrays}
 
 	Arrays werden mittels malloc zur Laufzeit am Heap erstellt.
+	Sie können aus den oben genannten Basic Types bestehen.
 
 	\subsubsection{Records}
 
@@ -163,6 +176,8 @@
 		\item fputc
 		\item printf
 	\end{itemize}
+	Die Target Machine verwaltet ein Array an geöffneten Dateien und gibt dem Programm nur den Index zurück.
+	Damit umgeht man die Probleme von Zuweisungen von 64bit Filepointern zu 32bit Registern.
 
 	\newpage
 	\section{Anhang 1: EBNF}
@@ -254,50 +269,46 @@ digit = 0-9.
 	\newpage
 	\section{Anhang 2: Unterstütze Instruktionen}
 	\begin{lstlisting}
-	TARGET_NOP = 0;
-
-	// F1 (1-23)
-	ADDI
-	SUBI
-	MULI
-	DIVI
-	MODI
-	CMPI
-	LW
-	SW
-	POP
-	PSH
-	BEQ
-	BGE
-	BGT
-	BLE
-	BLT
-	BNE
-	BR
-	BSR
-	MALLOC
-	RET
-	FOPEN
-	FGETC
-	FPUTC
-
-	// F2 (24-43)
-	SUB
-	MUL
-	DIV
-	MOD
-	CMP
-	RET
-	AND
-	OR
-	PRINTF
-	PRINTFI
-	ADD
-
-	// F3 (43-63)
-	JSR
-	J
-	TRAP
-	FCLOSE
+NOP 	// Initialwert im Memory
+// F1 (1-23)
+ADDI	// Addition mit einem konstanten Wert
+SUBI	// Subtraktion
+MULI	// Multiplikation
+DIVI	// Division
+MODI	// Modulo
+CMPI	// Vergleich mit einem konstanten Wert
+LW  	// Laden in ein Register
+SW  	// Speichern in Speicherstelle
+POP 	// Wert vom Stack holen
+PSH 	// Wert auf dem Stack speichern
+BEQ 	// Branch wenn Register gleich 0
+BGE 	// Branch wenn groesser oder gleich
+BGT 	// Branch wenn groesser
+BLE 	// Branch wenn kleiner oder gleich
+BLT 	// Branch wenn kleiner
+BNE 	// Branch wenn ungleich
+BR  	// Branch
+BSR 	// Branch in Subroutine
+MALLOC 	// Allokieren am Heap
+RET 	// Zurück zur aufrufenden Prozedur
+FOPEN 	// File oeffnen
+FGETC 	// Character lesen
+FPUTC 	// Character schreiben
+// F2 (24-43)
+SUB 	// Subtraktion von Registern
+MUL 	// Multiplikation
+DIV 	// Division
+MOD 	// Modulo
+CMP 	// Compare
+AND 	// Boolesche Konjunktion
+OR  	// Boolesche Disjunktion
+PRINTF 	// Ausgabe eines Strings
+PRINTFI // Ausgabe einer Zahl
+ADD 	// Addition von Registern
+// F3 (43-63)
+JSR 	// Jump in Subroutine
+J   	// Jump
+TRAP 	// Erfolg
+FCLOSE 	// File schliessen
 	\end{lstlisting}
 \end{document}

@@ -88,7 +88,10 @@
 	Wenn alle Variablen und Funktionen im selben File sind (bzw. die include-Anweisungen direkt auf die .c-Daten referenzieren), kann der Quellcode ohne Modifikationen auch vom GCC übersetzt werden.
 
 	\section{Parser}
-	Der Parser arbeitet nach dem LL(1)-Prinzip. Er liest von Links nach Rechts, evaluiert von Links und hat einen Lookahead von einem Token.
+	Der Parser enthält mit Parsing und Code Generation den größten Teil der Logik.
+	Der Aufbau des Parser orientiert sich an der in der Vorlesung vorgestellten Implementierung.
+	Es ist ein LL(1) recursive descent Parser.
+	Im Anhang 1 ist die verwendete Extended Backus-Naur-Form zu sehen.
 
 	\subsection{Typen}
 
@@ -212,6 +215,8 @@ Parsed with 0 errors, 2 warnings
 	\subsection{Binärformat}
 	Das erwartete Binärformat ist in folgende Segmente aufgeteilt:
 	\begin{itemize}
+		\item 1. Instruktion: TRAP
+		\item 2. Instruktion: Jump to main
 		\item Code
 		\item Strings
 		\item Globale Variablen
@@ -223,7 +228,7 @@ Parsed with 0 errors, 2 warnings
 	Die Target Machine lädt das Binärfile in den virtuellen RAM.
 	Der GP wird an die erste freie Stelle nach dem gelesen File gesetzt.
 	Der PC wird auf 1 gesetzt.
-	Die Semantik der Befehle ist ansonsten analog zu denen in der Vorlesung.
+	Die Semantik der Befehle ist ansonsten weitgehend analog zu denen in der Vorlesung.
 
 	\subsection{System IO}
 	Wir haben neue Instruktionen für Input und Output eingeführt.
@@ -237,6 +242,13 @@ Parsed with 0 errors, 2 warnings
 	\end{itemize}
 	Die Target Machine verwaltet ein Array an geöffneten Dateien und gibt dem Programm nur den Index zurück.
 	Damit umgeht man die Probleme von Zuweisungen von 64bit Filepointern zu 32bit Registern.
+
+	\section{Conclusio}
+	Die abschließenden Tests haben ergeben, dass der Compiler self-scanning ist (siehe final-Milestone).
+	Der Scanner, in der Target Machine ausgeführt, erkennt sowohl die Tokens im scanner sowie im Parser.
+	Der ausgeführte Parser jedoch hat einen Fehler beim Erkennen der Tokens.
+	Höchstwahrscheinlich liegt es an der Erstellung von Strings oder an der Speicherung von konstanten Strings,
+	welche im Scanner benötigt werden.
 
 	\newpage
 	\section{Anhang 1: EBNF}

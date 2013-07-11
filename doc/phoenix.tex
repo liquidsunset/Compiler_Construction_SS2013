@@ -217,12 +217,15 @@ include_def = "#include" (string_literal ||
 top_declaration = type_declaration ";" ||
 variable_declaration ";" || function_declaration.
 
-type_declaration = struct_declaration || typedef_declaration.
+type_declaration = struct_declaration ||
+typedef_declaration.
 
-variable_declaration = ["static"] type ["*"] identifier.
+variable_declaration = ["static"] type 
+["*"] identifier.
 
-function_declaration = type identifier formalParameters
-(";" || "{" [variableDeclarationSequence] {instruction} "}").
+function_declaration = type identifier 
+formalParameters (";" || "{" 
+[variableDeclarationSequence] {instruction} "}").
 
 struct_declaration = "struct" identifier
 "{" {variable_declaration ";"} "}".
@@ -234,52 +237,63 @@ type = "int" || "char" || "void" || identifier ||
 
 identifier = letter {letter || digit}.
 
-formalParameters = "(" formalParameter { "," formalParameter } ")".
+formalParameters = "(" formalParameter { "," 
+formalParameter } ")".
 
 formalParameter = type identifier.
 
-variableDeclarationSequence = { variable_declaration ";" }.
+variableDeclarationSequence =
+{ variable_declaration ";" }.
 
-instruction = if_else || fclose_func ";" || while_loop || 
-return_statement ";" || printf_func ";" || fputc_func ";" ||
-identifier ( actualParameters || "=" expression) ";".
+instruction = if_else || fclose_func ";" || 
+while_loop ||  return_statement ";" || 
+printf_func ";" || fputc_func ";" || identifier 
+( actualParameters || "=" expression) ";".
 
-if_else = "if" "(" expression ")" "{" { instruction } "}" 
-[ "else" "{" { instruction } "}" ].
+if_else = "if" "(" expression ")" "{" 
+{ instruction } "}" [ "else" "{" 
+{ instruction } "}" ].
 
 fclose_func = "fclose" "(" expression ")".
 
-while_loop = "while" "(" expression ")" "{" { instruction } ")".
+while_loop = "while" "(" expression ")" "{"
+{ instruction } ")".
 
 return_statement = "return" [expression].
 
 printf_func = "printf" "(" expression ")".
 
-fputc_func = "fputc" "(" expression "," expression ")".
+fputc_func = "fputc" "(" expression "," 
+expression ")".
 
-actualParameters = "(" [expression { "," expression } ] ")".
+actualParameters = "(" [expression {
+"," expression } ] ")".
 
 expression = simple_expression 
-[ ("==" || "<=" || "<" || "!=" || ">" || ">=") expression ].
+[ ("==" || "<=" || "<" || "!=" || ">" || ">=")
+expression ].
 
 simple_expression = ("-" simple_expression) ||
 term [ ("+" || "-" || "||") term].
 
 term = factor [ ("*" || "/" || "&") factor].
 
-factor = ("!" factor) || "(" expression ")" || integer || 
-string_literal || identifier || sizeof_func || malloc_func ||
-fopen_func || fgetc_func || fputc_func.
+factor = ("!" factor) || "(" expression ")" || 
+integer || string_literal || identifier || 
+sizeof_func || malloc_func || fopen_func ||
+fgetc_func || fputc_func.
 
 sizeof_func = "sizeof" "(" type ")".
 
 malloc_func = "malloc" "(" expression ")".
 
-fopen_func = "fopen" "(" expression ["," expression] ")".
+fopen_func = "fopen" "(" expression 
+["," expression] ")".
 
 fgetc_func = "fgetc" "(" expression ")".
 
-fputc_func = "fputc" "(" expression "," expression ")".
+fputc_func = "fputc" "(" expression ","
+expression ")".
 
 string_literal = """ string """.
 

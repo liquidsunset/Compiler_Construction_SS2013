@@ -592,7 +592,7 @@ int main(int argc,  char ** argv) {
 	{
 		load(argv[1]);
 	}
-
+    printf("\nPress enter to continue\n");
 	getchar();
 	while(fetch())
 	{

@@ -45,7 +45,7 @@
 	\section{Features}
 	\begin{multicols}{2}
 	\begin{itemize}
-		\item Basic Types
+		\item Basic Types (char und int)
 		\item Arrays
 		\item Records
 		\item Boolean Expressions
@@ -57,8 +57,8 @@
 		\item If-Else (auch verschachtelt)
 		\item Lazy Evaluation
 		\item Prozeduren
-		\item Call-by-value
-		\item Call-by-reference
+		\item Call-by-value (bei Basic Types)
+		\item Call-by-reference (bei Arrays und Records)
 		\item Scoping von Variablen (Global und lokal)
 		\item Type-checking
 		\item Self-Scanning
@@ -102,6 +102,31 @@
 	Implizit können auch Booleans deklariert werden.
 	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
 	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflikt erkannt).
+
+	Ein Beispiel von Type Checking:
+
+	\begin{lstlisting}[title=types.c,frame=single]
+void main()
+{
+	int i;
+	char ch;
+
+	i = (1<2); // Boolean expression
+	ch = 65;
+}
+\end{lstlisting}
+
+	\begin{lstlisting}[title=Ausgabe des Compilers,frame=single]
+Phoenix: Parser
+===============
+2 main
+
+Warning Near Line 6: type mismatch in assignment
+
+Warning Near Line 7: type mismatch in assignment
+
+Parsed with 0 errors, 2 warnings
+\end{lstlisting}
 
 	\subsubsection{Strings}
 

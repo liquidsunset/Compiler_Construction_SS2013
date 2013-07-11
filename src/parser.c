@@ -143,7 +143,7 @@ struct object_t *findProcedureObject(struct object_t *firstElement, char *identi
     if(firstElement != 0){
         while (firstElement->next != 0) {
             if(strCompare(firstElement->name, identifier) && firstElement->class == CLASS_PROC){
-                printf("\nSymbol table: found %s\n", identifier);
+                //printf("\nSymbol table: found %s\n", identifier);
                 return firstElement;
             }
             firstElement = firstElement->next;
@@ -654,7 +654,7 @@ void putAt(int op, int a, int b, int c,  int pos)
     // assuming: -32768 = -2^15 <= c <= 2^26-1 = 67108863
     // assuming: if c > 2^15-1 = 32767 then a == 0 and b == 0
 
-    printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
+    //printf("put %d %d %d %d at %d\n", op, a, b, c, pos);
 
     if(pos >= CODESIZE)
     {
@@ -2094,7 +2094,7 @@ void actualParameters(struct object_t * object)
 
 int sJump(int branchAddress)
 {
-    printf("sJump(%d)\n", branchAddress);
+    //printf("sJump(%d)\n", branchAddress);
     put(TARGET_BSR, 0, 0, branchAddress);
     return PC - 1;
 }
@@ -2902,7 +2902,7 @@ int variableDeclarationSequence(struct object_t * object) // returns the number 
             getNextToken();
         }
     }
-    printf("# of local variables=%d\n", x);
+    //printf("# of local variables=%d\n", x);
     return x;
 }
 
@@ -2918,7 +2918,7 @@ void function_declaration()
 
         if(tokenType == TOKEN_IDENTIFIER)
         {
-            printf("%d %s", PC, stringValue);
+            printf("\n%d %s", PC, stringValue);
             object = findProcedureObject(objectGlobal, stringValue);
             if(object != 0) // the procedure appeared before, either as declaration or invokation
             {
@@ -3047,7 +3047,7 @@ void struct_declaration()
 
                     if(tokenType == TOKEN_IDENTIFIER) // whoops, a function declaration!
                     {
-                        printf("\n> Entering function '%s'\n", stringValue);
+                        //printf("\n> Entering function '%s'\n", stringValue);
                         isGlobal = 0;
                         typeObject = object;        
                         object = findProcedureObject(objectGlobal, stringValue);
@@ -3307,7 +3307,7 @@ int main(int argc, char ** argv){
     }
     start();
     writeToFile();
-    printf("Parsed with %d errors, %d warnings\n", errorCount, warningCount);
+    printf("\nCompilation complete.\nParsed with %d errors, %d warnings\n\n", errorCount, warningCount);
 
     return 0;
 }

@@ -79,7 +79,7 @@
 
 	\section{Scanner}
 	Der Scanner liest ein Textfile in ASCII-Kodierung ein und fügt Zeichen zu syntaktischen Einheiten (Tokens) zusammen.
-	Diese Tokens sind in ihrer Bedeutung eindeutig definiert (Anhang).
+	Diese Tokens sind in ihrer Bedeutung eindeutig definiert (Anhang 1).
 
 	Der Scanner in Phoenix liest solange Zeichen von der Eingabedatei ein, bis er eine Wortgrenze erkennt.
 	Danach versucht er, das bis zu diesem Zeitpunkt eingelesene Wort zu kategorisieren und dies als Token an den Parser weiter zu geben.
@@ -101,7 +101,7 @@
 	Implizit können auch Booleans deklariert werden.
 	Da aber der boolesche Datentyp in C nicht explizit vorhanden ist, kann keine Variable vom Typ bool angelegt werden.
 	Eine Zuweisung eines booleschen Ausdrucks zu einer Integervariable ist jedoch möglich (wird aber vom Parser als Typkonflikt erkannt).
-
+	\newpage
 	\subsubsection{Strings}
 
 	Strings können nicht nur zur Laufzeit als \lstinline|char|-Arrays erstellt werden, sondern auch im Quellcode als Konstanten verwendet werden.
@@ -136,7 +136,7 @@ Execution stopped.
 	Arrays werden mittels \lstinline|malloc| zur Laufzeit am Heap erstellt.
 	Sie können aus den oben genannten Basic Types bestehen.
 	
-	%\newpage
+	\newpage
 	\subsubsection{Records}
 
 	Wie Arrays werden auch Records (\lstinline|struct| in C) zur Laufzeit mittels \lstinline|malloc| am Heap erzeugt.
@@ -172,7 +172,7 @@ void main()
 	i = (1<2); // Boolean expression
 	ch = 65;
 }\end{lstlisting}
-
+	\newpage
 	\begin{lstlisting}[title=Ausgabe des Compilers,frame=single]
 Phoenix: Parser
 ===============
@@ -201,7 +201,7 @@ Parsed with 0 errors, 2 warnings
 	In arithmetischen Ausdrücken werden konstante Werte zusammengefasst (Constant folding).
 	Aus $x + 3 + 5$ wird so zuerst $x+8$ bevor Code generiert wird.
 
-	\section{Code Generation}
+	\subsection{Code Generation}
 	Die Code Generation geschieht während dem Parsing.
 	Die Generierung von Code wird so lange wie möglich verzögert, um Optimierungen wie Constant Folding zu erlauben.
 
@@ -210,7 +210,7 @@ Parsed with 0 errors, 2 warnings
 	Somit besitzt sie 32 Register mit jeweils 32bit.
 	Zusätzlich zu den DLX-Befehlen haben wir neue Instruktionen für Input/Output eingeführt.
 	Zusätzlich haben wir das Sichern und Wiederherstellen von Registern bei Prozeduraufrufen als je eine Instruktion ausgedrückt,
-	was zu einer Reduktion der Größe der Binärdatei von bis zu 50\% führte.
+	was zu einer Reduktion der Größe der Binärdatei des Parser von bis zu 50\% führte.
 
 	\subsection{Binärformat}
 	Das erwartete Binärformat ist in folgende Segmente aufgeteilt:
@@ -249,6 +249,8 @@ Parsed with 0 errors, 2 warnings
 	Der ausgeführte Parser jedoch hat einen Fehler beim Erkennen der Tokens.
 	Höchstwahrscheinlich liegt es an der Erstellung von Strings oder an der Speicherung von konstanten Strings,
 	welche im Scanner benötigt werden.
+	
+	Seperate Compilation haben wir nicht implementiert, stattdessen wurden die aufgeteilten Files konkateniert.
 
 	\newpage
 	\section{Anhang 1: EBNF}

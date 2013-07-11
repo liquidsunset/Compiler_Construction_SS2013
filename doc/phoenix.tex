@@ -42,7 +42,13 @@
 		\item Alexander Miller (1120667)
 	\end{itemize}
 
+
 	\section{Features}
+
+
+
+
+	Die Features werden unterstützt:
 	\begin{multicols}{2}
 	\begin{itemize}
 		\item Basic Types (char und int)
@@ -70,16 +76,6 @@
 		\item Self-Compilation
 		\item Seperate Compilation
 	\end{itemize}
-
-	\section{Aufbau}
-	Phoenix ist in mehrere Teile aufgeteilt.
-	\begin{itemize}
-		\item Scanner (in scanner.c)
-		\item Parser (in parser.c)
-		\item Code Generation (ebenfalls in parser.c)
-		\item Target Machine (in margit.c)
-	\end{itemize}
-
 
 	\section{Scanner}
 	Der Scanner liest ein Textfile in ASCII-Kodierung ein und fügt Zeichen zu syntaktischen Einheiten (Tokens) zusammen.
@@ -113,8 +109,7 @@ void main()
 
 	i = (1<2); // Boolean expression
 	ch = 65;
-}
-\end{lstlisting}
+}\end{lstlisting}
 
 	\begin{lstlisting}[title=Ausgabe des Compilers,frame=single]
 Phoenix: Parser
@@ -162,7 +157,7 @@ Execution stopped.
 	Arrays werden mittels malloc zur Laufzeit am Heap erstellt.
 	Sie können aus den oben genannten Basic Types bestehen.
 	
-	\newpage
+	%\newpage
 	\subsubsection{Records}
 
 	Wie Arrays werden auch Records (structs in C) zur Laufzeit mittels malloc am Heap erzeugt.
@@ -334,7 +329,7 @@ fgetc_func = "fgetc" "(" expression ")".
 fputc_func = "fputc" "(" expression ","
 expression ")".
 
-string_literal = """ string """.
+string_literal = '"' string '"'.
 
 string = letter { letter || digit || " " }.
 
